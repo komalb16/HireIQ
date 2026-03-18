@@ -1,0 +1,172 @@
+{
+  "basics": {
+    "name": "Komal Batra",
+    "title": "Software Engineer II @ Microsoft",
+    "summary": "Software Engineer II at Microsoft focused on building AI-driven solutions, with 13+ years of experience in core software engineering, Site Reliability Engineering (SRE), and cloud infrastructure. I design and develop scalable, high-performance systems that leverage intelligent agents, Copilot integrations, and AI-assisted automation. My expertise spans distributed systems, DevOps, and cloud-native architectures using Azure and AWS, enabling smart decision-making and optimizing enterprise-scale system reliability.",
+    "location": "Atlanta, Georgia, United States",
+    "email": "komalbatra1602@gmail.com",
+    "phone": "4047365283",
+    "links": [
+      { "name": "LinkedIn", "url": "www.linkedin.com/in/komal-batra0216" }
+    ]
+  },
+  "experience": [
+    {
+      "company": "Microsoft",
+      "role": "Software Engineer II",
+      "dates": "January 2024 - Present (2 years 3 months)",
+      "location": "Atlanta, Georgia, United States",
+      "bullets": [
+        "Design and develop scalable AI-driven software solutions and intelligent agents, integrating Copilot capabilities into enterprise workflows.",
+        "Architect and implement robust Machine Learning (ML) pipelines and MLOps infrastructure to streamline model deployment and lifecycle management.",
+        "Collaborate with cross-functional teams to build cloud-native applications on Microsoft Azure, ensuring high performance, security, and scalability.",
+        "Drive software engineering best practices, including code reviews, automated testing, and continuous integration/continuous deployment (CI/CD)."
+      ]
+    },
+    {
+      "company": "Microsoft",
+      "role": "Site Reliability Engineer II",
+      "dates": "August 2023 - December 2023 (5 months)",
+      "location": "Atlanta, Georgia, United States",
+      "bullets": [
+        "Leveraged AI and machine learning techniques to enhance software observability, implementing AI-assisted anomaly detection for proactive incident resolution.",
+        "Optimized system reliability and performance for large-scale distributed systems, significantly improving SLAs and SLOs.",
+        "Automated infrastructure provisioning and configuration management using Infrastructure as Code (IaC) and advanced DevOps practices.",
+        "Led incident response and post-mortem analyses, driving continuous improvement in system architecture and operational resilience."
+      ]
+    },
+    {
+      "company": "Microsoft",
+      "role": "Site Reliability Engineer 2",
+      "dates": "February 2022 - August 2023 (1 year 7 months)",
+      "location": "Hyderabad, Telangana, India",
+      "bullets": [
+        "Engineered and maintained highly available cloud infrastructure on Azure, focusing on fault tolerance and disaster recovery.",
+        "Developed custom automation scripts and tools in Python and C# (.NET) to eliminate toil and streamline operational workflows.",
+        "Managed containerized deployments using Kubernetes and Docker, ensuring efficient resource utilization and seamless scaling.",
+        "Implemented comprehensive monitoring and alerting solutions using OpenTelemetry and distributed tracing to identify and mitigate bottlenecks."
+      ]
+    },
+    {
+      "company": "J.P. Morgan",
+      "role": "Site Reliability Engineer",
+      "dates": "November 2020 - January 2022 (1 year 3 months)",
+      "location": "Hyderabad, Telangana, India",
+      "bullets": [
+        "Spearheaded Site Reliability Engineering initiatives for mission-critical financial applications, ensuring 99.99% uptime and low-latency performance.",
+        "Designed and maintained robust CI/CD pipelines, accelerating software delivery and reducing deployment risks.",
+        "Collaborated with software engineering teams to embed reliability and observability into the application design phase.",
+        "Conducted capacity planning and performance tuning for high-throughput database systems (Oracle, SQL Server) and big data platforms."
+      ]
+    },
+    {
+      "company": "Wells Fargo",
+      "role": "System Engineer",
+      "dates": "April 2018 - November 2020 (2 years 8 months)",
+      "location": "Hyderabad, Telangana, India",
+      "bullets": [
+        "Apply broad knowledge of technology options, technology platforms, design techniques and approaches across the Data Engineering ecosystem to design systems that meet business needs.",
+        "Play a leading role in building systems and datasets using software engineering best practices, data management fundamentals, data storage principles, recent advances in distributed systems, and operational excellence best practices.",
+        "Play a leading role in architecture design and implementation of next generation BI solutions using Big Data and AWS Services.",
+        "Analyze source systems, define underlying data sources and transformation requirements, design suitable data models and document the design/specifications.",
+        "Demonstrate passion for quality and productivity by use of efficient development techniques, standards and guidelines.",
+        "Effectively communicate with various teams and stakeholders, escalate technical and managerial issues at the right time and resolve conflicts.",
+        "Peer review work. Actively mentor more junior members of the team, improving their skills, their knowledge of our systems and their ability to get things done."
+      ]
+    },
+    {
+      "company": "Bank of America",
+      "role": "Analyst",
+      "dates": "August 2016 - April 2018 (1 year 9 months)",
+      "location": "Hyderabad, Telangana, India",
+      "bullets": [
+        "Work with a variety of data sources - extracting knowledge and actionable information from massive datasets towards solving business problems.",
+        "Own the design of advanced analytics dashboards and KPI reports in our BI tool starting from requirements gathering across sales, product and senior leadership teams to the delivery of final, polished reports in production.",
+        "Work closely with the Data Science and Data Engineering team to deliver actionable insights to the organization.",
+        "Strong ability to troubleshoot and resolve data-related bugs in a timely manner.",
+        "Ability to build tabular and/or visualization reports as needed.",
+        "Build and flesh out data models in our Data Warehouse for use in regular and/or automated reporting and analysis.",
+        "Evaluate operations for inefficiencies and identify areas where you can create, automate, and develop tools (SQL-based or otherwise).",
+        "Continuously strive for a deeper understanding of our business drivers.",
+        "Grow to serve as the team's subject matter expert for advanced analytics and report design, offering insights and suggestions on what potential problems the team should be solving."
+      ]
+    },
+    {
+      "company": "Tata Consultancy Services",
+      "role": "IT Analyst",
+      "dates": "December 2011 - August 2016 (4 years 9 months)",
+      "location": "Mumbai Area, India",
+      "bullets": [
+        "Working with a leading organization in software development as a systems engineer, I firmly believe in implementing my duties with dedication, determination, positive attitude and passion. Have about 4 years IT experience in Oracle, PLSQL, SQL Server database, Application Support Specialist and Project Management.",
+        "Has been an Onsite Application Operations Project Lead at Stockholm, Sweden for about 4 months assignment (Aug 2015-Nov 2015).",
+        "Currently working as a Project Leader for the entire Buying Office and Production Office Team Project managing the entire team. Currently on Notice Period. Looking out for a good opportunity."
+      ]
+    }
+  ],
+  "achievements": [],
+  "projects": [],
+  "skills": [
+    {
+      "group": "Core Expertise",
+      "items": [
+        "Artificial Intelligence & Machine Learning (AI/ML)",
+        "Intelligent Agents & Copilot Integration",
+        "Site Reliability Engineering (SRE) & Incident Management",
+        "Distributed Systems & High Availability Architecture",
+        "Software Observability & AI-assisted anomaly detection",
+        "DevOps, CI/CD & Infrastructure as Code (IaC)"
+      ]
+    },
+    {
+      "group": "Technical Skills",
+      "items": [
+        "AI/ML Frameworks & Libraries",
+        "Programming Languages: Python, Java, .NET, SQL, PL/SQL",
+        "Cloud Computing: Microsoft Azure, Amazon Web Services (AWS)",
+        "Big Data & Analytics: Cloud Analytics, AI-driven insights",
+        "Database Management: Oracle, SQL Server"
+      ]
+    },
+    {
+      "group": "Tools & Platforms",
+      "items": [
+        "Machine Learning Pipelines & MLOps",
+        "Containerization: Kubernetes, Docker",
+        "Observability: OpenTelemetry, Metrics, Distributed Tracing",
+        "Business Intelligence (BI) & Advanced Analytics Dashboards",
+        "Version Control & Deployment Pipelines"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "BITS Pilani Work Integrated Learning Programmes",
+      "degree": "Postgraduate Degree, Artificial Intelligence",
+      "dates": "2020 - 2021"
+    },
+    {
+      "institution": "Amravati University",
+      "degree": "Bachelor's Degree, Information Technology Project Management",
+      "dates": "2007 - 2011"
+    },
+    {
+      "institution": "Vidyabharati Mahavidyalaya, Amravati",
+      "degree": "HSC, Electrical, Electronics and Communications Engineering",
+      "dates": "2005 - 2007"
+    }
+  ],
+  "certifications": [
+    "Introduction to Generative AI",
+    "Duolingo German Fluency: Beginner (Estimated)",
+    "What Is Generative AI?",
+    "AI Tools Workshop",
+    "Information Technology Infrastructure Library Certification(ITIL)- Foundation level"
+  ],
+  "awards": [],
+  "extra": [
+    "Women in Tech",
+    "Cloud & DevOps Enthusiast",
+    "Passionate about leveraging AI agents and Copilot to drive automation, reliability, and operational efficiency, and always open to connecting with professionals exploring AI, cloud, and modern DevOps practices.",
+    "Delivered impactful solutions for Microsoft, JP Morgan Chase, Wells Fargo, Bank of America, H&M, NSE, and Tata Motors Finance Ltd. across finance, retail, and technology."
+  ]
+}
