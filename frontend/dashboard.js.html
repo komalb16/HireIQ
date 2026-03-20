@@ -1,0 +1,1685 @@
+<script>
+// ═══════════════════════════════════════════════════════════════
+// JOBAGENT PRO — DASHBOARD JAVASCRIPT
+// ═══════════════════════════════════════════════════════════════
+
+const API = () => document.getElementById('s-backend-url')?.value || 'http://localhost:3001';
+
+// ── State ─────────────────────────────────────────────────────
+let state = {
+  userId: null,
+  user: null,
+  jobs: [],
+  jobFilter: 'all',
+  agentRunning: false,
+  pollInterval: null,
+  currentJob: null,
+  currentJobTab: 'overview',
+  solved: JSON.parse(localStorage.getItem('ib_solved') || '{}'),
+  ibCategory: null,
+  theme: localStorage.getItem('jap_theme') || 'cyber',
+  mode: localStorage.getItem('jap_mode') || 'dark',
+  roles: [],
+  locations: [],
+};
+
+// ── Init ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  applyTheme();
+  loadLocalUser();
+  initInterviewBank();
+  if (state.userId) {
+    loadStats();
+    loadJobs();
+  }
+});
+
+// ── Theme ─────────────────────────────────────────────────────
+function setTheme(t) {
+  state.theme = t;
+  localStorage.setItem('jap_theme', t);
+  applyTheme();
+  document.querySelectorAll('.theme-dot').forEach(d => d.classList.toggle('active', d.classList.contains(t)));
+}
+
+function setMode(m) {
+  state.mode = m;
+  localStorage.setItem('jap_mode', m);
+  applyTheme();
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase().includes(m === 'medium' ? 'mid' : m)));
+}
+
+function applyTheme() {
+  document.body.setAttribute('data-theme', state.theme);
+  document.body.setAttribute('data-mode', state.mode);
+}
+
+// ── Navigation ────────────────────────────────────────────────
+const pageTitles = {
+  dashboard: ['Dashboard', 'AI-powered job search overview'],
+  jobs: ['Job Queue', 'Review & apply to AI-matched jobs'],
+  applied: ['Applied Jobs', 'Track your applications'],
+  safeapply: ['Safe Apply', 'The right way to apply to jobs'],
+  interview: ['Interview Bank', '91+ questions · 5 languages · 72 companies'],
+  settings: ['Settings', 'Configure your account and preferences'],
+  history: ['Run History', 'Previous agent runs'],
+};
+
+function showPage(page) {
+  document.querySelectorAll('[id^="page-"]').forEach(p => p.classList.add('hidden'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`page-${page}`)?.classList.remove('hidden');
+
+  const [title, sub] = pageTitles[page] || [page, ''];
+  document.getElementById('topbar-title').textContent = title;
+  document.getElementById('topbar-sub').textContent = sub;
+
+  // Mark nav item active
+  document.querySelectorAll('.nav-item').forEach(item => {
+    if (item.getAttribute('onclick')?.includes(`'${page}'`)) item.classList.add('active');
+  });
+
+  if (page === 'jobs') loadJobs();
+  if (page === 'applied') loadApplied();
+  if (page === 'history') loadHistory();
+  if (page === 'settings') populateSettings();
+  if (page === 'dashboard') loadStats();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ── Toast ─────────────────────────────────────────────────────
+function toast(msg, type = 'info') {
+  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span>${icons[type]}</span><span>${msg}</span>`;
+  document.getElementById('toasts').prepend(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+// ── User / Auth ───────────────────────────────────────────────
+function loadLocalUser() {
+  const stored = localStorage.getItem('jap_user');
+  if (stored) {
+    try {
+      state.user = JSON.parse(stored);
+      state.userId = state.user.id;
+      state.roles = state.user.target_roles || [];
+      state.locations = state.user.target_locations || [];
+      document.getElementById('user-label').textContent = state.user.name;
+    } catch {}
+  }
+}
+
+async function saveProfile() {
+  const name = document.getElementById('s-name').value.trim();
+  const email = document.getElementById('s-email').value.trim();
+  const whatsapp = document.getElementById('s-whatsapp').value.trim();
+
+  if (!name || !email) { toast('Name and email are required', 'error'); return; }
+
+  try {
+    const method = state.userId ? 'PATCH' : 'POST';
+    const url = state.userId ? `${API()}/api/users/${state.userId}` : `${API()}/api/users`;
+    const body = state.userId ? { name, phone: whatsapp, whatsapp_number: whatsapp } : { name, email, phone: whatsapp };
+
+    const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!res.ok) throw new Error(await res.text());
+    const user = await res.json();
+    state.user = user; state.userId = user.id;
+    localStorage.setItem('jap_user', JSON.stringify(user));
+    document.getElementById('user-label').textContent = user.name;
+    toast('Profile saved!', 'success');
+  } catch (err) {
+    toast(`Save failed: ${err.message}`, 'error');
+  }
+}
+
+async function saveKeys() {
+  if (!state.userId) { toast('Save your profile first', 'error'); return; }
+  const body = {
+    GROQ_key: document.getElementById('s-GROQ').value.trim() || undefined,
+    rapidapi_key: document.getElementById('s-rapidapi').value.trim() || undefined,
+    twilio_sid: document.getElementById('s-twilio-sid').value.trim() || undefined,
+    twilio_token: document.getElementById('s-twilio-token').value.trim() || undefined,
+    twilio_from: document.getElementById('s-twilio-from').value.trim() || undefined,
+  };
+  // Remove empty
+  Object.keys(body).forEach(k => { if (!body[k]) delete body[k]; });
+
+  try {
+    const res = await fetch(`${API()}/api/users/${state.userId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!res.ok) throw new Error(await res.text());
+    toast('API keys saved!', 'success');
+  } catch (err) { toast(`Error: ${err.message}`, 'error'); }
+}
+
+async function savePreferences() {
+  if (!state.userId) { toast('Save your profile first', 'error'); return; }
+  const body = {
+    target_roles: state.roles,
+    target_locations: state.locations,
+    min_score: parseInt(document.getElementById('s-minscore').value) || 65,
+    apply_limit_daily: parseInt(document.getElementById('s-limit').value) || 10,
+    notify_whatsapp: document.getElementById('toggle-notify').classList.contains('on') ? 1 : 0,
+    auto_apply: document.getElementById('toggle-auto').classList.contains('on') ? 1 : 0,
+  };
+
+  try {
+    const res = await fetch(`${API()}/api/users/${state.userId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!res.ok) throw new Error(await res.text());
+    toast('Preferences saved!', 'success');
+  } catch (err) { toast(`Error: ${err.message}`, 'error'); }
+}
+
+async function saveResumeText() {
+  if (!state.userId) { toast('Save your profile first', 'error'); return; }
+  const text = document.getElementById('s-resume-text').value.trim();
+  if (!text) { toast('No resume text entered', 'error'); return; }
+
+  const blob = new Blob([text], { type: 'text/plain' });
+  const fd = new FormData();
+  fd.append('resume', blob, 'resume.txt');
+
+  try {
+    const res = await fetch(`${API()}/api/users/${state.userId}/resume`, { method: 'POST', body: fd });
+    if (!res.ok) throw new Error(await res.text());
+    document.getElementById('resume-status').textContent = `✅ Resume saved (${text.length} characters)`;
+    toast('Resume saved!', 'success');
+  } catch (err) { toast(`Error: ${err.message}`, 'error'); }
+}
+
+async function uploadResume(event) {
+  if (!state.userId) { toast('Save your profile first', 'error'); return; }
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const fd = new FormData();
+  fd.append('resume', file);
+
+  try {
+    const res = await fetch(`${API()}/api/users/${state.userId}/resume`, { method: 'POST', body: fd });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    document.getElementById('resume-status').textContent = `✅ ${file.name} uploaded (${data.chars} characters)`;
+    toast('Resume uploaded!', 'success');
+  } catch (err) { toast(`Upload error: ${err.message}`, 'error'); }
+}
+
+function dragOver(e) { e.preventDefault(); document.getElementById('resume-drop').classList.add('drag-over'); }
+function dropResume(e) {
+  e.preventDefault();
+  document.getElementById('resume-drop').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) uploadResume({ target: { files: [file] } });
+}
+
+// ── Settings Population ───────────────────────────────────────
+function populateSettings() {
+  if (!state.user) return;
+  document.getElementById('s-name').value = state.user.name || '';
+  document.getElementById('s-email').value = state.user.email || '';
+  document.getElementById('s-whatsapp').value = state.user.whatsapp_number || '';
+  document.getElementById('s-minscore').value = state.user.min_score || 65;
+  document.getElementById('s-limit').value = state.user.apply_limit_daily || 10;
+  if (state.user.notify_whatsapp) document.getElementById('toggle-notify').classList.add('on');
+  if (state.user.auto_apply) document.getElementById('toggle-auto').classList.add('on');
+  renderRoleTags();
+  renderLocationTags();
+}
+
+// ── Tag Input ─────────────────────────────────────────────────
+function addTag(type, event) {
+  if (event.key !== 'Enter') return;
+  const inputId = type === 'roles' ? 'role-input' : 'location-input';
+  const val = document.getElementById(inputId).value.trim();
+  if (!val) return;
+  if (type === 'roles' && !state.roles.includes(val)) { state.roles.push(val); renderRoleTags(); }
+  if (type === 'locations' && !state.locations.includes(val)) { state.locations.push(val); renderLocationTags(); }
+  document.getElementById(inputId).value = '';
+}
+
+function renderRoleTags() {
+  const wrap = document.getElementById('roles-wrap');
+  wrap.querySelectorAll('.tag').forEach(t => t.remove());
+  state.roles.forEach(r => {
+    const tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.innerHTML = `${r} <span class="tag-remove" onclick="removeTag('roles','${r}')">×</span>`;
+    wrap.insertBefore(tag, document.getElementById('role-input'));
+  });
+}
+
+function renderLocationTags() {
+  const wrap = document.getElementById('locations-wrap');
+  wrap.querySelectorAll('.tag').forEach(t => t.remove());
+  state.locations.forEach(l => {
+    const tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.innerHTML = `${l} <span class="tag-remove" onclick="removeTag('locations','${l}')">×</span>`;
+    wrap.insertBefore(tag, document.getElementById('location-input'));
+  });
+}
+
+function removeTag(type, val) {
+  if (type === 'roles') state.roles = state.roles.filter(r => r !== val);
+  else state.locations = state.locations.filter(l => l !== val);
+  renderRoleTags(); renderLocationTags();
+}
+
+function toggleEl(id) {
+  document.getElementById(id).classList.toggle('on');
+}
+
+// ── Connection Test ───────────────────────────────────────────
+async function testConnection() {
+  const el = document.getElementById('conn-status');
+  el.textContent = 'Testing…';
+  try {
+    const res = await fetch(`${API()}/health`);
+    const data = await res.json();
+    el.textContent = '✅ Connected — ' + data.version;
+    el.style.color = 'var(--green)';
+    toast('Backend connected!', 'success');
+  } catch (err) {
+    el.textContent = '❌ Not reachable — is the backend running?';
+    el.style.color = 'var(--red)';
+  }
+}
+
+// ── Agent Run ─────────────────────────────────────────────────
+async function runAgent() {
+  if (!state.userId) {
+    toast('Please create your profile in Settings first', 'error');
+    showPage('settings');
+    return;
+  }
+  if (state.agentRunning) { toast('Agent is already running', 'info'); return; }
+
+  try {
+    const res = await fetch(`${API()}/api/agent/run`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: state.userId }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+
+    state.agentRunning = true;
+    document.getElementById('run-btn').disabled = true;
+    document.getElementById('run-btn').textContent = '⏳ Running…';
+
+    showPage('dashboard');
+    document.getElementById('agent-viz-idle').classList.add('hidden');
+    document.getElementById('agent-viz-running').classList.remove('hidden');
+    document.getElementById('sidebar-dot').classList.add('running');
+
+    startPolling();
+    toast('Agent started! Discovering jobs…', 'success');
+  } catch (err) {
+    toast(`Failed to start: ${err.message}`, 'error');
+  }
+}
+
+function startPolling() {
+  clearInterval(state.pollInterval);
+  state.pollInterval = setInterval(pollStatus, 2500);
+}
+
+async function pollStatus() {
+  if (!state.userId) return;
+  try {
+    const res = await fetch(`${API()}/api/agent/status/${state.userId}`);
+    const s = await res.json();
+
+    if (s.status === 'idle') return;
+
+    // Update sidebar
+    document.getElementById('sidebar-phase').textContent = s.phase || s.status;
+    const prog = s.phase?.includes('Scor') ? 33 : s.phase?.includes('Tailor') ? 66 : s.phase?.includes('Notif') ? 88 : s.status === 'completed' ? 100 : 15;
+    document.getElementById('sidebar-progress').style.width = prog + '%';
+
+    // Update viz
+    document.getElementById('viz-phase').textContent = s.phase || s.status;
+    document.getElementById('viz-stats').textContent = `Found ${s.jobsFound || 0} · Scored ${s.jobsScored || 0} · Ready ${s.jobsQueued || 0}`;
+
+    // Append new logs
+    if (s.logs?.length) {
+      const logEl = document.getElementById('agent-log');
+      const lines = s.logs.slice(-15);
+      logEl.innerHTML = lines.map((l, i) => `<div class="log-line ${i === lines.length - 1 ? 'new' : ''}">${l}</div>`).join('');
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    if (s.status === 'completed' || s.status === 'failed') {
+      clearInterval(state.pollInterval);
+      state.agentRunning = false;
+      document.getElementById('run-btn').disabled = false;
+      document.getElementById('run-btn').innerHTML = '<span>▶</span> Run Agent';
+      document.getElementById('sidebar-dot').classList.remove('running');
+
+      if (s.status === 'completed') {
+        toast(`Done! Found ${s.jobsFound || 0} jobs, ${s.jobsQueued || 0} ready to apply`, 'success');
+        loadStats();
+        loadJobs();
+        document.getElementById('agent-viz-idle').classList.remove('hidden');
+        document.getElementById('agent-viz-running').classList.add('hidden');
+      } else {
+        toast('Agent run failed — check logs', 'error');
+      }
+    }
+  } catch { /* backend may be starting */ }
+}
+
+// ── Stats ─────────────────────────────────────────────────────
+async function loadStats() {
+  if (!state.userId) return;
+  try {
+    const res = await fetch(`${API()}/api/stats/${state.userId}`);
+    const d = await res.json();
+
+    document.getElementById('stat-total').textContent = d.total || 0;
+    document.getElementById('stat-applied').textContent = d.byStatus?.find(s => s.status === 'applied')?.n || 0;
+    document.getElementById('stat-ready').textContent = d.byStatus?.find(s => s.status === 'ready')?.n || 0;
+    document.getElementById('stat-score').textContent = d.avgScore ? d.avgScore + '%' : '—';
+
+    const readyCount = d.byStatus?.find(s => s.status === 'ready')?.n || 0;
+    const appliedCount = d.byStatus?.find(s => s.status === 'applied')?.n || 0;
+    document.getElementById('nav-ready-count').textContent = readyCount;
+    document.getElementById('nav-applied-count').textContent = appliedCount;
+
+    // Top jobs
+    if (d.topJobs?.length) {
+      document.getElementById('top-jobs-list').innerHTML = d.topJobs.map(j => `
+        <div style="padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="openJobLink('${j.job_url}')">
+          <div class="flex items-center gap-2">
+            <span class="score-badge ${j.match_score >= 80 ? 'high' : j.match_score >= 65 ? 'mid' : 'low'}" style="width:38px;height:38px;font-size:12px">${j.match_score}%</span>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--text)">${j.title}</div>
+              <div style="font-size:11px;color:var(--accent)">${j.company}</div>
+            </div>
+            <span class="status-pill status-${j.status} ml-auto">${j.status}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+  } catch { /* backend offline */ }
+}
+
+// ── Jobs ──────────────────────────────────────────────────────
+let allJobsData = [];
+
+async function loadJobs() {
+  if (!state.userId) return;
+  try {
+    const filter = state.jobFilter !== 'all' ? `&status=${state.jobFilter}` : '';
+    const res = await fetch(`${API()}/api/jobs/${state.userId}?limit=100${filter}`);
+    const d = await res.json();
+    allJobsData = d.jobs || [];
+    renderJobs(allJobsData);
+  } catch { document.getElementById('jobs-grid').innerHTML = '<p class="text-muted text-sm">⚠️ Could not connect to backend</p>'; }
+}
+
+function renderJobs(jobs) {
+  const grid = document.getElementById('jobs-grid');
+  if (!jobs.length) { grid.innerHTML = '<p class="text-muted text-sm">No jobs found — run the agent first.</p>'; return; }
+
+  grid.innerHTML = jobs.map(j => {
+    const sc = j.match_score;
+    const cls = sc >= 80 ? 'high' : sc >= 65 ? 'mid' : 'low';
+    return `<div class="job-card" onclick="openJobModal('${j.id}')">
+      <div>
+        <div class="job-title">${j.title}</div>
+        <div class="job-company">${j.company}</div>
+        <div class="job-meta">
+          <span class="job-meta-item">📍 ${j.location || '—'}</span>
+          ${j.salary ? `<span class="job-meta-item">💰 ${j.salary}</span>` : ''}
+          <span class="job-meta-item">🔗 ${j.source}</span>
+          <span class="status-pill status-${j.status}">${j.status}</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+        ${sc ? `<div class="score-badge ${cls}">${sc}%</div>` : '<div class="score-badge low">?</div>'}
+        ${j.tailored_resume ? '<span class="text-xs text-green">✅ Resume</span>' : ''}
+        ${j.cover_letter ? '<span class="text-xs text-accent">✅ Cover</span>' : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterJobs() {
+  const q = document.getElementById('job-search').value.toLowerCase();
+  const filtered = allJobsData.filter(j =>
+    !q || j.title.toLowerCase().includes(q) || j.company.toLowerCase().includes(q)
+  );
+  renderJobs(filtered);
+}
+
+function setJobFilter(filter, btn) {
+  state.jobFilter = filter;
+  document.querySelectorAll('#job-filters .filter-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadJobs();
+}
+
+async function loadApplied() {
+  if (!state.userId) return;
+  try {
+    const res = await fetch(`${API()}/api/jobs/${state.userId}?status=applied&limit=50`);
+    const d = await res.json();
+    const grid = document.getElementById('applied-grid');
+    if (!d.jobs?.length) { grid.innerHTML = '<p class="text-muted text-sm">No applied jobs yet.</p>'; return; }
+    grid.innerHTML = d.jobs.map(j => `
+      <div class="job-card">
+        <div>
+          <div class="job-title">${j.title}</div>
+          <div class="job-company">${j.company}</div>
+          <div class="job-meta">
+            <span class="job-meta-item">📍 ${j.location || '—'}</span>
+            <span class="job-meta-item">📅 Applied: ${j.applied_at ? new Date(j.applied_at).toLocaleDateString() : '—'}</span>
+          </div>
+        </div>
+        <div class="score-badge ${j.match_score >= 80 ? 'high' : 'mid'}">${j.match_score || '?'}%</div>
+      </div>`).join('');
+  } catch {}
+}
+
+// ── Job Modal ─────────────────────────────────────────────────
+let modalJob = null;
+
+async function openJobModal(jobId) {
+  const job = allJobsData.find(j => j.id === jobId);
+  if (!job) return;
+  modalJob = job;
+
+  document.getElementById('jm-title').textContent = job.title;
+  document.getElementById('jm-company').textContent = `${job.company} · ${job.location || '—'}`;
+  jmTab('overview', null);
+  document.getElementById('job-modal').classList.remove('hidden');
+}
+
+function jmTab(tab, btn) {
+  state.currentJobTab = tab;
+  document.querySelectorAll('.modal .tab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else document.querySelectorAll('.modal .tab')[0]?.classList.add('active');
+
+  const j = modalJob;
+  const body = document.getElementById('jm-body');
+
+  if (tab === 'overview') {
+    const sc = j.match_score;
+    const reasons = tryParseArr(j.match_reasons);
+    const gaps = tryParseArr(j.match_gaps);
+    body.innerHTML = `
+      <div class="flex gap-3 mb-4">
+        <div class="score-badge ${sc >= 80 ? 'high' : sc >= 65 ? 'mid' : 'low'}" style="width:60px;height:60px;font-size:20px">${sc || '?'}%</div>
+        <div>
+          <div class="font-display fw-700" style="font-size:16px">${j.title}</div>
+          <div style="color:var(--accent)">${j.company}</div>
+          <div class="text-muted text-xs">${j.location} · ${j.source}</div>
+        </div>
+      </div>
+      ${j.salary ? `<div class="text-sm mb-4"><span class="text-muted">Salary:</span> <strong>${j.salary}</strong></div>` : ''}
+      ${reasons.length ? `<div class="mb-4"><div class="q-section-title">✅ Why you match</div>${reasons.map(r => `<div class="text-sm" style="padding:3px 0">• ${r}</div>`).join('')}</div>` : ''}
+      ${gaps.length ? `<div class="mb-4"><div class="q-section-title" style="color:var(--amber)">⚠️ Gaps to address</div>${gaps.map(g => `<div class="text-sm" style="padding:3px 0">• ${g}</div>`).join('')}</div>` : ''}
+      <div class="status-pill status-${j.status}" style="display:inline-flex">${j.status}</div>
+    `;
+  } else if (tab === 'resume') {
+    body.innerHTML = j.tailored_resume
+      ? `<div class="code-block" style="white-space:pre-wrap;font-size:12px;color:var(--text2)">${escHtml(j.tailored_resume)}</div>`
+      : '<p class="text-muted text-sm">Resume not tailored yet — run the agent with your resume uploaded.</p>';
+  } else if (tab === 'cover') {
+    body.innerHTML = j.cover_letter
+      ? `<div class="code-block" style="white-space:pre-wrap;font-size:12px;color:var(--text2)">${escHtml(j.cover_letter)}</div>`
+      : '<p class="text-muted text-sm">Cover letter not generated yet.</p>';
+  } else if (tab === 'description') {
+    body.innerHTML = j.description
+      ? `<div style="font-size:12px;line-height:1.7;color:var(--text2);white-space:pre-wrap">${escHtml(j.description.slice(0, 3000))}${j.description.length > 3000 ? '\n\n[Truncated…]' : ''}</div>`
+      : '<p class="text-muted text-sm">No description available.</p>';
+  }
+}
+
+function closeJobModal(e) {
+  if (!e || e.target.id === 'job-modal') document.getElementById('job-modal').classList.add('hidden');
+}
+
+function openJobLink() {
+  if (modalJob?.job_url) window.open(modalJob.job_url, '_blank');
+}
+
+function copyContent() {
+  const text = state.currentJobTab === 'resume' ? modalJob?.tailored_resume : modalJob?.cover_letter;
+  if (text) { navigator.clipboard.writeText(text); toast('Copied to clipboard!', 'success'); }
+}
+
+async function markApplied() {
+  if (!modalJob) return;
+  try {
+    await fetch(`${API()}/api/jobs/${modalJob.id}`, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'applied' }),
+    });
+    modalJob.status = 'applied';
+    jmTab('overview', null);
+    loadStats();
+    toast('Marked as applied! 🎉', 'success');
+  } catch (err) { toast('Error: ' + err.message, 'error'); }
+}
+
+// ── History ───────────────────────────────────────────────────
+async function loadHistory() {
+  if (!state.userId) return;
+  try {
+    const res = await fetch(`${API()}/api/agent/history/${state.userId}`);
+    const runs = await res.json();
+    const el = document.getElementById('history-list');
+    if (!runs.length) { el.innerHTML = '<p class="text-muted text-sm">No runs yet.</p>'; return; }
+    el.innerHTML = runs.map(r => `
+      <div class="card" style="padding:16px 20px">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="status-pill ${r.status === 'completed' ? 'status-ready' : r.status === 'failed' ? 'status-' : 'status-scored'}">${r.status}</span>
+          <span class="text-sm fw-700">${new Date(r.started_at).toLocaleString()}</span>
+          <span class="text-xs text-muted ml-auto">Run ID: ${r.id.slice(0,8)}</span>
+        </div>
+        <div class="flex gap-3">
+          <span class="text-xs text-muted">Found: <strong>${r.jobs_found}</strong></span>
+          <span class="text-xs text-muted">Scored: <strong>${r.jobs_scored}</strong></span>
+          <span class="text-xs text-muted">Queued: <strong>${r.jobs_applied}</strong></span>
+        </div>
+      </div>`).join('');
+  } catch {}
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INTERVIEW BANK DATA
+// ═══════════════════════════════════════════════════════════════
+
+const IB = {
+  categories: [
+    { id: 'dsa', label: '⚡ DSA & Algorithms', count: 37 },
+    { id: 'design', label: '🏗️ System Design', count: 10 },
+    { id: 'behavioral', label: '🧠 Behavioral', count: 10 },
+    { id: 'sre', label: '🔧 SRE & Troubleshooting', count: 7 },
+  ],
+
+  dsa: [
+    {
+      id: 'two-sum', title: 'Two Sum', diff: 'Easy',
+      companies: ['Google','Amazon','Microsoft','Meta','Apple'],
+      blind75: true,
+      problem: 'Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.',
+      hints: 'Use a hash map to store visited elements. For each element, check if (target - element) exists in the map.',
+      solutions: {
+        python: `def twoSum(nums, target):
+    seen = {}
+    for i, num in enumerate(nums):
+        complement = target - num
+        if complement in seen:
+            return [seen[complement], i]
+        seen[num] = i`,
+        java: `public int[] twoSum(int[] nums, int target) {
+    Map<Integer,Integer> map = new HashMap<>();
+    for (int i = 0; i < nums.length; i++) {
+        int comp = target - nums[i];
+        if (map.containsKey(comp)) return new int[]{map.get(comp), i};
+        map.put(nums[i], i);
+    }
+    return new int[]{};
+}`,
+        cpp: `vector<int> twoSum(vector<int>& nums, int target) {
+    unordered_map<int,int> mp;
+    for (int i = 0; i < nums.size(); i++) {
+        int comp = target - nums[i];
+        if (mp.count(comp)) return {mp[comp], i};
+        mp[nums[i]] = i;
+    }
+    return {};
+}`,
+        javascript: `function twoSum(nums, target) {
+    const seen = new Map();
+    for (let i = 0; i < nums.length; i++) {
+        const comp = target - nums[i];
+        if (seen.has(comp)) return [seen.get(comp), i];
+        seen.set(nums[i], i);
+    }
+}`,
+        go: `func twoSum(nums []int, target int) []int {
+    seen := make(map[int]int)
+    for i, num := range nums {
+        comp := target - num
+        if j, ok := seen[comp]; ok {
+            return []int{j, i}
+        }
+        seen[num] = i
+    }
+    return nil
+}`,
+      },
+      followups: ['What if multiple pairs exist?', 'Sorted array version?', 'Three Sum approach?'],
+      complexity: 'Time: O(n) · Space: O(n)',
+    },
+    {
+      id: 'best-stock', title: 'Best Time to Buy and Sell Stock', diff: 'Easy',
+      companies: ['Amazon','Microsoft','Google','Adobe'],
+      blind75: true,
+      problem: 'You are given an array prices where prices[i] is the price of a given stock on the ith day. Maximize your profit by choosing a single day to buy and a different day to sell after.',
+      hints: 'Track the minimum price seen so far. At each step, profit = current price - min so far.',
+      solutions: {
+        python: `def maxProfit(prices):
+    min_price = float('inf')
+    max_profit = 0
+    for price in prices:
+        min_price = min(min_price, price)
+        max_profit = max(max_profit, price - min_price)
+    return max_profit`,
+        java: `public int maxProfit(int[] prices) {
+    int minPrice = Integer.MAX_VALUE, maxProfit = 0;
+    for (int p : prices) {
+        minPrice = Math.min(minPrice, p);
+        maxProfit = Math.max(maxProfit, p - minPrice);
+    }
+    return maxProfit;
+}`,
+        cpp: `int maxProfit(vector<int>& prices) {
+    int minP = INT_MAX, maxP = 0;
+    for (int p : prices) {
+        minP = min(minP, p);
+        maxP = max(maxP, p - minP);
+    }
+    return maxP;
+}`,
+        javascript: `function maxProfit(prices) {
+    let min = Infinity, max = 0;
+    for (const p of prices) {
+        min = Math.min(min, p);
+        max = Math.max(max, p - min);
+    }
+    return max;
+}`,
+        go: `func maxProfit(prices []int) int {
+    minP, maxP := math.MaxInt32, 0
+    for _, p := range prices {
+        if p < minP { minP = p }
+        if p - minP > maxP { maxP = p - minP }
+    }
+    return maxP
+}`,
+      },
+      followups: ['Multiple transactions allowed?', 'With cooldown?', 'With transaction fee?'],
+      complexity: 'Time: O(n) · Space: O(1)',
+    },
+    {
+      id: 'max-subarray', title: 'Maximum Subarray (Kadane\'s Algorithm)', diff: 'Medium',
+      companies: ['Amazon','Apple','Microsoft','LinkedIn'],
+      blind75: true,
+      problem: 'Given an integer array nums, find the subarray with the largest sum and return its sum.',
+      hints: 'Kadane\'s algorithm: keep a running sum. If it becomes negative, reset to 0 (or current element).',
+      solutions: {
+        python: `def maxSubArray(nums):
+    max_sum = nums[0]
+    curr = nums[0]
+    for n in nums[1:]:
+        curr = max(n, curr + n)
+        max_sum = max(max_sum, curr)
+    return max_sum`,
+        java: `public int maxSubArray(int[] nums) {
+    int maxSum = nums[0], curr = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+        curr = Math.max(nums[i], curr + nums[i]);
+        maxSum = Math.max(maxSum, curr);
+    }
+    return maxSum;
+}`,
+        cpp: `int maxSubArray(vector<int>& nums) {
+    int maxSum = nums[0], curr = nums[0];
+    for (int i = 1; i < nums.size(); i++) {
+        curr = max(nums[i], curr + nums[i]);
+        maxSum = max(maxSum, curr);
+    }
+    return maxSum;
+}`,
+        javascript: `function maxSubArray(nums) {
+    let max = nums[0], curr = nums[0];
+    for (let i = 1; i < nums.length; i++) {
+        curr = Math.max(nums[i], curr + nums[i]);
+        max = Math.max(max, curr);
+    }
+    return max;
+}`,
+        go: `func maxSubArray(nums []int) int {
+    maxS, curr := nums[0], nums[0]
+    for _, n := range nums[1:] {
+        if n > curr+n { curr = n } else { curr += n }
+        if curr > maxS { maxS = curr }
+    }
+    return maxS
+}`,
+      },
+      followups: ['Return the actual subarray?', 'Divide and conquer approach?', '2D version (max sum rectangle)?'],
+      complexity: 'Time: O(n) · Space: O(1)',
+    },
+    {
+      id: 'climbing-stairs', title: 'Climbing Stairs', diff: 'Easy',
+      companies: ['Amazon','Apple','Adobe','Bloomberg'],
+      blind75: true,
+      problem: 'You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?',
+      hints: 'This is Fibonacci. dp[i] = dp[i-1] + dp[i-2]. You only need last 2 values.',
+      solutions: {
+        python: `def climbStairs(n):
+    if n <= 2: return n
+    a, b = 1, 2
+    for _ in range(3, n+1):
+        a, b = b, a + b
+    return b`,
+        java: `public int climbStairs(int n) {
+    if (n <= 2) return n;
+    int a = 1, b = 2;
+    for (int i = 3; i <= n; i++) { int c = a+b; a = b; b = c; }
+    return b;
+}`,
+        cpp: `int climbStairs(int n) {
+    if (n <= 2) return n;
+    int a = 1, b = 2;
+    for (int i = 3; i <= n; i++) { int c = a+b; a = b; b = c; }
+    return b;
+}`,
+        javascript: `function climbStairs(n) {
+    if (n <= 2) return n;
+    let [a, b] = [1, 2];
+    for (let i = 3; i <= n; i++) [a, b] = [b, a + b];
+    return b;
+}`,
+        go: `func climbStairs(n int) int {
+    if n <= 2 { return n }
+    a, b := 1, 2
+    for i := 3; i <= n; i++ { a, b = b, a+b }
+    return b
+}`,
+      },
+      followups: ['Can climb k steps at a time?', 'With costs at each step?'],
+      complexity: 'Time: O(n) · Space: O(1)',
+    },
+    {
+      id: 'coin-change', title: 'Coin Change', diff: 'Medium',
+      companies: ['Amazon','Google','Microsoft','Goldman Sachs'],
+      blind75: true,
+      problem: 'Given coins of different denominations and an amount, find the fewest number of coins needed to make up that amount. Return -1 if impossible.',
+      hints: 'Bottom-up DP. dp[i] = min coins to make amount i. Initialize to amount+1 (infinity).',
+      solutions: {
+        python: `def coinChange(coins, amount):
+    dp = [amount+1] * (amount+1)
+    dp[0] = 0
+    for i in range(1, amount+1):
+        for c in coins:
+            if c <= i:
+                dp[i] = min(dp[i], dp[i-c]+1)
+    return dp[amount] if dp[amount] <= amount else -1`,
+        java: `public int coinChange(int[] coins, int amount) {
+    int[] dp = new int[amount+1];
+    Arrays.fill(dp, amount+1);
+    dp[0] = 0;
+    for (int i = 1; i <= amount; i++)
+        for (int c : coins) if (c <= i) dp[i] = Math.min(dp[i], dp[i-c]+1);
+    return dp[amount] > amount ? -1 : dp[amount];
+}`,
+        cpp: `int coinChange(vector<int>& coins, int amount) {
+    vector<int> dp(amount+1, amount+1);
+    dp[0] = 0;
+    for (int i = 1; i <= amount; i++)
+        for (int c : coins) if (c <= i) dp[i] = min(dp[i], dp[i-c]+1);
+    return dp[amount] > amount ? -1 : dp[amount];
+}`,
+        javascript: `function coinChange(coins, amount) {
+    const dp = new Array(amount+1).fill(amount+1);
+    dp[0] = 0;
+    for (let i = 1; i <= amount; i++)
+        for (const c of coins) if (c <= i) dp[i] = Math.min(dp[i], dp[i-c]+1);
+    return dp[amount] > amount ? -1 : dp[amount];
+}`,
+        go: `func coinChange(coins []int, amount int) int {
+    dp := make([]int, amount+1)
+    for i := range dp { dp[i] = amount+1 }
+    dp[0] = 0
+    for i := 1; i <= amount; i++ {
+        for _, c := range coins {
+            if c <= i && dp[i-c]+1 < dp[i] { dp[i] = dp[i-c]+1 }
+        }
+    }
+    if dp[amount] > amount { return -1 }
+    return dp[amount]
+}`,
+      },
+      followups: ['Number of combinations (not min)?', 'Count number of ways?'],
+      complexity: 'Time: O(amount × coins) · Space: O(amount)',
+    },
+    {
+      id: 'lru-cache', title: 'LRU Cache', diff: 'Hard',
+      companies: ['Google','Amazon','Microsoft','Meta','Uber'],
+      blind75: true,
+      problem: 'Design a data structure that follows LRU (Least Recently Used) cache constraints. Implement get and put in O(1) time.',
+      hints: 'Use OrderedDict in Python (doubly linked list + hash map). Evict least recently used on capacity overflow.',
+      solutions: {
+        python: `from collections import OrderedDict
+class LRUCache:
+    def __init__(self, capacity):
+        self.cap = capacity
+        self.cache = OrderedDict()
+    def get(self, key):
+        if key not in self.cache: return -1
+        self.cache.move_to_end(key)
+        return self.cache[key]
+    def put(self, key, value):
+        if key in self.cache: self.cache.move_to_end(key)
+        self.cache[key] = value
+        if len(self.cache) > self.cap:
+            self.cache.popitem(last=False)`,
+        java: `class LRUCache extends LinkedHashMap<Integer,Integer> {
+    private int cap;
+    LRUCache(int capacity) { super(capacity,0.75f,true); this.cap=capacity; }
+    public int get(int key) { return super.getOrDefault(key,-1); }
+    public void put(int key, int value) { super.put(key,value); }
+    protected boolean removeEldestEntry(Map.Entry e) { return size()>cap; }
+}`,
+        cpp: `class LRUCache {
+    int cap; list<pair<int,int>> lst; unordered_map<int,list<pair<int,int>>::iterator> mp;
+public:
+    LRUCache(int c): cap(c) {}
+    int get(int k) {
+        if (!mp.count(k)) return -1;
+        lst.splice(lst.begin(), lst, mp[k]); return mp[k]->second;
+    }
+    void put(int k, int v) {
+        if (mp.count(k)) { mp[k]->second=v; lst.splice(lst.begin(),lst,mp[k]); return; }
+        if (lst.size()==cap) { mp.erase(lst.back().first); lst.pop_back(); }
+        lst.push_front({k,v}); mp[k]=lst.begin();
+    }
+};`,
+        javascript: `class LRUCache {
+    constructor(capacity) { this.cap = capacity; this.cache = new Map(); }
+    get(key) {
+        if (!this.cache.has(key)) return -1;
+        const val = this.cache.get(key); this.cache.delete(key); this.cache.set(key, val); return val;
+    }
+    put(key, value) {
+        if (this.cache.has(key)) this.cache.delete(key);
+        else if (this.cache.size >= this.cap) this.cache.delete(this.cache.keys().next().value);
+        this.cache.set(key, value);
+    }
+}`,
+        go: `type LRUCache struct {
+    cap int; cache map[int]*list.Element; lst *list.List
+}
+type entry struct{ key, val int }
+func Constructor(cap int) LRUCache { return LRUCache{cap, make(map[int]*list.Element), list.New()} }
+func (c *LRUCache) Get(key int) int {
+    if e, ok := c.cache[key]; ok { c.lst.MoveToFront(e); return e.Value.(*entry).val }
+    return -1
+}
+func (c *LRUCache) Put(key, value int) {
+    if e, ok := c.cache[key]; ok { c.lst.MoveToFront(e); e.Value.(*entry).val = value; return }
+    if c.lst.Len()==c.cap { back := c.lst.Back(); c.lst.Remove(back); delete(c.cache, back.Value.(*entry).key) }
+    c.cache[key] = c.lst.PushFront(&entry{key, value})
+}`,
+      },
+      followups: ['LFU cache?', 'Distributed LRU?', 'Thread-safe version?'],
+      complexity: 'Time: O(1) get/put · Space: O(capacity)',
+    },
+    {
+      id: 'number-islands', title: 'Number of Islands', diff: 'Medium',
+      companies: ['Amazon','Microsoft','Google','Bloomberg','Uber'],
+      blind75: true,
+      problem: 'Given an m×n grid of 1s (land) and 0s (water), return the number of islands. An island is surrounded by water and formed by connecting adjacent lands horizontally/vertically.',
+      hints: 'DFS/BFS from each unvisited land cell. Mark visited cells to avoid counting twice.',
+      solutions: {
+        python: `def numIslands(grid):
+    if not grid: return 0
+    count = 0
+    def dfs(r, c):
+        if r<0 or r>=len(grid) or c<0 or c>=len(grid[0]) or grid[r][c]!='1': return
+        grid[r][c] = '0'
+        dfs(r+1,c); dfs(r-1,c); dfs(r,c+1); dfs(r,c-1)
+    for r in range(len(grid)):
+        for c in range(len(grid[0])):
+            if grid[r][c]=='1': count+=1; dfs(r,c)
+    return count`,
+        java: `public int numIslands(char[][] g) {
+    int count = 0;
+    for (int r=0;r<g.length;r++) for (int c=0;c<g[0].length;c++) if (g[r][c]=='1') { dfs(g,r,c); count++; }
+    return count;
+}
+void dfs(char[][] g,int r,int c) {
+    if (r<0||r>=g.length||c<0||c>=g[0].length||g[r][c]!='1') return;
+    g[r][c]='0'; dfs(g,r+1,c); dfs(g,r-1,c); dfs(g,r,c+1); dfs(g,r,c-1);
+}`,
+        cpp: `int numIslands(vector<vector<char>>& g) {
+    int cnt=0; int R=g.size(), C=g[0].size();
+    function<void(int,int)> dfs=[&](int r,int c){
+        if(r<0||r>=R||c<0||c>=C||g[r][c]!='1') return;
+        g[r][c]='0'; dfs(r+1,c); dfs(r-1,c); dfs(r,c+1); dfs(r,c-1);
+    };
+    for(int r=0;r<R;r++) for(int c=0;c<C;c++) if(g[r][c]=='1'){dfs(r,c);cnt++;}
+    return cnt;
+}`,
+        javascript: `function numIslands(grid) {
+    let count = 0;
+    const dfs = (r,c) => {
+        if(r<0||r>=grid.length||c<0||c>=grid[0].length||grid[r][c]!=='1') return;
+        grid[r][c]='0'; dfs(r+1,c); dfs(r-1,c); dfs(r,c+1); dfs(r,c-1);
+    };
+    for(let r=0;r<grid.length;r++) for(let c=0;c<grid[0].length;c++) if(grid[r][c]==='1'){dfs(r,c);count++;}
+    return count;
+}`,
+        go: `func numIslands(grid [][]byte) int {
+    cnt := 0
+    var dfs func(r,c int)
+    dfs = func(r,c int) {
+        if r<0||r>=len(grid)||c<0||c>=len(grid[0])||grid[r][c]!='1' { return }
+        grid[r][c]='0'; dfs(r+1,c); dfs(r-1,c); dfs(r,c+1); dfs(r,c-1)
+    }
+    for r:=range grid { for c:=range grid[r] { if grid[r][c]=='1' { dfs(r,c); cnt++ } } }
+    return cnt
+}`,
+      },
+      followups: ['Islands perimeter?', 'Max island area?', 'Union-Find approach?'],
+      complexity: 'Time: O(m×n) · Space: O(m×n) stack',
+    },
+    {
+      id: 'valid-parens', title: 'Valid Parentheses', diff: 'Easy',
+      companies: ['Google','Amazon','Meta','Airbnb'],
+      blind75: true,
+      problem: 'Given a string s containing just (, ), {, }, [ and ], determine if the input string is valid (properly closed and nested).',
+      hints: 'Use a stack. Push open brackets, pop and check match for close brackets.',
+      solutions: {
+        python: `def isValid(s):
+    stack, mapping = [], {')':'(', '}':'{', ']':'['}
+    for c in s:
+        if c in mapping:
+            if not stack or stack[-1] != mapping[c]: return False
+            stack.pop()
+        else:
+            stack.append(c)
+    return not stack`,
+        java: `public boolean isValid(String s) {
+    Deque<Character> stack = new ArrayDeque<>();
+    for (char c : s.toCharArray()) {
+        if (c=='('||c=='{'||c=='[') stack.push(c);
+        else if (stack.isEmpty()) return false;
+        else if (c==')'&&stack.pop()!='(') return false;
+        else if (c=='}'&&stack.pop()!='{') return false;
+        else if (c==']'&&stack.pop()!='[') return false;
+    }
+    return stack.isEmpty();
+}`,
+        cpp: `bool isValid(string s) {
+    stack<char> st; map<char,char> m={{')','{'},{'}',' {'},{')',' ('}};
+    // simplified:
+    for (char c : s) {
+        if (c=='('||c=='{'||c=='[') st.push(c);
+        else if (st.empty()) return false;
+        else {
+            char t=st.top(); st.pop();
+            if ((c==')'&&t!='(')||(c=='}'&&t!='{')||(c==']'&&t!='[')) return false;
+        }
+    }
+    return st.empty();
+}`,
+        javascript: `function isValid(s) {
+    const stack = [], map = {')':'(', '}':'{', ']':'['};
+    for (const c of s) {
+        if ('({['.includes(c)) stack.push(c);
+        else if (stack.pop() !== map[c]) return false;
+    }
+    return !stack.length;
+}`,
+        go: `func isValid(s string) bool {
+    stack := []rune{}
+    for _, c := range s {
+        if c=='('||c=='{'||c=='[' { stack=append(stack,c); continue }
+        if len(stack)==0 { return false }
+        t := stack[len(stack)-1]; stack=stack[:len(stack)-1]
+        if (c==')'&&t!='(')||(c=='}'&&t!='{')||(c==']'&&t!='[') { return false }
+    }
+    return len(stack)==0
+}`,
+      },
+      followups: ['Minimum removals to make valid?', 'Minimum additions?'],
+      complexity: 'Time: O(n) · Space: O(n)',
+    },
+    {
+      id: 'reverse-linked-list', title: 'Reverse Linked List', diff: 'Easy',
+      companies: ['Amazon','Microsoft','Apple','Meta'],
+      blind75: true,
+      problem: 'Given the head of a singly linked list, reverse the list and return the reversed list.',
+      hints: 'Iterative: use prev, curr pointers. Recursive: reverse(head.next) then head.next.next = head.',
+      solutions: {
+        python: `def reverseList(head):
+    prev = None
+    while head:
+        nxt = head.next
+        head.next = prev
+        prev = head
+        head = nxt
+    return prev`,
+        java: `public ListNode reverseList(ListNode head) {
+    ListNode prev = null;
+    while (head != null) {
+        ListNode nxt = head.next; head.next = prev; prev = head; head = nxt;
+    }
+    return prev;
+}`,
+        cpp: `ListNode* reverseList(ListNode* head) {
+    ListNode* prev = nullptr;
+    while (head) {
+        ListNode* nxt = head->next; head->next = prev; prev = head; head = nxt;
+    }
+    return prev;
+}`,
+        javascript: `function reverseList(head) {
+    let prev = null;
+    while (head) {
+        [head.next, prev, head] = [prev, head, head.next];
+    }
+    return prev;
+}`,
+        go: `func reverseList(head *ListNode) *ListNode {
+    var prev *ListNode
+    for head != nil {
+        head.Next, prev, head = prev, head, head.Next
+    }
+    return prev
+}`,
+      },
+      followups: ['Recursive version?', 'Reverse in groups of k?', 'Palindrome linked list?'],
+      complexity: 'Time: O(n) · Space: O(1)',
+    },
+    {
+      id: 'word-break', title: 'Word Break', diff: 'Medium',
+      companies: ['Google','Amazon','Facebook','Coupang'],
+      blind75: true,
+      problem: 'Given a string s and a dictionary wordDict, return true if s can be segmented into a space-separated sequence of dictionary words.',
+      hints: 'DP: dp[i] = true if s[0..i] can be broken. For each position, check all words ending at i.',
+      solutions: {
+        python: `def wordBreak(s, wordDict):
+    words = set(wordDict)
+    dp = [False] * (len(s)+1)
+    dp[0] = True
+    for i in range(1, len(s)+1):
+        for j in range(i):
+            if dp[j] and s[j:i] in words:
+                dp[i] = True; break
+    return dp[len(s)]`,
+        java: `public boolean wordBreak(String s, List<String> dict) {
+    Set<String> set = new HashSet<>(dict);
+    boolean[] dp = new boolean[s.length()+1]; dp[0]=true;
+    for (int i=1;i<=s.length();i++) for (int j=0;j<i;j++) if(dp[j]&&set.contains(s.substring(j,i))){dp[i]=true;break;}
+    return dp[s.length()];
+}`,
+        cpp: `bool wordBreak(string s, vector<string>& dict) {
+    unordered_set<string> st(dict.begin(),dict.end());
+    vector<bool> dp(s.size()+1,false); dp[0]=true;
+    for(int i=1;i<=s.size();i++) for(int j=0;j<i;j++) if(dp[j]&&st.count(s.substr(j,i-j))){dp[i]=true;break;}
+    return dp[s.size()];
+}`,
+        javascript: `function wordBreak(s, wordDict) {
+    const words = new Set(wordDict), n = s.length;
+    const dp = new Array(n+1).fill(false); dp[0] = true;
+    for (let i=1;i<=n;i++) for (let j=0;j<i;j++) if(dp[j]&&words.has(s.slice(j,i))){dp[i]=true;break;}
+    return dp[n];
+}`,
+        go: `func wordBreak(s string, wordDict []string) bool {
+    words := map[string]bool{}
+    for _,w:=range wordDict{words[w]=true}
+    dp := make([]bool,len(s)+1); dp[0]=true
+    for i:=1;i<=len(s);i++ { for j:=0;j<i;j++ { if dp[j]&&words[s[j:i]]{dp[i]=true;break} } }
+    return dp[len(s)]
+}`,
+      },
+      followups: ['Return all possible sentences?', 'With DP memoization?'],
+      complexity: 'Time: O(n²) · Space: O(n)',
+    },
+  ],
+
+  design: [
+    {
+      id: 'url-shortener', title: 'Design URL Shortener (TinyURL)', diff: 'Medium',
+      companies: ['Amazon','Google','Microsoft','Twitter'],
+      problem: 'Design a URL shortening service like TinyURL that can shorten URLs and expand short links back to original URLs.',
+      approach: `1. CLARIFY: Scale (100M URLs/day?), URL lifetime, custom aliases?
+2. CORE COMPONENTS:
+   • API Gateway → Hash Service → DB + Cache
+   • Short URL = base62(random 7 chars) = 62^7 ≈ 3.5T combinations
+3. HASH STRATEGY: MD5 → take first 7 chars → collision check → retry
+4. DB: NoSQL (Cassandra) — key=shortURL, value=longURL, TTL
+5. CACHE: Redis LRU (80/20 rule — 20% URLs get 80% traffic)
+6. REDIRECTION: 301 (permanent, cached) vs 302 (temporary, always hits server)
+7. SCALE: multiple hash generators → Zookeeper for coordination`,
+      arch: '[ Client ] → [ API GW / LB ] → [ App Servers ] → [ Redis Cache ]\n                                          ↓\n                                   [ DB Cluster (Cassandra) ]',
+      followups: ['Analytics for each click?', 'Custom vanity URLs?', 'Link expiration?', 'Prevent abuse/spam?'],
+    },
+    {
+      id: 'rate-limiter', title: 'Design Rate Limiter', diff: 'Hard',
+      companies: ['Stripe','Cloudflare','Google','Amazon'],
+      problem: 'Design a rate limiter that restricts the number of requests a client can make per time window.',
+      approach: `ALGORITHMS:
+1. Fixed Window: simple but burst at boundary edge
+2. Sliding Window Log: accurate, memory intensive (store timestamps)
+3. Token Bucket: allows bursts up to capacity, smooth rate (used by Stripe)
+4. Leaky Bucket: strict rate, queue-based
+
+DISTRIBUTED: Use Redis INCR + EXPIRE
+• Lua script for atomicity: GET → compare → INCR or reject
+• Rate limit per: IP, user ID, API key, endpoint
+
+HEADERS: X-RateLimit-Limit, X-RateLimit-Remaining, Retry-After`,
+      arch: '[ Request ] → [ Rate Limiter Middleware ] ← [ Redis Cluster ]\n                      ↓ allowed\n               [ Backend Service ]',
+      followups: ['Different limits per user tier?', 'Distributed rate limiting across data centers?', 'Handling clock drift?'],
+    },
+    {
+      id: 'twitter-feed', title: 'Design Twitter Feed', diff: 'Hard',
+      companies: ['Twitter','Meta','LinkedIn','Snapchat'],
+      problem: 'Design the Twitter home timeline — a user sees tweets from people they follow, ordered by time.',
+      approach: `APPROACHES:
+1. Pull (Fan-out on Read): Query all followees → merge → sort. Simple but slow at read time.
+2. Push (Fan-out on Write): Pre-compute timeline per user on tweet. Fast read, but celebrity problem.
+3. Hybrid: Regular users → push. Celebrities (>1M followers) → pull on read.
+
+KEY DESIGN:
+• Timeline cache: Redis sorted set (score=timestamp, value=tweetId)
+• Tweet store: Cassandra (wide rows by userId, reverse-chronological)
+• Follow graph: social graph service (separate from tweets)
+• Media: CDN (S3 + CloudFront)
+• Search: Elasticsearch for full-text
+
+SCALE: 500M users, 300K RPS peak reads`,
+      arch: '[ Tweet ] → [ Tweet Service ] → [ Fan-out Service ] → [ User Timeline Cache (Redis) ]\n[ Read ]  → [ Timeline Service ] → [ Redis Cache ] → [ Cassandra fallback ]',
+      followups: ['Trending topics?', 'Search?', 'Notification on mention?'],
+    },
+    {
+      id: 'kv-store', title: 'Design Distributed Key-Value Store', diff: 'Hard',
+      companies: ['Amazon','Google','Meta','Stripe'],
+      problem: 'Design a distributed key-value store like DynamoDB or Redis Cluster that scales horizontally.',
+      approach: `CORE DECISIONS:
+1. Consistent Hashing: distribute keys across nodes, minimize redistribution
+2. Replication: N replicas (typically N=3), write to W, read from R (W+R > N = strong consistency)
+3. Conflict Resolution: vector clocks, last-write-wins
+4. CAP Theorem: Choose CP or AP based on use case
+5. Gossip Protocol: for node failure detection
+
+STORAGE:
+• In-memory (Redis): fast, limited by RAM
+• On-disk (LevelDB): larger, uses LSM trees
+
+OPERATIONS:
+• GET: hash key → find node → read (with fallback to replicas)
+• PUT: hash key → primary node → fan-out to N-1 replicas
+• DELETE: tombstone marker (don't delete immediately)`,
+      arch: '[ Client ] → [ Coordinator Node ]\n                    ↓ Consistent Hash Ring\n             [ Node A | Node B | Node C ]\n                    (each replicated 3×)',
+      followups: ['How to handle hot keys?', 'Cross-region replication?', 'TTL implementation?'],
+    },
+    {
+      id: 'notification-system', title: 'Design Notification System', diff: 'Medium',
+      companies: ['Meta','Uber','Airbnb','Slack'],
+      problem: 'Design a notification system that sends push, SMS, and email notifications at scale (billions per day).',
+      approach: `COMPONENTS:
+1. Notification Service API
+2. Message Queue (Kafka) — per channel (push/sms/email)
+3. Workers per channel type
+4. Provider Integrations: FCM/APNs (push), Twilio (SMS), SendGrid (email)
+5. User Preference Service — respect opt-outs and quiet hours
+6. Retry + DLQ for failed sends
+7. Analytics/tracking service
+
+FLOW: Event → Notification Service → Kafka → Workers → Provider → Device
+RATE LIMITING: prevent spam, respect device tokens
+DEDUPLICATION: idempotency key to prevent duplicate sends`,
+      arch: '[ Event Source ] → [ Notification API ] → [ Kafka ]\n                                                    ↓\n                                    [ Push Worker | SMS Worker | Email Worker ]\n                                                    ↓\n                                         [ FCM | Twilio | SendGrid ]',
+      followups: ['Priority queue for critical notifications?', 'A/B testing notification copy?'],
+    },
+  ],
+
+  behavioral: [
+    {
+      id: 'tell-me-about-yourself', title: 'Tell Me About Yourself', diff: 'Easy',
+      companies: ['Universal'],
+      star: false,
+      prompt: 'Walk me through your background and why you\'re interested in this role.',
+      framework: `STRUCTURE (90-second pitch):
+1. CURRENT: Where you are now and your key expertise
+2. PAST: The career arc that got you here (2-3 milestones)
+3. WHY HERE: What excites you about this specific company/role
+
+FOR EM/DIRECTOR ROLES, emphasize:
+• Team size managed (e.g., "scaled from 8 to 25 engineers")
+• Org impact (not just code shipped)
+• Technical depth AND business acumen
+• Leadership philosophy in one sentence`,
+      redflags: ['Reading a resume chronology', 'Speaking too long (>3 min)', 'Generic "I love technology" openers'],
+      example: `"I'm a Staff Engineer with 10 years in distributed systems, currently leading the platform team at [Company] where I own the infrastructure powering 50M users. Before that I was at [Company] where I scaled the payment service from 1K to 100K TPS. What excites me about this role is [specific reason about company's technical challenge or mission]."`,
+    },
+    {
+      id: 'technical-disagreement', title: 'Disagreed With Your Manager', diff: 'Medium',
+      companies: ['Amazon','Google','Meta','Microsoft'],
+      star: true,
+      prompt: 'Tell me about a time you disagreed with your manager or a technical decision and how you handled it.',
+      framework: `AMAZON LP: Have Backbone; Disagree and Commit
+
+SITUATION: Set up the technical and interpersonal context
+ACTION: How you raised the disagreement constructively (data, not opinions)
+RESOLUTION: How it was resolved — either you convinced them OR you committed after losing
+OUTCOME: What happened and what you learned
+
+KEY POINTS:
+• Show you can disagree respectfully and with data
+• Show you ultimately committed even when overruled
+• Avoid making manager look incompetent
+• Pick a real technical disagreement, not a trivial one`,
+      redflags: ['Making manager look foolish', 'You always won the argument', 'Avoiding conflict — never disagreed with anyone', 'Personal conflicts disguised as technical ones'],
+    },
+    {
+      id: 'failure-story', title: 'Tell Me About a Failure / Mistake', diff: 'Medium',
+      companies: ['Universal'],
+      star: true,
+      prompt: 'Describe a significant technical mistake you made and what you learned from it.',
+      framework: `AMAZON LP: Learn and Be Curious / Earn Trust
+
+WHAT THEY WANT TO SEE:
+1. Self-awareness: Do you recognize your mistakes?
+2. Accountability: Do you own them without blaming others?
+3. Growth: Did you actually learn something and change?
+4. Impact: The failure should be real, not trivial
+
+STRUCTURE:
+• Situation: Context and what the failure was
+• Your role: Own it clearly — "I made the decision to..."
+• Impact: What broke, who was affected, magnitude
+• Root cause: What was the real underlying cause?
+• Fix: Immediate remediation
+• Prevention: What you changed to prevent recurrence`,
+      redflags: ['Humble brags disguised as failures ("I work too hard")', 'Blaming teammates or context', 'No ownership', 'No learnings', 'Too trivial'],
+    },
+    {
+      id: 'competing-priorities', title: 'Competing Priorities / Can\'t Do Everything', diff: 'Medium',
+      companies: ['Amazon','Google','Stripe','Airbnb'],
+      star: true,
+      prompt: 'Tell me about a time you had too much on your plate and had to make hard prioritization decisions.',
+      framework: `FOR EM/DIRECTOR LEVEL this is particularly important.
+
+WHAT TO SHOW:
+1. Clear framework for prioritization (impact × effort, OKRs, customer impact)
+2. Stakeholder communication — you told people what wouldn't get done
+3. Tradeoffs — what you explicitly deprioritized and why
+4. Outcome — did the right things ship?
+
+METRICS THAT HELP:
+• "I had 4 projects competing for my team's bandwidth..."
+• "I used a WSJF scoring model to rank..."
+• "I set up a weekly prioritization review with product..."`,
+      redflags: ['No framework — just intuition', 'Never pushed back on scope', 'Didn\'t communicate tradeoffs', 'Team burned out because you said yes to everything'],
+    },
+    {
+      id: 'why-this-company', title: 'Why This Company?', diff: 'Easy',
+      companies: ['Universal'],
+      star: false,
+      prompt: 'Why do you want to work at [Company]? Why this role specifically?',
+      framework: `THE REAL QUESTION: Are you genuinely interested, or just applying everywhere?
+
+GREAT ANSWER STRUCTURE:
+1. SPECIFIC technical problem they're solving that excites you
+2. SPECIFIC technology decision or architectural choice you respect
+3. Personal alignment with mission or values (backed by evidence)
+4. Why NOW — why is this the right time in your career?
+
+RESEARCH YOU SHOULD DO:
+• Recent engineering blog posts
+• Tech stack choices and why they made them
+• Recent product launches and technical challenges
+• Company culture (Glassdoor reviews, team structure)
+
+RED FLAG: Generic "I love your product" without specifics`,
+      redflags: ['Company size / salary / remote policy as primary reason', '"I\'ve been using your product for years" alone', 'No mention of technical challenges', 'Same answer for all companies'],
+    },
+  ],
+
+  sre: [
+    {
+      id: 'latency-spike', title: 'Sudden Latency Spike in Production', diff: 'Hard',
+      companies: ['Google','Amazon','Cloudflare','Datadog'],
+      problem: 'P99 latency on your API service just jumped from 200ms to 8 seconds. What do you do?',
+      approach: `INCIDENT RESPONSE FRAMEWORK:
+
+1. TRIAGE (2 min)
+   • Scope: what % of requests? all endpoints or specific? all regions?
+   • Impact: how many users? is it total outage or degraded?
+   • Recent change: any deploy in last 30 min? (git log, deploy logs)
+
+2. IMMEDIATE MITIGATION (5 min)
+   • If recent deploy → rollback immediately
+   • Increase timeout / circuit breaker thresholds temporarily
+   • Scale out horizontally if CPU/memory pressure
+
+3. ROOT CAUSE (deep dive)
+   • Check dashboards in ORDER: CPU → Memory → DB → External deps
+   • DB: SHOW PROCESSLIST for slow queries, check connection pool exhaustion
+   • Network: DNS issues? TLS handshake? Upstream service?
+   • Traces: what % of requests are hitting the slow path?
+   • Logs: grep for new error patterns in the spike window
+
+4. TOOLS: Datadog/Grafana, distributed tracing (Jaeger/Zipkin), kubectl top pods, DB slow query log`,
+      followups: ['How do you prevent this next time (SLOs, alerting, load testing)?', 'How do you communicate during the incident?'],
+    },
+    {
+      id: 'k8s-crashloop', title: 'Kubernetes CrashLoopBackOff', diff: 'Medium',
+      companies: ['Google','Uber','Airbnb','Stripe'],
+      problem: 'A pod is in CrashLoopBackOff. Walk me through your diagnosis.',
+      approach: `STEP-BY-STEP DIAGNOSIS:
+
+kubectl get pods -n <ns>           # confirm CrashLoopBackOff
+kubectl describe pod <pod> -n <ns> # check Events section at bottom
+
+COMMON CAUSES (check in order):
+1. Application crash: kubectl logs <pod> --previous
+2. OOMKilled: kubectl describe pod → Last State: Reason: OOMKilled
+   → fix: increase memory request/limit in pod spec
+3. Liveness probe failing: probe hitting wrong path/port, startup too slow
+   → fix: increase initialDelaySeconds, fix probe endpoint
+4. Config error: missing env var, bad secret mount, wrong configmap key
+   → kubectl exec <pod> env | grep KEY
+5. Image pull error: wrong tag, private registry auth
+   → kubectl describe pod → Events: Failed to pull image
+
+AFTER FIX:
+kubectl rollout restart deployment/<name>
+kubectl rollout status deployment/<name>`,
+      followups: ['How do you prevent OOM kills proactively?', 'Pod disruption budgets?', 'Horizontal Pod Autoscaler setup?'],
+    },
+    {
+      id: 'memory-leak', title: 'Memory Leak in Production Service', diff: 'Hard',
+      companies: ['Google','Amazon','Netflix','Meta'],
+      problem: 'Memory usage on your Node.js service grows 2% per hour and never drops. How do you find and fix the leak?',
+      approach: `DIAGNOSIS APPROACH:
+
+1. CONFIRM IT'S A LEAK (not just cache):
+   • Memory grows monotonically? Does it ever GC back down?
+   • kubectl top pods -n <ns> --watch
+
+2. PROFILE (Node.js):
+   • heap snapshot: process.memoryUsage(), --inspect flag
+   • Chrome DevTools → Memory tab → Heap snapshot comparison
+   • clinic.js heap: clinic heap -- node server.js
+
+3. COMMON NODE.JS LEAK PATTERNS:
+   • EventEmitter: forgot removeListener (unlimited listeners)
+   • Closures capturing large objects
+   • Growing array/map never cleared (caches without eviction)
+   • setTimeout/setInterval callbacks referencing large objects
+   • Promise chains never resolved/rejected
+
+4. IMMEDIATE MITIGATION:
+   • Memory-based HPA to scale out when memory > 80%
+   • Scheduled restarts (cron restart) as short-term fix
+   • Reduce pod memory limit to fail faster and restart
+
+5. FIX & VERIFY:
+   • Load test with leak fix applied
+   • Memory flat-line in Datadog for 24h before deploy to prod`,
+      followups: ['How do you load test to trigger the leak?', 'How do you set memory limits/requests correctly?'],
+    },
+    {
+      id: 'on-call-design', title: 'Design an On-Call Rotation', diff: 'Medium',
+      companies: ['Google','Stripe','Pagerduty','Netflix'],
+      problem: 'You\'re the Staff SRE at a 50-person engineering org. Design the on-call process from scratch.',
+      approach: `ON-CALL SYSTEM DESIGN:
+
+PRINCIPLES (Google SRE):
+• On-call burden < 25% of engineer's time
+• Every page should be actionable (no alert fatigue)
+• Runbooks for every recurring alert
+• Post-mortems for every P0/P1
+
+ROTATION DESIGN:
+• Primary + secondary (escalation path)
+• Follow-the-sun for global teams (handoff every 12h)
+• Week-long rotations (not daily — context switching overhead)
+• No on-call tax: comp time, on-call pay, shadow rotations first
+
+ALERTING HIERARCHY:
+1. P0: customer-facing outage → immediate page (always)
+2. P1: degraded service → page if not auto-healing
+3. P2: warning threshold → ticket (next business day)
+4. P3: informational → dashboard only
+
+TOOLING: PagerDuty/OpsGenie → runbooks in Confluence → post-mortem in Jira
+SLO ALERTING: burn-rate alerts > threshold paging is better than static thresholds`,
+      followups: ['How do you measure on-call health?', 'How do you handle alert fatigue?', 'Post-mortem culture?'],
+    },
+  ],
+};
+
+// ═══════════════════════════════════════════════════════════════
+// INTERVIEW BANK UI
+// ═══════════════════════════════════════════════════════════════
+
+function initInterviewBank() {
+  updateSolvedProgress();
+}
+
+function ibNav() {
+  const nav = document.getElementById('ib-nav');
+  nav.innerHTML = '';
+
+  IB.categories.forEach(cat => {
+    const header = document.createElement('div');
+    header.className = 'ib-section-header';
+    header.textContent = cat.label;
+    nav.appendChild(header);
+
+    const items = IB[cat.id] || [];
+    const companies = [...new Set(items.flatMap(q => q.companies || []))];
+
+    // Show companies as sub-filters
+    const allBtn = document.createElement('div');
+    allBtn.className = `ib-cat ${state.ibCategory === cat.id + '_all' ? 'active' : ''}`;
+    allBtn.innerHTML = `<span>All ${cat.label.split(' ').slice(1).join(' ')}</span><span class="ib-cat-count">${items.length}</span>`;
+    allBtn.onclick = () => { state.ibCategory = cat.id + '_all'; ibNav(); renderIBQuestions(cat.id, null); };
+    nav.appendChild(allBtn);
+
+    // Top companies
+    companies.slice(0, 5).forEach(co => {
+      const btn = document.createElement('div');
+      btn.className = `ib-cat ${state.ibCategory === cat.id + '_' + co ? 'active' : ''}`;
+      const count = items.filter(q => q.companies?.includes(co)).length;
+      btn.innerHTML = `<span style="padding-left:8px">⤷ ${co}</span><span class="ib-cat-count">${count}</span>`;
+      btn.onclick = () => { state.ibCategory = cat.id + '_' + co; ibNav(); renderIBQuestions(cat.id, co); };
+      nav.appendChild(btn);
+    });
+  });
+}
+
+function renderIBQuestions(catId, companyFilter) {
+  let questions = (IB[catId] || []);
+  if (companyFilter) questions = questions.filter(q => q.companies?.includes(companyFilter));
+
+  // Apply search/diff filter
+  const q = document.getElementById('ib-search')?.value.toLowerCase() || '';
+  const diff = document.getElementById('ib-diff-filter')?.value || '';
+  if (q) questions = questions.filter(q2 => q2.title.toLowerCase().includes(q) || q2.problem.toLowerCase().includes(q));
+  if (diff) questions = questions.filter(q2 => q2.diff === diff);
+
+  const main = document.getElementById('ib-main');
+  if (!questions.length) { main.innerHTML = '<div style="padding:32px;text-align:center;color:var(--text3)">No questions found</div>'; return; }
+
+  main.innerHTML = questions.map((q, i) => {
+    const solved = state.solved[q.id];
+    return `<div class="q-card ${solved ? 'solved' : ''}" id="qcard-${q.id}">
+      <div class="q-header" onclick="toggleQ('${q.id}')">
+        <span class="q-num">#${i+1}</span>
+        <span class="q-title">${q.title}</span>
+      </div>
+      <div class="q-meta">
+        <span class="diff-badge diff-${q.diff.toLowerCase()}">${q.diff}</span>
+        ${q.blind75 ? '<span class="company-tag" style="background:rgba(0,212,255,0.1);color:var(--accent)">Blind 75</span>' : ''}
+        ${(q.companies || []).slice(0,4).map(c => `<span class="company-tag">${c}</span>`).join('')}
+        ${solved ? '<span class="company-tag" style="background:rgba(0,255,136,0.1);color:var(--green)">✅ Solved</span>' : ''}
+      </div>
+      <div id="qbody-${q.id}" class="q-body hidden">
+        ${renderQBody(q, catId)}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderQBody(q, catId) {
+  const solved = state.solved[q.id];
+  let html = `<div class="flex items-center gap-2 mb-4">
+    <button class="solve-btn ${solved ? 'solved' : ''}" onclick="toggleSolved('${q.id}',event)">
+      ${solved ? '✅ Solved' : '○ Mark Solved'}
+    </button>
+    ${q.complexity ? `<span class="text-xs text-muted">${q.complexity}</span>` : ''}
+  </div>`;
+
+  html += `<div class="q-section-title">Problem</div>
+  <p style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px">${q.problem}</p>`;
+
+  if (q.hints) {
+    html += `<div class="q-section-title">Hints</div>
+    <div class="hint-box">${q.hints}</div>`;
+  }
+
+  if (q.approach) {
+    html += `<div class="q-section-title">Approach</div>
+    <div class="code-block" style="white-space:pre-wrap;color:var(--text2)">${q.approach}</div>`;
+  }
+
+  if (q.arch) {
+    html += `<div class="q-section-title">Architecture</div>
+    <div class="code-block" style="white-space:pre">${q.arch}</div>`;
+  }
+
+  if (q.solutions) {
+    const langs = Object.keys(q.solutions);
+    const firstLang = langs[0];
+    html += `<div class="q-section-title">Solutions</div>
+    <div class="lang-tabs" id="ltabs-${q.id}">
+      ${langs.map((l,i) => `<button class="lang-tab ${i===0?'active':''}" onclick="showLang('${q.id}','${l}',this)">${l.charAt(0).toUpperCase()+l.slice(1)}</button>`).join('')}
+    </div>
+    ${langs.map((l,i) => `<div class="code-block" id="lcode-${q.id}-${l}" ${i>0?'style="display:none"':''}>${escHtml(q.solutions[l])}</div>`).join('')}`;
+  }
+
+  if (q.framework) {
+    html += `<div class="q-section-title">Framework & Structure</div>
+    <div class="code-block" style="white-space:pre-wrap;color:var(--text2)">${q.framework}</div>`;
+  }
+
+  if (q.example) {
+    html += `<div class="q-section-title">Example Answer</div>
+    <div class="hint-box" style="border-left-color:var(--green)">${q.example}</div>`;
+  }
+
+  if (q.star) {
+    html += `<div class="q-section-title">STAR Template</div>
+    <div class="star-template">
+      ${['Situation','Task','Action','Result'].map(s => `<div class="star-label">${s}</div><p style="font-size:12px;color:var(--text2);margin-bottom:10px">Write your ${s.toLowerCase()} here...</p>`).join('')}
+    </div>`;
+  }
+
+  if (q.redflags) {
+    html += `<div class="q-section-title" style="color:var(--red)">🚩 Red Flags to Avoid</div>
+    <div class="hint-box" style="border-left-color:var(--red)">
+      ${q.redflags.map(r => `• ${r}`).join('<br>')}
+    </div>`;
+  }
+
+  if (q.followups?.length) {
+    html += `<div class="q-section-title">Follow-up Questions</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      ${q.followups.map(f => `<span class="company-tag" style="font-size:11px;padding:4px 8px">${f}</span>`).join('')}
+    </div>`;
+  }
+
+  return html;
+}
+
+function toggleQ(id) {
+  const body = document.getElementById(`qbody-${id}`);
+  body.classList.toggle('hidden');
+  document.getElementById(`qcard-${id}`)?.classList.toggle('open');
+}
+
+function showLang(qId, lang, btn) {
+  const tabs = document.getElementById(`ltabs-${qId}`);
+  tabs?.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Hide all lang blocks
+  ['python','java','cpp','javascript','go'].forEach(l => {
+    const el = document.getElementById(`lcode-${qId}-${l}`);
+    if (el) el.style.display = l === lang ? '' : 'none';
+  });
+}
+
+function toggleSolved(id, event) {
+  event.stopPropagation();
+  state.solved[id] = !state.solved[id];
+  localStorage.setItem('ib_solved', JSON.stringify(state.solved));
+  updateSolvedProgress();
+  const btn = document.querySelector(`#qcard-${id} .solve-btn`);
+  if (btn) { btn.classList.toggle('solved'); btn.textContent = state.solved[id] ? '✅ Solved' : '○ Mark Solved'; }
+}
+
+function clearSolved() {
+  state.solved = {}; localStorage.setItem('ib_solved', '{}');
+  updateSolvedProgress();
+  document.querySelectorAll('.solve-btn.solved').forEach(b => { b.classList.remove('solved'); b.textContent = '○ Mark Solved'; });
+}
+
+function updateSolvedProgress() {
+  const total = IB.dsa.length + IB.design.length + IB.behavioral.length + IB.sre.length;
+  const solved = Object.values(state.solved).filter(Boolean).length;
+  const pct = total ? Math.round((solved / total) * 100) : 0;
+  const circ = 113 - (113 * pct / 100);
+  const ring = document.getElementById('progress-ring-fill');
+  if (ring) ring.style.strokeDashoffset = circ;
+  const pctEl = document.getElementById('progress-pct');
+  if (pctEl) pctEl.textContent = pct + '%';
+  const countEl = document.getElementById('solved-count');
+  if (countEl) countEl.textContent = `${solved} / ${total}`;
+}
+
+function ibFilter() {
+  const active = state.ibCategory;
+  if (!active) return;
+  const [catId, filter] = active.split('_');
+  const co = filter === 'all' ? null : filter;
+  renderIBQuestions(catId, co);
+}
+
+// Initialize IB nav after DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  ibNav();
+});
+
+// ── Utility Functions ─────────────────────────────────────────
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function tryParseArr(s) {
+  try { return JSON.parse(s) || []; } catch { return []; }
+}
+
+// Check if user was previously logged in and reload stats
+window.addEventListener('load', () => {
+  applyTheme();
+  if (state.userId) {
+    loadStats();
+    // Resume polling if agent was running
+    pollStatus();
+  }
+});
+
+</script>
+</body>
+</html>
