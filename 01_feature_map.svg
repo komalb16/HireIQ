@@ -1,0 +1,112 @@
+<svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg" font-family="Inter,Arial,sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0f1a"/>
+      <stop offset="100%" style="stop-color:#0d1524"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0ea47a"/>
+      <stop offset="100%" style="stop-color:#0d8f6b"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="520" fill="url(#bg)" rx="12"/>
+
+  <!-- Grid pattern -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+  </pattern>
+  <rect width="900" height="520" fill="url(#grid)" rx="12"/>
+
+  <!-- Title -->
+  <text x="450" y="44" text-anchor="middle" font-size="20" font-weight="700" fill="#ffffff" letter-spacing="-0.5">HireIQ — Complete Job Search Workflow</text>
+  <text x="450" y="65" text-anchor="middle" font-size="12" fill="rgba(255,255,255,0.45)">From finding a job to negotiating the offer — one tool, all free</text>
+
+  <!-- Central hub -->
+  <circle cx="450" cy="270" r="52" fill="url(#accentGrad)" filter="url(#glow)" opacity="0.15"/>
+  <circle cx="450" cy="270" r="44" fill="none" stroke="#0ea47a" stroke-width="1.5" opacity="0.6"/>
+  <text x="450" y="264" text-anchor="middle" font-size="22" fill="#0ea47a" font-weight="800">Hire</text>
+  <text x="450" y="283" text-anchor="middle" font-size="22" fill="#ffffff" font-weight="800">IQ</text>
+
+  <!-- Feature nodes -->
+  <!-- 1: Job Search - top left -->
+  <g transform="translate(115,110)">
+    <rect width="140" height="68" rx="10" fill="#111827" stroke="#0ea47a" stroke-width="1.2"/>
+    <text x="70" y="22" text-anchor="middle" font-size="18">🔍</text>
+    <text x="70" y="42" text-anchor="middle" font-size="11.5" font-weight="600" fill="#ffffff">Live Job Search</text>
+    <text x="70" y="57" text-anchor="middle" font-size="9.5" fill="rgba(255,255,255,0.45)">LinkedIn · Indeed · Glassdoor</text>
+  </g>
+  <line x1="255" y1="156" x2="408" y2="242" stroke="#0ea47a" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+
+  <!-- 2: ATS Checker - top center -->
+  <g transform="translate(335,85)">
+    <rect width="140" height="68" rx="10" fill="#111827" stroke="#6c5ce7" stroke-width="1.2"/>
+    <text x="70" y="22" text-anchor="middle" font-size="18">🎯</text>
+    <text x="70" y="42" text-anchor="middle" font-size="11.5" font-weight="600" fill="#ffffff">ATS Checker</text>
+    <text x="70" y="57" text-anchor="middle" font-size="9.5" fill="rgba(255,255,255,0.45)">Keyword scoring · Gap analysis</text>
+  </g>
+  <line x1="405" y1="153" x2="438" y2="226" stroke="#6c5ce7" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+
+  <!-- 3: Resume - top right -->
+  <g transform="translate(555,110)">
+    <rect width="140" height="68" rx="10" fill="#111827" stroke="#0ea47a" stroke-width="1.2"/>
+    <text x="70" y="22" text-anchor="middle" font-size="18">📄</text>
+    <text x="70" y="42" text-anchor="middle" font-size="11.5" font-weight="600" fill="#ffffff">Resume Builder</text>
+    <text x="70" y="57" text-anchor="middle" font-size="9.5" fill="rgba(255,255,255,0.45)">AI tailoring · .docx export</text>
+  </g>
+  <line x1="555" y1="156" x2="492" y2="242" stroke="#0ea47a" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+
+  <!-- 4: Cover Letter - right -->
+  <g transform="translate(690,220)">
+    <rect width="140" height="68" rx="10" fill="#111827" stroke="#fb923c" stroke-width="1.2"/>
+    <text x="70" y="22" text-anchor="middle" font-size="18">✉️</text>
+    <text x="70" y="42" text-anchor="middle" font-size="11.5" font-weight="600" fill="#ffffff">Cover Letters</text>
+    <text x="70" y="57" text-anchor="middle" font-size="9.5" fill="rgba(255,255,255,0.45)">5 tones · Per-role personalised</text>
+  </g>
+  <line x1="690" y1="260" x2="494" y2="271" stroke="#fb923c" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+
+  <!-- 5: Mock Interview - bottom right -->
+  <g transform="translate(618,355)">
+    <rect width="140" height="68" rx="10" fill="#111827" stroke="#a78bfa" stroke-width="1.2"/>
+    <text x="70" y="22" text-anchor="middle" font-size="18">🎤</text>
+    <text x="70" y="42" text-anchor="middle" font-size="11.5" font-weight="600" fill="#ffffff">Mock Interviewer</text>
+    <text x="70" y="57" text-anchor="middle" font-size="9.5" fill="rgba(255,255,255,0.45)">Scored · 4 types · Transcript</text>
+  </g>
+  <line x1="618" y1="380" x2="494" y2="305" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+
+  <!-- 6: Tracker - bottom center -->
+  <g transform="translate(335,385)">
+    <rect width="140" height="68" rx="10" fill="#111827" stroke="#60a5fa" stroke-width="1.2"/>
+    <text x="70" y="22" text-anchor="middle" font-size="18">📋</text>
+    <text x="70" y="42" text-anchor="middle" font-size="11.5" font-weight="600" fill="#ffffff">Kanban Tracker</text>
+    <text x="70" y="57" text-anchor="middle" font-size="9.5" fill="rgba(255,255,255,0.45)">5 stages · Reminders · Analytics</text>
+  </g>
+  <line x1="405" y1="385" x2="438" y2="314" stroke="#60a5fa" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+
+  <!-- 7: Salary + Negotiation - bottom left -->
+  <g transform="translate(75,355)">
+    <rect width="140" height="68" rx="10" fill="#111827" stroke="#4ade80" stroke-width="1.2"/>
+    <text x="70" y="22" text-anchor="middle" font-size="18">💰</text>
+    <text x="70" y="42" text-anchor="middle" font-size="11.5" font-weight="600" fill="#ffffff">Salary + Negotiate</text>
+    <text x="70" y="57" text-anchor="middle" font-size="9.5" fill="rgba(255,255,255,0.45)">Band estimation · BATNA · Email</text>
+  </g>
+  <line x1="215" y1="380" x2="406" y2="305" stroke="#4ade80" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+
+  <!-- 8: Interview Bank - left -->
+  <g transform="translate(68,220)">
+    <rect width="140" height="68" rx="10" fill="#111827" stroke="#f59e0b" stroke-width="1.2"/>
+    <text x="70" y="22" text-anchor="middle" font-size="18">💡</text>
+    <text x="70" y="42" text-anchor="middle" font-size="11.5" font-weight="600" fill="#ffffff">Interview Bank</text>
+    <text x="70" y="57" text-anchor="middle" font-size="9.5" fill="rgba(255,255,255,0.45)">145 questions · 46 companies</text>
+  </g>
+  <line x1="208" y1="260" x2="406" y2="271" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+
+  <!-- Free badge -->
+  <rect x="370" y="475" width="160" height="30" rx="15" fill="#0ea47a" opacity="0.15" stroke="#0ea47a" stroke-width="1"/>
+  <text x="450" y="495" text-anchor="middle" font-size="12" font-weight="700" fill="#0ea47a">✦ 100% Free · No backend · No account</text>
+</svg>

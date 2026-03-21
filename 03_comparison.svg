@@ -1,0 +1,106 @@
+<svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg" font-family="Inter,Arial,sans-serif">
+  <defs>
+    <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0f1a"/>
+      <stop offset="100%" style="stop-color:#0d1524"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="500" fill="url(#bg3)" rx="12"/>
+  <pattern id="grid3" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+  </pattern>
+  <rect width="900" height="500" fill="url(#grid3)" rx="12"/>
+
+  <text x="450" y="42" text-anchor="middle" font-size="20" font-weight="700" fill="#ffffff" letter-spacing="-0.5">HireIQ vs The Alternatives</text>
+  <text x="450" y="62" text-anchor="middle" font-size="12" fill="rgba(255,255,255,0.4)">What you'd need to pay for — and what HireIQ replaces</text>
+
+  <!-- Column headers -->
+  <text x="190" y="95" text-anchor="middle" font-size="12" font-weight="700" fill="rgba(255,255,255,0.5)">Feature</text>
+
+  <!-- Apify header -->
+  <rect x="340" y="76" width="150" height="32" rx="8" fill="#f59e0b" fill-opacity="0.12" stroke="#f59e0b" stroke-width="1"/>
+  <text x="415" y="97" text-anchor="middle" font-size="12" font-weight="700" fill="#f59e0b">Apify + Claude</text>
+
+  <!-- Paid tools header -->
+  <rect x="510" y="76" width="150" height="32" rx="8" fill="#f87171" fill-opacity="0.12" stroke="#f87171" stroke-width="1"/>
+  <text x="585" y="97" text-anchor="middle" font-size="12" font-weight="700" fill="#f87171">Paid tools</text>
+
+  <!-- HireIQ header -->
+  <rect x="680" y="76" width="170" height="32" rx="8" fill="#0ea47a" fill-opacity="0.15" stroke="#0ea47a" stroke-width="1.5"/>
+  <text x="765" y="97" text-anchor="middle" font-size="13" font-weight="700" fill="#0ea47a">HireIQ</text>
+
+  <!-- Table rows -->
+  <g id="rows">
+    <!-- Row data: [label, apify, paid, hireiq, apify_color, paid_color, hi_color] -->
+    <!-- Row 1 -->
+    <rect x="60" y="112" width="820" height="36" rx="6" fill="rgba(255,255,255,0.02)"/>
+    <text x="80" y="135" font-size="11.5" fill="rgba(255,255,255,0.75)">🔍 Live job search (LinkedIn, Indeed)</text>
+    <text x="415" y="135" text-anchor="middle" font-size="13" fill="#4ade80">✓</text>
+    <text x="585" y="135" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.4)">Job boards only</text>
+    <text x="765" y="135" text-anchor="middle" font-size="13" fill="#4ade80">✓</text>
+
+    <!-- Row 2 -->
+    <rect x="60" y="150" width="820" height="36" rx="6" fill="rgba(255,255,255,0.0)"/>
+    <text x="80" y="173" font-size="11.5" fill="rgba(255,255,255,0.75)">⚖️ Legal / ToS compliant</text>
+    <text x="415" y="173" text-anchor="middle" font-size="13" fill="#f87171">✗</text>
+    <text x="510" y="165" width="150" height="20" rx="0" fill="none"/>
+    <text x="585" y="173" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.4)">Varies</text>
+    <text x="765" y="173" text-anchor="middle" font-size="13" fill="#4ade80">✓ Licensed data</text>
+
+    <!-- Row 3 -->
+    <rect x="60" y="188" width="820" height="36" rx="6" fill="rgba(255,255,255,0.02)"/>
+    <text x="80" y="211" font-size="11.5" fill="rgba(255,255,255,0.75)">🎯 ATS keyword checker</text>
+    <text x="415" y="211" text-anchor="middle" font-size="13" fill="#f87171">✗</text>
+    <text x="585" y="211" text-anchor="middle" font-size="11" fill="#f59e0b">JobScan $50/mo</text>
+    <text x="765" y="211" text-anchor="middle" font-size="13" fill="#4ade80">✓ Free</text>
+
+    <!-- Row 4 -->
+    <rect x="60" y="226" width="820" height="36" rx="6" fill="rgba(255,255,255,0.0)"/>
+    <text x="80" y="249" font-size="11.5" fill="rgba(255,255,255,0.75)">📄 AI resume tailoring per role</text>
+    <text x="415" y="249" text-anchor="middle" font-size="13" fill="#f87171">✗</text>
+    <text x="585" y="249" text-anchor="middle" font-size="11" fill="#f59e0b">Rezi $30/mo</text>
+    <text x="765" y="249" text-anchor="middle" font-size="13" fill="#4ade80">✓ Free</text>
+
+    <!-- Row 5 -->
+    <rect x="60" y="264" width="820" height="36" rx="6" fill="rgba(255,255,255,0.02)"/>
+    <text x="80" y="287" font-size="11.5" fill="rgba(255,255,255,0.75)">📋 Application tracking (Kanban)</text>
+    <text x="415" y="287" text-anchor="middle" font-size="13" fill="#f87171">✗</text>
+    <text x="585" y="287" text-anchor="middle" font-size="11" fill="#f59e0b">Teal $30/mo</text>
+    <text x="765" y="287" text-anchor="middle" font-size="13" fill="#4ade80">✓ Free</text>
+
+    <!-- Row 6 -->
+    <rect x="60" y="302" width="820" height="36" rx="6" fill="rgba(255,255,255,0.0)"/>
+    <text x="80" y="325" font-size="11.5" fill="rgba(255,255,255,0.75)">🎤 AI mock interviews (scored)</text>
+    <text x="415" y="325" text-anchor="middle" font-size="13" fill="#f87171">✗</text>
+    <text x="585" y="325" text-anchor="middle" font-size="11" fill="#f59e0b">Pramp / paid</text>
+    <text x="765" y="325" text-anchor="middle" font-size="13" fill="#4ade80">✓ Free</text>
+
+    <!-- Row 7 -->
+    <rect x="60" y="340" width="820" height="36" rx="6" fill="rgba(255,255,255,0.02)"/>
+    <text x="80" y="363" font-size="11.5" fill="rgba(255,255,255,0.75)">💰 Salary estimation</text>
+    <text x="415" y="363" text-anchor="middle" font-size="13" fill="#f87171">✗</text>
+    <text x="585" y="363" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.4)">Levels.fyi (limited)</text>
+    <text x="765" y="363" text-anchor="middle" font-size="13" fill="#4ade80">✓ Free</text>
+
+    <!-- Row 8 -->
+    <rect x="60" y="378" width="820" height="36" rx="6" fill="rgba(255,255,255,0.0)"/>
+    <text x="80" y="401" font-size="11.5" fill="rgba(255,255,255,0.75)">🤝 Offer negotiation coach</text>
+    <text x="415" y="401" text-anchor="middle" font-size="13" fill="#f87171">✗</text>
+    <text x="585" y="401" text-anchor="middle" font-size="11" fill="#f59e0b">Coaches $200+/hr</text>
+    <text x="765" y="401" text-anchor="middle" font-size="13" fill="#4ade80">✓ Free</text>
+
+    <!-- Row 9 -->
+    <rect x="60" y="416" width="820" height="36" rx="6" fill="rgba(255,255,255,0.02)"/>
+    <text x="80" y="439" font-size="11.5" fill="rgba(255,255,255,0.75)">⚡ Works without technical setup</text>
+    <text x="415" y="439" text-anchor="middle" font-size="13" fill="#f87171">✗ Dev skills needed</text>
+    <text x="585" y="439" text-anchor="middle" font-size="13" fill="#4ade80">✓</text>
+    <text x="765" y="439" text-anchor="middle" font-size="13" fill="#4ade80">✓</text>
+  </g>
+
+  <!-- Total cost footer -->
+  <rect x="60" y="462" width="820" height="30" rx="8" fill="rgba(14,164,122,0.08)" stroke="#0ea47a" stroke-width="1"/>
+  <text x="190" y="482" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.5)">Equivalent cost</text>
+  <text x="415" y="482" text-anchor="middle" font-size="11" fill="#f59e0b">Config time + ToS risk</text>
+  <text x="585" y="482" text-anchor="middle" font-size="12" font-weight="700" fill="#f87171">$110+ / month</text>
+  <text x="765" y="482" text-anchor="middle" font-size="12" font-weight="700" fill="#0ea47a">Free</text>
+</svg>
