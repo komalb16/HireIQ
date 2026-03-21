@@ -888,6 +888,30 @@ textarea.ta::placeholder{color:var(--text3);}
 /* ── LinkedIn badge on job cards ── */
 .li-badge{background:#0077B5;color:#fff;font-size:.63rem;padding:2px 6px;border-radius:3px;font-family:var(--font-d);font-weight:700;letter-spacing:.2px;flex-shrink:0;}
 .easy-apply-badge{background:#00a0dc;color:#fff;font-size:.63rem;padding:2px 6px;border-radius:3px;font-family:var(--font-d);font-weight:700;}
+
+/* ── Wide-screen two-column search layout ── */
+.search-layout{display:block;}
+.search-sidebar{display:none;}
+@media(min-width:1024px){
+  .search-layout{display:grid;grid-template-columns:1fr 340px;align-items:start;gap:2.5rem;}
+  .search-sidebar{display:flex;flex-direction:column;gap:1rem;position:sticky;top:120px;}
+  .hero{text-align:left;max-width:none;margin:0;}
+  .hero::before{left:25%;width:500px;}
+  .sbox{margin:0;}
+}
+@media(min-width:1280px){.search-layout{grid-template-columns:1fr 380px;}}
+.ss-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.25rem;}
+.ss-card-title{font-family:var(--font-d);font-weight:700;font-size:.7rem;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:.85rem;}
+.ss-feature{display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all var(--ease);}
+.ss-feature:last-child{border-bottom:none;padding-bottom:0;}
+.ss-feature:hover .ss-ft{color:var(--accent);}
+.ss-fi{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;background:var(--surface2);}
+.ss-ft{font-size:.82rem;font-weight:600;color:var(--text);font-family:var(--font-d);transition:color var(--ease);}
+.ss-fs{font-size:.71rem;color:var(--text3);margin-top:1px;line-height:1.4;}
+.ss-stat{display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border);}
+.ss-stat:last-child{border-bottom:none;}
+.ss-stat-l{font-size:.78rem;color:var(--text2);}
+.ss-stat-v{font-family:var(--font-d);font-weight:700;font-size:.84rem;color:var(--accent);}
 </style>
 </head>
 <body>
@@ -1023,46 +1047,88 @@ textarea.ta::placeholder{color:var(--text3);}
      SEARCH PANEL
 ═════════════════════════════════════ -->
 <div class="panel on" id="panel-search">
-  <div class="hero">
-    <div class="greet">Welcome back, <strong id="greetN">there</strong> 👋</div>
-    <h1>Your AI-powered<br><em>job search toolkit</em></h1>
-    <p>Search live jobs · Tailor your resume · Ace interviews · Track applications</p>
-    <div class="sbox">
-      <div class="ac-wrap"><input id="sTitle" placeholder="Job title (e.g. ML Engineer)" autocomplete="off" oninput="acInput(this,'title')" onkeydown="acKey(event,'title')" onfocus="acInput(this,'title')" onblur="acBlur('title')" /><div class="ac-drop" id="ac-title"></div></div>
-      <div class="ac-wrap"><input id="sLoc"   placeholder="Location (e.g. Austin, TX)"  autocomplete="off" oninput="acInput(this,'loc')"   onkeydown="acKey(event,'loc')"   onfocus="acInput(this,'loc')"   onblur="acBlur('loc')"   /><div class="ac-drop" id="ac-loc"></div></div>
-      <div class="ac-wrap"><input id="sKw"    placeholder="Skills (e.g. React, Python)" autocomplete="off" oninput="acInput(this,'kw')"    onkeydown="acKey(event,'kw')"    onfocus="acInput(this,'kw')"    onblur="acBlur('kw')"    /><div class="ac-drop" id="ac-kw"></div></div>
-      <button class="btn btn-p" onclick="doSearch()">Search</button>
+  <div class="search-layout">
+
+    <!-- LEFT: hero + search + results -->
+    <div>
+      <div class="hero">
+        <div class="greet">Welcome back, <strong id="greetN">there</strong> 👋</div>
+        <h1>Stop applying blindly.<br><em>Start landing interviews.</em></h1>
+        <p>AI that tailors your resume, checks ATS keywords, coaches you through interviews, and helps you negotiate — all free.</p>
+        <div class="sbox">
+          <div class="ac-wrap"><input id="sTitle" placeholder="Job title (e.g. ML Engineer)" autocomplete="off" oninput="acInput(this,'title')" onkeydown="acKey(event,'title')" onfocus="acInput(this,'title')" onblur="acBlur('title')" /><div class="ac-drop" id="ac-title"></div></div>
+          <div class="ac-wrap"><input id="sLoc"   placeholder="Location (e.g. Austin, TX)"  autocomplete="off" oninput="acInput(this,'loc')"   onkeydown="acKey(event,'loc')"   onfocus="acInput(this,'loc')"   onblur="acBlur('loc')"   /><div class="ac-drop" id="ac-loc"></div></div>
+          <div class="ac-wrap"><input id="sKw"    placeholder="Skills (e.g. React, Python)" autocomplete="off" oninput="acInput(this,'kw')"    onkeydown="acKey(event,'kw')"    onfocus="acInput(this,'kw')"    onblur="acBlur('kw')"    /><div class="ac-drop" id="ac-kw"></div></div>
+          <button class="btn btn-p" onclick="doSearch()">Search</button>
+        </div>
+      </div>
+      <!-- SAVE SEARCH BAR -->
+      <div class="save-search-bar" id="saveSearchBar">
+        <span>💾 Save this search as a <strong>Job Alert</strong> to get notified of new postings</span>
+        <button class="btn btn-tl btn-sm" onclick="quickSaveAlert()">Save Alert</button>
+        <button class="btn btn-o" onclick="document.getElementById('saveSearchBar').style.display='none'">✕</button>
+      </div>
+      <!-- SEARCH HISTORY -->
+      <div id="searchHistWrap" style="display:none;margin-bottom:.65rem">
+        <div style="font-size:.7rem;color:var(--text3);font-family:var(--font-d);font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-bottom:.4rem">Recent searches</div>
+        <div class="search-hist-wrap" id="searchHistPills"></div>
+      </div>
+      <div class="fil-row">
+        <span class="fl">Type:</span>
+        <div class="chip on" onclick="fc(this,'t','all')">All</div>
+        <div class="chip" onclick="fc(this,'t','fulltime')">Full-time</div>
+        <div class="chip" onclick="fc(this,'t','parttime')">Part-time</div>
+        <div class="chip" onclick="fc(this,'t','contract')">Contract</div>
+        <span class="fl" style="margin-left:.5rem">Work:</span>
+        <div class="chip on" onclick="fc(this,'w','all')">All</div>
+        <div class="chip" onclick="fc(this,'w','remote')">Remote</div>
+        <div class="chip" onclick="fc(this,'w','hybrid')">Hybrid</div>
+        <div class="chip" onclick="fc(this,'w','onsite')">On-site</div>
+      </div>
+      <div id="searchOut">
+        <div class="empty-state" id="searchInitial">
+          <div class="es-icon">🔍</div>
+          <div class="es-title">Search live job listings</div>
+          <div class="es-desc">Enter a job title, location, or skills above and hit Search. Results come from LinkedIn, Indeed, and Glassdoor in real time.</div>
+        </div>
+      </div>
     </div>
-  </div>
-  <!-- SAVE SEARCH BAR — shown after search -->
-  <div class="save-search-bar" id="saveSearchBar">
-    <span>💾 Save this search as a <strong>Job Alert</strong> to get notified of new postings</span>
-    <button class="btn btn-tl btn-sm" onclick="quickSaveAlert()">Save Alert</button>
-    <button class="btn btn-o" onclick="document.getElementById('saveSearchBar').style.display='none'">✕</button>
-  </div>
-  <!-- SEARCH HISTORY -->
-  <div id="searchHistWrap" style="display:none;margin-bottom:.65rem">
-    <div style="font-size:.7rem;color:var(--text3);font-family:var(--font-d);font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-bottom:.4rem">Recent searches</div>
-    <div class="search-hist-wrap" id="searchHistPills"></div>
-  </div>
-  <div class="fil-row">
-    <span class="fl">Type:</span>
-    <div class="chip on" onclick="fc(this,'t','all')">All</div>
-    <div class="chip" onclick="fc(this,'t','fulltime')">Full-time</div>
-    <div class="chip" onclick="fc(this,'t','parttime')">Part-time</div>
-    <div class="chip" onclick="fc(this,'t','contract')">Contract</div>
-    <span class="fl" style="margin-left:.5rem">Work:</span>
-    <div class="chip on" onclick="fc(this,'w','all')">All</div>
-    <div class="chip" onclick="fc(this,'w','remote')">Remote</div>
-    <div class="chip" onclick="fc(this,'w','hybrid')">Hybrid</div>
-    <div class="chip" onclick="fc(this,'w','onsite')">On-site</div>
-  </div>
-  <div id="searchOut">
-    <div class="empty-state" id="searchInitial">
-      <div class="es-icon">🔍</div>
-      <div class="es-title">Search live job listings</div>
-      <div class="es-desc">Enter a job title, location, or skills above and hit Search. Results come from LinkedIn, Indeed, and Glassdoor in real time.</div>
+
+    <!-- RIGHT: sidebar — only visible on wide screens -->
+    <div class="search-sidebar" id="searchSidebar">
+
+      <!-- Quick actions -->
+      <div class="ss-card">
+        <div class="ss-card-title">Quick actions</div>
+        <div class="ss-feature" onclick="sw('resume',document.querySelector('[onclick*=resume]'))">
+          <div class="ss-fi">📄</div>
+          <div><div class="ss-ft">Upload your resume</div><div class="ss-fs">Enables AI match scoring on every job</div></div>
+        </div>
+        <div class="ss-feature" onclick="sw('alerts',document.querySelector('[onclick*=alerts]'))">
+          <div class="ss-fi">🔔</div>
+          <div><div class="ss-ft">Create a job alert</div><div class="ss-fs">Get notified when new roles match your search</div></div>
+        </div>
+        <div class="ss-feature" onclick="sw('mock',document.querySelector('[onclick*=mock]'))">
+          <div class="ss-fi">🎤</div>
+          <div><div class="ss-ft">Practice interviews</div><div class="ss-fs">AI mock interviewer with scored feedback</div></div>
+        </div>
+        <div class="ss-feature" onclick="sw('salary',document.querySelector('[onclick*=salary]'))">
+          <div class="ss-fi">💰</div>
+          <div><div class="ss-ft">Estimate a salary</div><div class="ss-fs">Paste any JD to get low/mid/high band</div></div>
+        </div>
+      </div>
+
+      <!-- Your stats -->
+      <div class="ss-card" id="sidebarStats">
+        <div class="ss-card-title">Your progress</div>
+        <div class="ss-stat"><span class="ss-stat-l">Applications tracked</span><span class="ss-stat-v" id="ss-apps">0</span></div>
+        <div class="ss-stat"><span class="ss-stat-l">Active alerts</span><span class="ss-stat-v" id="ss-alerts">0</span></div>
+        <div class="ss-stat"><span class="ss-stat-l">Resume saved</span><span class="ss-stat-v" id="ss-resume">—</span></div>
+        <div class="ss-stat"><span class="ss-stat-l">Questions reviewed</span><span class="ss-stat-v" id="ss-reviewed">0</span></div>
+      </div>
+
     </div>
+
   </div>
 </div>
 
@@ -1963,7 +2029,6 @@ function applyState(){
   document.getElementById('greetN').textContent = S.name.split(' ')[0]||'there';
   document.getElementById('uname').textContent  = S.name||'Guest';
   document.getElementById('uav').textContent    = S.name ? S.name[0].toUpperCase() : '?';
-  // Populate user dropdown
   const udName  = document.getElementById('udName');
   const udEmail = document.getElementById('udEmail');
   if(udName)  udName.textContent  = S.name||'Guest';
@@ -1984,6 +2049,21 @@ function applyState(){
   document.getElementById('s-email').value=S.email;
   const liEl=document.getElementById('s-linkedin'); if(liEl) liEl.value=S.linkedin||'';
   document.getElementById('s-theme').value=S.theme;
+  updateSidebarStats();
+}
+
+function updateSidebarStats(){
+  const apps    = document.getElementById('ss-apps');
+  const alerts  = document.getElementById('ss-alerts');
+  const resume  = document.getElementById('ss-resume');
+  const reviewed= document.getElementById('ss-reviewed');
+  if(apps)     apps.textContent     = S.apps.length;
+  if(alerts)   alerts.textContent   = S.alerts.length;
+  if(resume)   resume.textContent   = S.resume ? '✅' : '—';
+  if(reviewed){
+    const rev = JSON.parse(localStorage.getItem('hiq_reviewed')||'[]').length;
+    reviewed.textContent = rev ? `${rev} / 145` : '0';
+  }
 }
 
 function toggleUserMenu(e){
