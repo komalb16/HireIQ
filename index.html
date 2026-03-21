@@ -16,7 +16,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
 /* ═══════════════════════════════════════════
-   THEME SYSTEM
+   THEME SYSTEM---HireIQ16
 ═══════════════════════════════════════════ */
 :root {
   --radius:14px; --radius-sm:8px;
@@ -850,7 +850,7 @@ textarea.ta::placeholder{color:var(--text3);}
         </select>
       </div>
 
-      <button class="btn btn-p" id="ob-launch-btn" style="width:100%;padding:13px;margin-top:.5rem;font-size:.95rem;opacity:.45;" onclick="completeOnboard()" disabled>
+      <button class="btn btn-p" id="ob-launch-btn" style="width:100%;padding:13px;margin-top:.5rem;font-size:.95rem;opacity:.45;pointer-events:none;" onclick="completeOnboard()">
         Launch HireIQ →
       </button>
       <p style="font-size:.72rem;color:var(--text3);text-align:center;margin-top:.7rem;line-height:1.55">
@@ -1766,9 +1766,10 @@ function obLiveValidate(){
 
   const btn = document.getElementById('ob-launch-btn');
   if(btn){
-    btn.disabled      = !allOk;
-    btn.style.opacity = allOk ? '1' : '.45';
-    btn.style.cursor  = allOk ? 'pointer' : 'not-allowed';
+    btn.disabled            = !allOk;
+    btn.style.opacity       = allOk ? '1'       : '.45';
+    btn.style.cursor        = allOk ? 'pointer' : 'not-allowed';
+    btn.style.pointerEvents = allOk ? 'auto'    : 'none';
   }
 }
 
@@ -3485,6 +3486,10 @@ document.addEventListener('DOMContentLoaded',()=>{
   // Poll for 3s after load — some browsers inject autofill with a delay
   let polls=0;
   const t=setInterval(()=>{ obLiveValidate(); if(++polls>6) clearInterval(t); },500);
+  // Bind launch button click directly in JS — the HTML onclick attr is
+  // ignored by some browsers when the button has the `disabled` attribute
+  const btn=document.getElementById('ob-launch-btn');
+  if(btn) btn.addEventListener('click', e=>{ e.preventDefault(); completeOnboard(); });
 });
 async function groq(prompt,maxTokens=1200){
   if(!S.gkey) return '⚠️ No Groq API key. Click settings (top-right) and add your free key from console.groq.com';
