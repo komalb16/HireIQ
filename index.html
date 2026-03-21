@@ -14,6 +14,7 @@
 <link rel="manifest" id="pwaManifest">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 /* ═══════════════════════════════════════════
    THEME SYSTEM
@@ -1252,10 +1253,11 @@ textarea.ta::placeholder{color:var(--text3);}
   <div class="two-col">
     <div>
       <div class="drop-z" id="dropZ">
-        <input type="file" accept=".txt,.docx" onchange="handleFile(this)" />
+        <input type="file" accept=".txt,.docx,.pdf" onchange="handleFile(this)" />
         <div class="dico">📎</div>
         <h3>Drop resume here</h3>
-        <p>.txt or .docx supported<br><small>PDF? Paste text below</small></p>
+        <p style="margin-bottom:.35rem"><strong style="color:var(--text)">Accepted:</strong> .pdf &nbsp;·&nbsp; .docx &nbsp;·&nbsp; .txt</p>
+        <p style="font-size:.75rem;color:var(--text3)">Max 5MB &nbsp;·&nbsp; Text-based PDFs only (not scanned)</p>
       </div>
       <div style="text-align:center;color:var(--text3);font-size:.78rem;margin:.7rem 0">— or paste text —</div>
       <textarea class="ta" id="resumeTA" placeholder="Paste your resume here..." oninput="livePreview()"></textarea>
@@ -3042,23 +3044,93 @@ Output only the complete cover letter:`,1200);
 // ═══════════════════════════════════════════════
 async function handleFile(input){
   const f=input.files[0]; if(!f) return;
-  if(f.name.endsWith('.docx')){
-    try{ const ab=await f.arrayBuffer(); const r=await mammoth.extractRawText({arrayBuffer:ab}); document.getElementById('resumeTA').value=r.value; S.resume=r.value; showRStats(r.value); toast('DOCX loaded ✅'); }
-    catch{ toast('Could not parse DOCX — paste text instead'); }
-  } else {
-    const txt=await f.text(); document.getElementById('resumeTA').value=txt; S.resume=txt; showRStats(txt); toast('Resume loaded ✅');
+  // File size check — 5MB limit
+  if(f.size > 5 * 1024 * 1024){
+    toast('⚠️ File too large — max 5MB. Try copy-pasting your resume text instead.');
+    return;
+  }
+  // Unsupported format check
+  const ext = f.name.split('.').pop().toLowerCase();
+  if(!['pdf','docx','txt','text'].includes(ext)){
+    toast('⚠️ Unsupported format. Please use .pdf, .docx, or .txt');
+    return;
+  }
+  try{
+    let txt='';
+
+    if(f.name.endsWith('.docx')){
+      // DOCX — mammoth.js
+      const ab=await f.arrayBuffer();
+      const r=await mammoth.extractRawText({arrayBuffer:ab});
+      txt=r.value;
+      toast('DOCX parsed ✅ — click Save Resume to confirm');
+
+    } else if(f.name.endsWith('.pdf')){
+      // PDF — PDF.js
+      toast('📄 Reading PDF...');
+      const ab=await f.arrayBuffer();
+      // Set worker source
+      if(window.pdfjsLib){
+        pdfjsLib.GlobalWorkerOptions.workerSrc=
+          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        const pdf=await pdfjsLib.getDocument({data:ab}).promise;
+        const pages=[];
+        for(let i=1;i<=pdf.numPages;i++){
+          const page=await pdf.getPage(i);
+          const content=await page.getTextContent();
+          const pageText=content.items.map(item=>item.str).join(' ');
+          pages.push(pageText);
+        }
+        txt=pages.join('\n\n');
+        if(!txt.trim()){
+          toast('⚠️ PDF appears to be scanned/image-based — paste your resume text instead');
+          return;
+        }
+        toast('PDF parsed ✅ — click Save Resume to confirm');
+      } else {
+        toast('⚠️ PDF reader not loaded yet — try again in a moment or paste text directly');
+        return;
+      }
+
+    } else {
+      // Plain text
+      txt=await f.text();
+      toast('File loaded ✅ — click Save Resume to confirm');
+    }
+
+    if(!txt.trim()){ toast('File appears empty — try a different file'); return; }
+    document.getElementById('resumeTA').value=txt;
+    S.resume=txt;
+    try{ showRStats(txt); } catch(e){}
+
+  } catch(err){
+    toast('Could not read file — try pasting text directly');
+    console.error('handleFile error:', err);
   }
 }
 function livePreview(){ const v=document.getElementById('resumeTA').value; if(v.length>30) showRStats(v); }
 function saveResume(){
-  const v=document.getElementById('resumeTA').value.trim(); if(!v){ toast('Nothing to save'); return; }
-  S.resume=v; localStorage.setItem('hiq_resume',v);
-  const pv=document.getElementById('resumePrev'); pv.textContent=v; pv.classList.remove('dim');
-  showRStats(v); toast('Resume saved ✅');
+  const v=document.getElementById('resumeTA').value.trim();
+  if(!v){ toast('Nothing to save'); return; }
+  S.resume=v;
+  try{
+    localStorage.setItem('hiq_resume',v);
+  } catch(e){
+    // QuotaExceededError — storage full
+    toast('⚠️ Storage full — clear some data in Settings and try again');
+    return;
+  }
+  const pv=document.getElementById('resumePrev');
+  if(pv){ pv.textContent=v; pv.classList.remove('dim'); }
+  try{ showRStats(v); } catch(e){}
+  updateSidebarStats();
+  toast('Resume saved ✅');
 }
 function showRStats(t){
+  const el=document.getElementById('rsStats');
+  if(!el) return;
   const wc=t.split(/\s+/).filter(Boolean).length;
-  document.getElementById('rsStats').innerHTML=`<span>📝 ${wc} words</span><span>📏 ${t.length} chars</span><span class="ok">✅ AI-ready</span>`;
+  el.innerHTML=`<span>📝 ${wc} words</span><span>📏 ${t.length} chars</span><span class="ok">✅ AI-ready</span>`;
 }
 async function buildResume(){
   if(!S.gkey){ toast('Add Groq API key in settings'); return; }
@@ -4043,11 +4115,19 @@ document.getElementById('jMod').addEventListener('click',e=>{if(e.target===docum
 document.getElementById('sMod').addEventListener('click',e=>{if(e.target===document.getElementById('sMod'))closeMod('sMod');});
 function fc(el,type,val){document.querySelectorAll('.chip').forEach(c=>{if(c.getAttribute('onclick')?.includes(`'${type}'`))c.classList.remove('on');});el.classList.add('on');}
 function persist(){
-  localStorage.setItem('hiq_name',S.name);localStorage.setItem('hiq_gkey',S.gkey);
-  localStorage.setItem('hiq_rkey',S.rkey);localStorage.setItem('hiq_email',S.email);
-  localStorage.setItem('hiq_linkedin',S.linkedin||'');
-  localStorage.setItem('hiq_theme',S.theme);localStorage.setItem('hiq_apps',JSON.stringify(S.apps));
-  localStorage.setItem('hiq_alerts',JSON.stringify(S.alerts));localStorage.setItem('hiq_notifs',JSON.stringify(S.notifs));
+  try{
+    localStorage.setItem('hiq_name',S.name);
+    localStorage.setItem('hiq_gkey',S.gkey);
+    localStorage.setItem('hiq_rkey',S.rkey);
+    localStorage.setItem('hiq_email',S.email);
+    localStorage.setItem('hiq_linkedin',S.linkedin||'');
+    localStorage.setItem('hiq_theme',S.theme);
+    localStorage.setItem('hiq_apps',JSON.stringify(S.apps));
+    localStorage.setItem('hiq_alerts',JSON.stringify(S.alerts));
+    localStorage.setItem('hiq_notifs',JSON.stringify(S.notifs));
+  } catch(e){
+    console.warn('[HireIQ] localStorage write failed — storage may be full:', e.message);
+  }
 }
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 function copyTxt(t){navigator.clipboard.writeText(t).then(()=>toast('Copied ✅'));}
