@@ -2764,6 +2764,12 @@ function renderJobs(jobs){
   if(!jobs.length){ document.getElementById('searchOut').innerHTML=`<div class="empty-state"><div class="es-icon">🔍</div><div class="es-title">No results found</div><div class="es-desc">Try a broader job title, a different location, or remove some skills from your search.</div></div>`; return; }
   // Annotate LinkedIn / Easy Apply before rendering
   jobs = annotateLinkedInJobs(jobs);
+  // Sort by match score descending — highest match first, unscored at end
+  jobs.sort((a,b)=>{
+    const sa = (a.score != null) ? a.score : -1;
+    const sb = (b.score != null) ? b.score : -1;
+    return sb - sa;
+  });
   // Store jobs in registry so onclick handlers use a safe numeric index
   window._jobReg = jobs;
   const liveCount = jobs.filter(j=>j.source==='live').length;
@@ -3108,7 +3114,15 @@ async function handleFile(input){
     console.error('handleFile error:', err);
   }
 }
-function livePreview(){ const v=document.getElementById('resumeTA').value; if(v.length>30) showRStats(v); }
+let _livePreviewTimer=null;
+function livePreview(){
+  // Debounce — only fire showRStats 400ms after user stops typing
+  clearTimeout(_livePreviewTimer);
+  _livePreviewTimer=setTimeout(()=>{
+    const v=document.getElementById('resumeTA').value;
+    if(v.length>30) try{ showRStats(v); }catch(e){}
+  },400);
+}
 function saveResume(){
   const v=document.getElementById('resumeTA').value.trim();
   if(!v){ toast('Nothing to save'); return; }
@@ -3540,6 +3554,15 @@ const _origSw=window.sw;
 window.sw=function(name,el){
   _origSw(name,el);
   if(name==='tracker'){ setTimeout(()=>{ renderTracker(); initTouchDrag(); },60); }
+  // Lazy-populate resume preview only when tab is opened
+  if(name==='resume' && S.resume){
+    const pv=document.getElementById('resumePrev');
+    if(pv && pv.classList.contains('dim')){
+      pv.textContent=S.resume;
+      pv.classList.remove('dim');
+      try{ showRStats(S.resume); }catch(e){}
+    }
+  }
 };
 
 // ═══════════════════════════════════════════════
