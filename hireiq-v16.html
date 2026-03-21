@@ -16,7 +16,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
 /* ═══════════════════════════════════════════
-   THEME SYSTEM
+   THEME SYSTEM---HireIQ16
 ═══════════════════════════════════════════ */
 :root {
   --radius:14px; --radius-sm:8px;
@@ -126,7 +126,7 @@ header{position:sticky;top:0;z-index:200;background:var(--hbg);backdrop-filter:b
 .uname{font-size:.82rem;font-weight:500;}
 
 /* ═══════════════════════════════════════════
-   NAV--
+   NAV
 ═══════════════════════════════════════════ */
 nav{display:flex;padding:0 1.5rem;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;position:sticky;top:60px;z-index:199;}
 .tab{padding:0 18px;height:46px;display:flex;align-items:center;gap:6px;font-family:var(--font-d);font-weight:600;font-size:.8rem;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all var(--ease);}
@@ -850,7 +850,7 @@ textarea.ta::placeholder{color:var(--text3);}
         </select>
       </div>
 
-      <button class="btn btn-p" id="ob-launch-btn" style="width:100%;padding:13px;margin-top:.5rem;font-size:.95rem;opacity:.45;transition:opacity .2s;" onclick="completeOnboard()">
+      <button class="btn btn-p" id="ob-launch-btn" style="width:100%;padding:13px;margin-top:.5rem;font-size:.95rem;opacity:.45;pointer-events:none;" onclick="completeOnboard()">
         Launch HireIQ →
       </button>
       <p style="font-size:.72rem;color:var(--text3);text-align:center;margin-top:.7rem;line-height:1.55">
@@ -1748,7 +1748,7 @@ function obLiveValidate(){
   const rkey  = (document.getElementById('ob-rkey')?.value  || '').trim();
   const email = (document.getElementById('ob-email')?.value || '').trim();
 
-  // Per-field live errors — only show if field has content
+  // Per-field live errors — only show if field has some content
   setObErr('ob-name-err',  name.length > 0  && name.length < 2,
     'Please enter your full name');
   setObErr('ob-gkey-err',  gkey.length > 0  && gkey.length < 8,
@@ -1764,10 +1764,13 @@ function obLiveValidate(){
     rkey.length >= 8 &&
     (!email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
 
-  // Only change visual appearance — never block the click
-  // completeOnboard() handles validation on submit
   const btn = document.getElementById('ob-launch-btn');
-  if(btn) btn.style.opacity = allOk ? '1' : '.45';
+  if(btn){
+    btn.disabled            = !allOk;
+    btn.style.opacity       = allOk ? '1'       : '.45';
+    btn.style.cursor        = allOk ? 'pointer' : 'not-allowed';
+    btn.style.pointerEvents = allOk ? 'auto'    : 'none';
+  }
 }
 
 // Helper: show or hide a field's error message
@@ -3478,11 +3481,15 @@ Output only the complete letter:`;
 document.addEventListener('DOMContentLoaded',()=>{
   const n=document.getElementById('cl-name');
   if(n&&S.name) n.value=S.name;
-  // Run validator immediately to reflect any autofilled values
+  // Run validator on load (catches browser autofill which doesn't fire oninput)
   obLiveValidate();
-  // Poll briefly for delayed browser autofill
+  // Poll for 3s after load — some browsers inject autofill with a delay
   let polls=0;
   const t=setInterval(()=>{ obLiveValidate(); if(++polls>6) clearInterval(t); },500);
+  // Bind launch button click directly in JS — the HTML onclick attr is
+  // ignored by some browsers when the button has the `disabled` attribute
+  const btn=document.getElementById('ob-launch-btn');
+  if(btn) btn.addEventListener('click', e=>{ e.preventDefault(); completeOnboard(); });
 });
 async function groq(prompt,maxTokens=1200){
   if(!S.gkey) return '⚠️ No Groq API key. Click settings (top-right) and add your free key from console.groq.com';
