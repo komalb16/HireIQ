@@ -1955,15 +1955,42 @@ function saveSettings(){
 // ═══════════════════════════════════════════════
 async function registerSW(){
   if(!('serviceWorker' in navigator)) return;
-  try {
-    // Register real same-origin sw.js — works on Vercel and all HTTPS hosts
-    swReg = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
-    navigator.serviceWorker.addEventListener('message', e => {
-      if(e.data?.type === 'RUN_CHECK') runAlertCheck(e.data.alertId);
+
+  const swCode = `
+self.addEventListener('message', e => {
+  if(e.data && e.data.type==='CHECK_ALERT'){
+    self.clients.matchAll().then(cls => {
+      cls.forEach(c => c.postMessage({ type:'RUN_CHECK', alertId: e.data.alertId }));
     });
-    console.log('[HireIQ] SW registered ✅');
-  } catch(err) {
-    console.info('[HireIQ] SW not available — in-tab alerts active');
+  }
+});
+self.addEventListener('push', e => {
+  const d = e.data ? e.data.json() : {};
+  e.waitUntil(self.registration.showNotification(d.title||'HireIQ', {
+    body: d.body||'New jobs found!',
+    tag: d.tag||'hireiq',
+    data: d.data||{}
+  }));
+});
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(clients.openWindow('/'));
+});`;
+
+  // Try blob URL first (works on file:// and some browsers)
+  // If that fails, try creating a same-origin sw.js via a ServiceWorker-compatible method
+  try {
+    const blob = new Blob([swCode], {type:'application/javascript'});
+    const url  = URL.createObjectURL(blob);
+    swReg = await navigator.serviceWorker.register(url, {scope:'./'});
+    navigator.serviceWorker.addEventListener('message', e => {
+      if(e.data?.type==='RUN_CHECK') runAlertCheck(e.data.alertId);
+    });
+    console.log('[HireIQ] SW registered via blob');
+  } catch(blobErr) {
+    // Blob SW blocked (common on HTTPS hosted pages like Vercel)
+    // Fall back to in-tab polling — alerts still work while tab is open
+    console.info('[HireIQ] Background SW unavailable — using in-tab alerts (tab must stay open for background checks)');
     swReg = null;
   }
 }
@@ -4770,38 +4797,49 @@ document.addEventListener('click', e=>{
 });
 // ═══════════════════════════════════════════════
 (function initPWA(){
-  // Inject manifest inline as a data: URI — works on both Vercel and local file
+  // Inject manifest as blob so it works from a local file
   const manifest = {
     name: 'HireIQ — Job Search Agent',
     short_name: 'HireIQ',
     description: 'AI-powered job search, resume builder, ATS checker & mock interviewer',
-    start_url: '/',
-    scope: '/',
+    start_url: '.',
     display: 'standalone',
     background_color: '#080c10',
     theme_color: '#0ea47a',
     orientation: 'portrait-primary',
     icons: [
-      {
-        src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='38' fill='%230ea47a'/><text y='140' x='96' font-size='110' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>H</text></svg>",
-        sizes: '192x192',
-        type: 'image/svg+xml'
-      },
-      {
-        src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%230ea47a'/><text y='370' x='256' font-size='300' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>H</text></svg>",
-        sizes: '512x512',
-        type: 'image/svg+xml',
-        purpose: 'any maskable'
-      }
+      { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='38' fill='%230ea47a'/><text y='140' x='96' font-size='110' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>H</text></svg>", sizes: '192x192', type: 'image/svg+xml' },
+      { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%230ea47a'/><text y='370' x='256' font-size='300' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>H</text></svg>", sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
     ]
   };
   try {
-    const url  = 'data:application/json,' + encodeURIComponent(JSON.stringify(manifest));
+    const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+    const url  = URL.createObjectURL(blob);
     const link = document.getElementById('pwaManifest');
     if(link) link.href = url;
   } catch(e){}
 
-  // SW already registered in registerSW() above via /sw.js — no duplicate needed here
+  // Register SW for offline support — blob method works on file://, 
+  // silently skipped on hosted HTTPS (Vercel) where blob SW is blocked
+  if('serviceWorker' in navigator){
+    const swCode = `
+const CACHE='hireiq-v6';
+const ASSETS=['./'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
+self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
+  const clone=res.clone();
+  caches.open(CACHE).then(c=>c.put(e.request,clone));
+  return res;
+}).catch(()=>r))));
+`;
+    try {
+      const swBlob = new Blob([swCode],{type:'application/javascript'});
+      const swUrl  = URL.createObjectURL(swBlob);
+      navigator.serviceWorker.register(swUrl,{scope:'./'})
+        .then(()=>console.log('[HireIQ] Offline SW registered'))
+        .catch(()=>console.info('[HireIQ] Offline SW unavailable on this host (expected on Vercel)'));
+    } catch(e){}
+  }
 
   // Install banner
   let deferredPrompt = null;

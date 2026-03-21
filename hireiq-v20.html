@@ -352,35 +352,22 @@ textarea.ta::placeholder{color:var(--text3);}
 .bsearch input::placeholder{color:var(--text3);}
 .bmeta{font-family:var(--font-d);font-size:.76rem;color:var(--text2);}
 .qa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:.9rem;}
-.qcard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.15rem;cursor:pointer;transition:all var(--ease);position:relative;}
+.qcard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.15rem;cursor:pointer;transition:all var(--ease);}
 .qcard:hover{border-color:var(--border2);}
 .qcard.open{border-color:var(--accent);background:var(--surface);}
-.qcard.reviewed{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.03);}
-.qcard.reviewed::after{content:'✓ Reviewed';position:absolute;top:.7rem;right:.7rem;font-size:.65rem;font-family:var(--font-d);font-weight:700;color:#4ade80;background:rgba(74,222,128,.1);padding:2px 7px;border-radius:10px;}
 .qc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.55rem;gap:.4rem;}
 .qc-cat{font-family:var(--font-d);font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent2);}
 .qc-co{font-size:.68rem;color:var(--text3);margin-bottom:3px;font-family:var(--font-d);font-weight:600;}
-.qd{font-size:.68rem;font-weight:700;font-family:var(--font-d);padding:2px 8px;border-radius:10px;flex-shrink:0;}
+.qd{font-size:.68rem;font-weight:700;font-family:var(--font-d);padding:2px 8px;border-radius:10px;}
 .e{background:rgba(34,197,94,.1);color:#4ade80;}
 .m{background:rgba(251,146,60,.1);color:#fb923c;}
 .h{background:rgba(248,113,113,.1);color:#f87171;}
 .qq{font-size:.85rem;font-weight:500;line-height:1.5;}
 .qa{font-size:.8rem;color:var(--text2);line-height:1.65;margin-top:.7rem;display:none;padding-top:.7rem;border-top:1px solid var(--border);}
 .qcard.open .qa{display:block;}
-.qfooter{display:flex;justify-content:space-between;align-items:center;margin-top:.7rem;gap:.4rem;flex-wrap:wrap;}
+.qfooter{display:flex;justify-content:space-between;align-items:center;margin-top:.7rem;}
 .qhint{font-size:.7rem;color:var(--text3);font-family:var(--font-d);font-weight:600;}
 .qcard.open .qhint{color:var(--accent);}
-.q-actions{display:flex;gap:.35rem;align-items:center;opacity:0;transition:opacity var(--ease);}
-.qcard:hover .q-actions,.qcard.open .q-actions{opacity:1;}
-.q-btn{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:.68rem;font-family:var(--font-d);font-weight:600;cursor:pointer;color:var(--text2);transition:all var(--ease);}
-.q-btn:hover{border-color:var(--accent);color:var(--accent);}
-.q-btn.rev-btn:hover{border-color:#4ade80;color:#4ade80;}
-.qcard.reviewed .rev-btn{color:#4ade80;border-color:rgba(74,222,128,.3);}
-.bank-progress{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
-.bp-label{font-size:.8rem;color:var(--text2);flex-shrink:0;}
-.bp-bar{flex:1;min-width:120px;background:var(--surface2);border-radius:4px;height:8px;overflow:hidden;}
-.bp-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .5s ease;}
-.bp-count{font-family:var(--font-d);font-weight:700;font-size:.8rem;color:var(--accent);flex-shrink:0;}
 .gen-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.75rem;}
 .gen-box h3{font-family:var(--font-d);font-weight:700;font-size:.95rem;margin-bottom:.95rem;}
 .gen-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.65rem;align-items:flex-end;}
@@ -1474,19 +1461,7 @@ textarea.ta::placeholder{color:var(--text3);}
 </div>
 
 <div class="panel" id="panel-bank">
-  <div class="sec-h"><h2>Interview Bank</h2><p>145 questions · 46 companies · DSA · System Design · Behavioral · Troubleshooting</p></div>
-
-  <!-- Category stats strip -->
-  <div id="bankStats" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem"></div>
-
-  <!-- Action row -->
-  <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.25rem;align-items:center">
-    <button class="btn btn-o btn-sm" onclick="studyMode()" title="Practice random unreviewed questions one at a time">🎯 Study Mode</button>
-    <button class="btn btn-o btn-sm" onclick="surpriseQ()">🎲 Random question</button>
-    <button class="btn btn-o btn-sm" onclick="document.getElementById('bankProgress').style.display='flex';renderBank()">📊 Show progress</button>
-  </div>
-
-  <!-- AI question generator -->
+  <div class="sec-h"><h2>Interview Bank</h2><p>Blind 75 · Company-specific · DSA · System Design · Behavioral · Troubleshooting</p></div>
   <div class="gen-box">
     <h3>✨ Generate Questions from Job Description</h3>
     <textarea class="ta" id="genJD" placeholder="Paste a job description to generate targeted questions..." style="min-height:80px"></textarea>
@@ -1497,7 +1472,6 @@ textarea.ta::placeholder{color:var(--text3);}
     </div>
     <div id="genOut"></div>
   </div>
-
   <div class="cat-tabs" id="catTabs"></div>
   <div class="diff-row">
     <span class="fl" style="margin-right:3px">Diff:</span>
@@ -1507,39 +1481,9 @@ textarea.ta::placeholder{color:var(--text3);}
     <div class="dc hrd" onclick="setDiff(this,'Hard')">Hard</div>
   </div>
   <div class="bsearch"><input id="bq" placeholder="Search questions, companies, topics..." oninput="renderBank()" /><span class="bmeta" id="bmeta"></span></div>
-  <div class="bank-progress" id="bankProgress" style="display:none">
-    <span class="bp-label">Progress</span>
-    <div class="bp-bar"><div class="bp-fill" id="bpFill" style="width:0%"></div></div>
-    <span class="bp-count" id="bpCount">0 / 0 reviewed</span>
-    <button class="btn btn-o" style="font-size:.72rem;padding:4px 10px" onclick="clearReviewed()">Reset</button>
-  </div>
   <div class="qa-grid" id="qaGrid"></div>
 </div>
 </main>
-
-<!-- STUDY MODE MODAL -->
-<div class="moverlay" id="studyMod">
-  <div class="modal" style="max-width:600px">
-    <button class="mcl" onclick="closeMod('studyMod')">✕</button>
-    <div style="font-family:var(--font-d);font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:1rem" id="studyProgress">Question 1 of 0</div>
-    <div style="display:flex;gap:.5rem;margin-bottom:1.25rem">
-      <span id="studyCat" class="qd e" style="font-size:.72rem"></span>
-      <span id="studyDiff" class="qd" style="font-size:.72rem"></span>
-      <span id="studyCo" style="font-size:.72rem;color:var(--text3);font-family:var(--font-d);font-weight:600;align-self:center"></span>
-    </div>
-    <div id="studyQ" style="font-size:1rem;font-weight:600;line-height:1.6;margin-bottom:1.5rem;color:var(--text)"></div>
-    <div id="studyA" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;font-size:.84rem;color:var(--text2);line-height:1.7;margin-bottom:1.25rem"></div>
-    <div style="display:flex;gap:.6rem;flex-wrap:wrap">
-      <button class="btn btn-o" id="studyRevealBtn" onclick="studyReveal()">Reveal answer</button>
-      <button class="btn btn-p" id="studyNextBtn" onclick="studyNext(true)" style="display:none">✓ Got it — next</button>
-      <button class="btn btn-dx" id="studySkipBtn" onclick="studyNext(false)" style="display:none">✗ Need more practice</button>
-      <button class="btn btn-tl btn-sm" onclick="studyNext(false,true)" style="margin-left:auto">Skip →</button>
-    </div>
-    <div style="margin-top:1rem;background:var(--surface2);border-radius:4px;height:6px;overflow:hidden">
-      <div id="studyBar" style="height:100%;background:var(--accent);border-radius:4px;transition:width .4s ease;width:0%"></div>
-    </div>
-  </div>
-</div>
 
 <!-- EMAIL COMPOSER MODAL -->
 <div class="moverlay" id="emailMod">
@@ -1955,15 +1899,42 @@ function saveSettings(){
 // ═══════════════════════════════════════════════
 async function registerSW(){
   if(!('serviceWorker' in navigator)) return;
-  try {
-    // Register real same-origin sw.js — works on Vercel and all HTTPS hosts
-    swReg = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
-    navigator.serviceWorker.addEventListener('message', e => {
-      if(e.data?.type === 'RUN_CHECK') runAlertCheck(e.data.alertId);
+
+  const swCode = `
+self.addEventListener('message', e => {
+  if(e.data && e.data.type==='CHECK_ALERT'){
+    self.clients.matchAll().then(cls => {
+      cls.forEach(c => c.postMessage({ type:'RUN_CHECK', alertId: e.data.alertId }));
     });
-    console.log('[HireIQ] SW registered ✅');
-  } catch(err) {
-    console.info('[HireIQ] SW not available — in-tab alerts active');
+  }
+});
+self.addEventListener('push', e => {
+  const d = e.data ? e.data.json() : {};
+  e.waitUntil(self.registration.showNotification(d.title||'HireIQ', {
+    body: d.body||'New jobs found!',
+    tag: d.tag||'hireiq',
+    data: d.data||{}
+  }));
+});
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(clients.openWindow('/'));
+});`;
+
+  // Try blob URL first (works on file:// and some browsers)
+  // If that fails, try creating a same-origin sw.js via a ServiceWorker-compatible method
+  try {
+    const blob = new Blob([swCode], {type:'application/javascript'});
+    const url  = URL.createObjectURL(blob);
+    swReg = await navigator.serviceWorker.register(url, {scope:'./'});
+    navigator.serviceWorker.addEventListener('message', e => {
+      if(e.data?.type==='RUN_CHECK') runAlertCheck(e.data.alertId);
+    });
+    console.log('[HireIQ] SW registered via blob');
+  } catch(blobErr) {
+    // Blob SW blocked (common on HTTPS hosted pages like Vercel)
+    // Fall back to in-tab polling — alerts still work while tab is open
+    console.info('[HireIQ] Background SW unavailable — using in-tab alerts (tab must stay open for background checks)');
     swReg = null;
   }
 }
@@ -2105,7 +2076,7 @@ async function fetchJobsForAlert(a){
         salary:j.job_min_salary?`$${Math.round(j.job_min_salary/1000)}k–$${Math.round(j.job_max_salary/1000)}k`:'Salary not listed',
         posted:'Just posted',
         url:j.job_apply_link||j.job_google_link||'#',
-        desc:j.job_description||'',
+        desc:j.job_description?.slice(0,200)||'',
         reqs:[],skills:[],
         source:'live',
       }));
@@ -2334,47 +2305,20 @@ async function fetchLiveJobs(query,loc){
       headers:{'X-RapidAPI-Key':S.rkey,'X-RapidAPI-Host':'jsearch.p.rapidapi.com'}
     });
     const d=await r.json();
-    return (d.data||[]).map(j=>{
-      // Extract requirements from job highlights if available
-      const highlights = j.job_highlights || {};
-      const reqs = [
-        ...(highlights.Qualifications||[]),
-        ...(highlights.Requirements||[]),
-      ].slice(0,8);
-      const responsibilities = (highlights.Responsibilities||[]).slice(0,6);
-
-      // Salary — use annual if available, otherwise hourly
-      let salary = 'Not listed';
-      if(j.job_min_salary && j.job_max_salary){
-        const period = j.job_salary_period || 'YEAR';
-        if(period==='YEAR'){
-          salary = `$${Math.round(j.job_min_salary/1000)}k–$${Math.round(j.job_max_salary/1000)}k`;
-        } else if(period==='HOUR'){
-          salary = `$${j.job_min_salary}–$${j.job_max_salary}/hr`;
-        } else {
-          salary = `$${j.job_min_salary.toLocaleString()}–$${j.job_max_salary.toLocaleString()}`;
-        }
-      }
-
-      return {
-        id:       'r_'+j.job_id,
-        title:    j.job_title,
-        company:  j.employer_name,
-        location: j.job_city?(j.job_city+(j.job_country?', '+j.job_country:'')):j.job_country||'Unknown',
-        type:     j.job_employment_type||'Full-time',
-        work:     j.job_is_remote?'Remote':'On-site',
-        salary,
-        posted:   j.job_posted_at_datetime_utc ? timeAgo(j.job_posted_at_datetime_utc) : 'Recently',
-        url:      j.job_apply_link||'#',
-        // Full description — no truncation
-        desc:     j.job_description||'',
-        reqs,
-        responsibilities,
-        skills:   [j.job_required_skills||[]].flat().slice(0,8),
-        source:   'live',
-        logo:     j.employer_logo||'',
-      };
-    });
+    return (d.data||[]).map(j=>({
+      id:'r_'+j.job_id,
+      title:j.job_title,
+      company:j.employer_name,
+      location:j.job_city?(j.job_city+(j.job_country?', '+j.job_country:'')):j.job_country||'Unknown',
+      type:j.job_employment_type||'Full-time',
+      work:j.job_is_remote?'Remote':'On-site',
+      salary:j.job_min_salary?`$${Math.round(j.job_min_salary/1000)}k–$${Math.round(j.job_max_salary/1000)}k`:'Not listed',
+      posted:'Recently',
+      url:j.job_apply_link||'#',
+      desc:(j.job_description||'').slice(0,200),
+      reqs:[],skills:[j.job_required_skills||[]].flat().slice(0,5),
+      source:'live',
+    }));
   } catch(e){ console.warn('JSearch error',e); return []; }
 }
 
@@ -2470,34 +2414,9 @@ function openJob(id){
 
     <!-- OVERVIEW TAB -->
     <div class="mtab-panel on" id="mt-overview">
-
-      <!-- Responsibilities -->
-      ${j.responsibilities?.length ? `
-      <div class="msec">
-        <h3>What you'll do</h3>
-        <ul>${j.responsibilities.map(r=>`<li>${r}</li>`).join('')}</ul>
-      </div>` : ''}
-
-      <!-- Requirements / Qualifications -->
-      ${j.reqs?.length ? `
-      <div class="msec">
-        <h3>Requirements</h3>
-        <ul>${j.reqs.map(r=>`<li>${r}</li>`).join('')}</ul>
-      </div>` : ''}
-
-      <!-- Skills tags -->
-      ${j.skills?.length ? `
-      <div class="msec">
-        <h3>Skills</h3>
-        <div class="tags">${j.skills.map(s=>`<span class="tag">${s}</span>`).join('')}</div>
-      </div>` : ''}
-
-      <!-- Full description -->
-      <div class="msec">
-        <h3>Full description</h3>
-        <div id="jd-full-text" style="font-size:.83rem;color:var(--text2);line-height:1.75;white-space:pre-wrap;max-height:320px;overflow-y:auto;padding:.75rem;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">${j.desc ? escHtml(j.desc) : 'No description available.'}</div>
-      </div>
-
+      <div class="msec"><h3>Description</h3><p>${j.desc||'No description available.'}</p></div>
+      ${j.reqs?.length?`<div class="msec"><h3>Requirements</h3><ul>${j.reqs.map(r=>`<li>${r}</li>`).join('')}</ul></div>`:''}
+      ${j.skills?.length?`<div class="msec"><h3>Skills</h3><div class="tags">${j.skills.map(s=>`<span class="tag">${s}</span>`).join('')}</div></div>`:''}
       <div style="display:flex;gap:.55rem;flex-wrap:wrap;margin-top:1.25rem">
         <button class="btn btn-p btn-sm" onclick="openModalJobUrl();addTrack(window._modalJobId)">Apply Now ↗</button>
         <button class="btn btn-o" onclick="addTrack(window._modalJobId)">+ Track Application</button>
@@ -2509,7 +2428,7 @@ function openJob(id){
       <div style="font-size:.82rem;color:var(--text2);margin-bottom:1rem;line-height:1.6">
         Checks your saved resume against this job description and shows exactly which keywords are missing or present.
       </div>
-      <textarea class="ta" id="modal-ats-jd" style="min-height:100px;margin-bottom:.75rem" placeholder="Job description (auto-filled below)">${j.desc} ${(j.reqs||[]).join('. ')} ${(j.responsibilities||[]).join('. ')} ${(j.skills||[]).join(', ')}</textarea>
+      <textarea class="ta" id="modal-ats-jd" style="min-height:100px;margin-bottom:.75rem" placeholder="Job description (auto-filled below)">${j.desc} ${(j.reqs||[]).join('. ')} ${(j.skills||[]).join(', ')}</textarea>
       <button class="btn btn-p btn-sm" onclick="runATS('modal-ats-resume-hidden','modal-ats-jd','modal-ats-results')">Run ATS Analysis</button>
       <textarea id="modal-ats-resume-hidden" style="display:none"></textarea>
       <div id="modal-ats-results" style="margin-top:1rem"></div>
@@ -2574,8 +2493,8 @@ async function doTailor(){
   const res=await groq(`You are an expert resume writer. Tailor this resume for the role.
 
 ROLE: ${j.title} at ${j.company}
-DESCRIPTION: ${(j.desc||"").slice(0,2000)}
-REQUIREMENTS: ${[...(j.reqs||[]),(j.responsibilities||[])].flat().join('. ')}
+DESCRIPTION: ${j.desc}
+REQUIREMENTS: ${(j.reqs||[]).join(', ')}
 SKILLS: ${(j.skills||[]).join(', ')}
 
 ORIGINAL RESUME:
@@ -2651,8 +2570,8 @@ async function doModalCoverLetter(){
 
 ROLE: ${j.title}
 COMPANY: ${j.company}
-JOB DESCRIPTION: ${(j.desc||"").slice(0,2000)}
-REQUIREMENTS: ${[...(j.reqs||[]),(j.responsibilities||[])].flat().join('. ')}
+JOB DESCRIPTION: ${j.desc}
+REQUIREMENTS: ${(j.reqs||[]).join(', ')}
 CANDIDATE NAME: ${S.name||'[Your Name]'}${resumeCtx}
 
 Guidelines:
@@ -3284,15 +3203,9 @@ function buildCatTabs(){
 function setCat(el,cat){ curCat=cat==='All'?'all':cat; document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on')); el.classList.add('on'); renderBank(); }
 function setDiff(el,d){ curDiff=d; document.querySelectorAll('.dc').forEach(c=>c.classList.remove('on')); el.classList.add('on'); renderBank(); }
 
-// Bank reviewed state — persisted in localStorage
-let bankReviewed = new Set(JSON.parse(localStorage.getItem('hiq_reviewed')||'[]'));
-function saveReviewed(){ localStorage.setItem('hiq_reviewed', JSON.stringify([...bankReviewed])); }
-function clearReviewed(){ if(!confirm('Reset all reviewed questions?')) return; bankReviewed.clear(); saveReviewed(); renderBank(); toast('Progress reset'); }
-
 function renderBank(){
   buildCatTabs();
   buildCompanyFilter();
-  renderBankStats();
   const q=(document.getElementById('bq')?.value||'').toLowerCase();
   const filtered=BANK.filter(item=>{
     const mc=curCat==='all'||item.cat===curCat;
@@ -3301,75 +3214,36 @@ function renderBank(){
     const mq=!q||item.q.toLowerCase().includes(q)||item.company.toLowerCase().includes(q)||item.a.toLowerCase().includes(q)||item.cat.toLowerCase().includes(q);
     return mc&&md&&mco&&mq;
   });
-
-  const total     = BANK.length;
-  const revCount  = bankReviewed.size;
-  const revPct    = total ? Math.round((revCount/total)*100) : 0;
-
-  // Update progress bar
-  const prog = document.getElementById('bankProgress');
-  if(prog){
-    prog.style.display = revCount>0 ? 'flex' : 'none';
-    const fill = document.getElementById('bpFill');
-    const cnt  = document.getElementById('bpCount');
-    if(fill) fill.style.width = revPct+'%';
-    if(cnt)  cnt.textContent  = `${revCount} / ${total} reviewed (${revPct}%)`;
-  }
-
+  const total=BANK.length;
   document.getElementById('bmeta').textContent=`${filtered.length} of ${total} questions`;
-  document.getElementById('qaGrid').innerHTML = filtered.map((item,idx)=>{
-    const key     = item.q.slice(0,40); // stable key
-    const isRev   = bankReviewed.has(key);
-    const diffCls = item.diff==='Easy'?'e':item.diff==='Medium'?'m':'h';
-    return `
-    <div class="qcard${isRev?' reviewed':''}" onclick="toggleQCard(this)">
-      <div class="qc-top">
-        <div><div class="qc-cat">${item.cat}</div><div class="qc-co">${item.company}</div></div>
-        <span class="qd ${diffCls}">${item.diff}</span>
-      </div>
+  document.getElementById('qaGrid').innerHTML=filtered.map(item=>`
+    <div class="qcard" onclick="this.classList.toggle('open')">
+      <div class="qc-top"><div><div class="qc-cat">${item.cat}</div><div class="qc-co">${item.company}</div></div><span class="qd ${item.diff==='Easy'?'e':item.diff==='Medium'?'m':'h'}">${item.diff}</span></div>
       <div class="qq">${item.q}</div>
-      <div class="qa" id="qa-${idx}">${item.a}</div>
-      <div class="qfooter">
-        <span class="qhint">Click to reveal answer ↓</span>
-        <div class="q-actions" onclick="event.stopPropagation()">
-          <button class="q-btn" onclick="copyTxt(${JSON.stringify(item.q+'\\n\\n'+item.a)})" title="Copy Q&A">📋 Copy</button>
-          <button class="q-btn rev-btn" onclick="toggleReviewed(this,'${key.replace(/'/g,"\\'")}')" title="${isRev?'Mark unreviewed':'Mark reviewed'}">${isRev?'✓ Done':'Mark done'}</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('')||`<div class="empty" style="grid-column:1/-1"><div class="ei">🔍</div><h3>No questions match</h3><p>Try clearing some filters</p></div>`;
+      <div class="qa">${item.a}</div>
+      <div class="qfooter"><span class="qhint">Tap to reveal answer ↓</span></div>
+    </div>`).join('')||`<div class="empty" style="grid-column:1/-1"><div class="ei">🔍</div><h3>No questions match</h3><p>Try clearing some filters</p></div>`;
 }
 
-function toggleQCard(card){
-  card.classList.toggle('open');
-  const hint = card.querySelector('.qhint');
-  if(hint) hint.textContent = card.classList.contains('open') ? 'Click to collapse ↑' : 'Click to reveal answer ↓';
-}
+async function genQs(){
+  const jd=document.getElementById('genJD').value.trim();
+  const type=document.getElementById('genType').value;
+  const n=document.getElementById('genN').value;
+  if(!jd){ toast('Paste a job description first'); return; }
+  if(!S.gkey){ toast('Add Groq API key in settings'); return; }
+  document.getElementById('genOut').innerHTML=`<div class="ai-box dim">Generating ${n} ${type} questions with Groq AI…</div>`;
+  const res=await groq(`You are a senior technical interviewer. Generate exactly ${n} ${type} interview questions with detailed answer frameworks.
 
-function toggleReviewed(btn, key){
-  if(bankReviewed.has(key)){
-    bankReviewed.delete(key);
-    btn.textContent = 'Mark done';
-    btn.closest('.qcard').classList.remove('reviewed');
-  } else {
-    bankReviewed.add(key);
-    btn.textContent = '✓ Done';
-    btn.closest('.qcard').classList.add('reviewed');
-  }
-  saveReviewed();
-  // Update progress bar without full re-render
-  const total  = BANK.length;
-  const cnt    = bankReviewed.size;
-  const pct    = total ? Math.round((cnt/total)*100) : 0;
-  const prog   = document.getElementById('bankProgress');
-  const fill   = document.getElementById('bpFill');
-  const cntEl  = document.getElementById('bpCount');
-  if(prog)  prog.style.display  = cnt>0 ? 'flex' : 'none';
-  if(fill)  fill.style.width    = pct+'%';
-  if(cntEl) cntEl.textContent   = `${cnt} / ${total} reviewed (${pct}%)`;
-}
+JOB DESCRIPTION:
+${jd}
 
-// genQs defined later with improved card-based rendering
+Format EACH as:
+Q[N]: [Question text]
+Framework: [3-4 sentence answer framework with key points and what makes an excellent answer]
+
+Generate all ${n} questions:`,1600);
+  document.getElementById('genOut').innerHTML=`<div class="ai-box">${res}</div>`;
+}
 
 // ═══════════════════════════════════════════════
 // ATS KEYWORD CHECKER ENGINE
@@ -4233,7 +4107,6 @@ const _origSwAnalytics = window.sw;
 window.sw = function(name, el){
   _origSwAnalytics(name, el);
   if(name==='analytics') renderAnalytics();
-  if(name==='bank') renderBankStats();
 };
 
 // ═══════════════════════════════════════════════
@@ -4312,7 +4185,7 @@ function exportAllData(){
 
 function resetAllData(){
   if(!confirm('This will permanently delete all your HireIQ data — tracker, resume, alerts, and settings. This cannot be undone.\n\nAre you absolutely sure?')) return;
-  ['hiq_name','hiq_gkey','hiq_rkey','hiq_email','hiq_theme','hiq_resume','hiq_apps','hiq_alerts','hiq_notifs','hiq_search_hist','hiq_tkview','hiq_fontsize','hiq_install_dismissed','hiq_reviewed'].forEach(k=>localStorage.removeItem(k));
+  ['hiq_name','hiq_gkey','hiq_rkey','hiq_email','hiq_theme','hiq_resume','hiq_apps','hiq_alerts','hiq_notifs','hiq_search_hist','hiq_tkview','hiq_fontsize','hiq_install_dismissed'].forEach(k=>localStorage.removeItem(k));
   location.reload();
 }
 
@@ -4361,183 +4234,6 @@ function annotateLinkedInJobs(jobs){
                     (j.apply_options||[]).some(o=>(o.title||'').toLowerCase().includes('easy apply'));
     return j;
   });
-}
-
-// ═══════════════════════════════════════════════
-// INTERVIEW BANK — STUDY MODE + EXTRAS
-// ═══════════════════════════════════════════════
-
-// Category stats strip
-function renderBankStats(){
-  const el = document.getElementById('bankStats');
-  if(!el) return;
-  const cats = {};
-  BANK.forEach(item => {
-    if(!cats[item.cat]) cats[item.cat] = {total:0, reviewed:0};
-    cats[item.cat].total++;
-    const key = item.q.slice(0,40);
-    if(bankReviewed.has(key)) cats[item.cat].reviewed++;
-  });
-  const colors = {
-    'DSA':'#60a5fa','System Design':'#a78bfa',
-    'Behavioral':'#fb923c','Troubleshooting':'#4ade80',
-    'Leadership':'#f59e0b','Situational':'#ec4899'
-  };
-  el.innerHTML = Object.entries(cats).map(([cat,{total,reviewed}])=>{
-    const pct = Math.round((reviewed/total)*100);
-    const col = colors[cat]||'var(--accent)';
-    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.5rem .85rem;cursor:pointer;min-width:100px"
-      onclick="setCat(this,'${cat}')" title="${reviewed}/${total} reviewed">
-      <div style="font-family:var(--font-d);font-weight:700;font-size:.7rem;color:${col};margin-bottom:3px">${cat}</div>
-      <div style="display:flex;align-items:center;gap:.4rem">
-        <div style="flex:1;background:var(--surface2);border-radius:3px;height:5px;overflow:hidden">
-          <div style="height:100%;width:${pct}%;background:${col};border-radius:3px;transition:width .4s"></div>
-        </div>
-        <span style="font-size:.68rem;color:var(--text3);font-family:var(--font-d)">${reviewed}/${total}</span>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// Random question
-function surpriseQ(){
-  const unreviewed = BANK.filter(item => !bankReviewed.has(item.q.slice(0,40)));
-  const pool = unreviewed.length ? unreviewed : BANK;
-  const item = pool[Math.floor(Math.random()*pool.length)];
-  // Switch to bank tab and search for it
-  const bankTab = Array.from(document.querySelectorAll('.tab')).find(t=>t.textContent.includes('Interview Bank'));
-  if(bankTab) sw('bank', bankTab);
-  const bq = document.getElementById('bq');
-  if(bq){ bq.value = item.q.slice(0,30); renderBank(); }
-  // Open first card
-  setTimeout(()=>{
-    const cards = document.querySelectorAll('#qaGrid .qcard');
-    if(cards[0]) toggleQCard(cards[0]);
-  }, 100);
-}
-
-// Study Mode
-let studyQueue = [], studyIdx = 0, studyCorrect = 0;
-
-function studyMode(){
-  // Build queue of unreviewed questions, shuffled
-  const unreviewed = BANK.filter(item => !bankReviewed.has(item.q.slice(0,40)));
-  studyQueue = (unreviewed.length ? unreviewed : BANK)
-    .sort(()=>Math.random()-.5)
-    .slice(0,20); // cap at 20 per session
-  studyIdx = 0; studyCorrect = 0;
-  if(!studyQueue.length){ toast('No questions available'); return; }
-  openMod('studyMod');
-  renderStudyCard();
-}
-
-function renderStudyCard(){
-  const item = studyQueue[studyIdx];
-  if(!item){ studyFinish(); return; }
-
-  const diffCls = item.diff==='Easy'?'e':item.diff==='Medium'?'m':'h';
-  document.getElementById('studyProgress').textContent = `Question ${studyIdx+1} of ${studyQueue.length} · ${studyCorrect} correct`;
-  document.getElementById('studyCat').textContent  = item.cat;
-  document.getElementById('studyCat').className    = 'qd '+diffCls;
-  document.getElementById('studyDiff').textContent = item.diff;
-  document.getElementById('studyDiff').className   = 'qd '+diffCls;
-  document.getElementById('studyCo').textContent   = item.company;
-  document.getElementById('studyQ').textContent    = item.q;
-  document.getElementById('studyA').textContent    = item.a;
-  document.getElementById('studyA').style.display  = 'none';
-  document.getElementById('studyRevealBtn').style.display = 'inline-flex';
-  document.getElementById('studyNextBtn').style.display   = 'none';
-  document.getElementById('studySkipBtn').style.display   = 'none';
-  document.getElementById('studyBar').style.width  = ((studyIdx/studyQueue.length)*100)+'%';
-}
-
-function studyReveal(){
-  document.getElementById('studyA').style.display = 'block';
-  document.getElementById('studyRevealBtn').style.display = 'none';
-  document.getElementById('studyNextBtn').style.display   = 'inline-flex';
-  document.getElementById('studySkipBtn').style.display   = 'inline-flex';
-}
-
-function studyNext(correct, skip=false){
-  const item = studyQueue[studyIdx];
-  if(item && correct && !skip){
-    studyCorrect++;
-    // Mark as reviewed
-    const key = item.q.slice(0,40);
-    bankReviewed.add(key);
-    saveReviewed();
-  }
-  studyIdx++;
-  if(studyIdx >= studyQueue.length){ studyFinish(); return; }
-  renderStudyCard();
-}
-
-function studyFinish(){
-  const total = studyQueue.length;
-  document.getElementById('studyQ').innerHTML = `
-    <div style="text-align:center;padding:1rem 0">
-      <div style="font-size:2.5rem;margin-bottom:.75rem">${studyCorrect===total?'🏆':studyCorrect>total/2?'💪':'📚'}</div>
-      <div style="font-family:var(--font-d);font-weight:800;font-size:1.25rem;margin-bottom:.5rem">${studyCorrect} / ${total} correct</div>
-      <div style="color:var(--text2);font-size:.85rem">${studyCorrect===total?'Perfect session!':studyCorrect>total/2?'Good work — keep practising the ones you missed.':'Keep going — repetition is the key.'}</div>
-    </div>`;
-  document.getElementById('studyA').style.display = 'none';
-  document.getElementById('studyRevealBtn').style.display = 'none';
-  document.getElementById('studyNextBtn').style.display   = 'none';
-  document.getElementById('studySkipBtn').style.display   = 'none';
-  document.getElementById('studyBar').style.width = '100%';
-  document.getElementById('studyProgress').textContent = 'Session complete';
-  renderBank(); // refresh reviewed badges
-  renderBankStats();
-}
-
-// Improved genQs — renders cards inline, not raw AI text
-async function genQs(){
-  const jd   = document.getElementById('genJD').value.trim();
-  const type = document.getElementById('genType').value;
-  const n    = document.getElementById('genN').value;
-  if(!jd){ toast('Paste a job description first'); return; }
-  if(!S.gkey){ toast('Add Groq API key in settings'); return; }
-  const out = document.getElementById('genOut');
-  out.innerHTML=`<div class="ai-box dim" style="margin-top:.75rem">Generating ${n} ${type} questions…</div>`;
-
-  const res = await groq(`You are a senior technical interviewer. Generate exactly ${n} ${type} interview questions with detailed answer frameworks for this role.
-
-JOB DESCRIPTION:
-${jd.slice(0,1500)}
-
-Return ONLY a JSON array, no markdown, no preamble:
-[
-  {"q":"question text","a":"detailed answer framework 2-4 sentences","diff":"Easy|Medium|Hard"},
-  ...
-]`, 1800);
-
-  let items = [];
-  try {
-    const clean = res.replace(/```json|```/g,'').trim();
-    items = JSON.parse(clean);
-  } catch(e) {
-    out.innerHTML=`<div class="ai-box" style="margin-top:.75rem">${res}</div>`; return;
-  }
-
-  out.innerHTML = `<div style="margin-top:.85rem;display:flex;flex-direction:column;gap:.6rem">
-    ${items.map((item,i)=>{
-      const diffCls = item.diff==='Easy'?'e':item.diff==='Medium'?'m':'h';
-      return `<div class="qcard" onclick="this.classList.toggle('open')">
-        <div class="qc-top">
-          <div><div class="qc-cat">${type}</div><div class="qc-co">Generated for this role</div></div>
-          <span class="qd ${diffCls}">${item.diff||'Medium'}</span>
-        </div>
-        <div class="qq">${item.q||''}</div>
-        <div class="qa">${item.a||''}</div>
-        <div class="qfooter">
-          <span class="qhint">Click to reveal answer ↓</span>
-          <div class="q-actions" onclick="event.stopPropagation()">
-            <button class="q-btn" onclick="copyTxt(${JSON.stringify((item.q||'')+'\\n\\n'+(item.a||''))})">📋 Copy</button>
-          </div>
-        </div>
-      </div>`;
-    }).join('')}
-  </div>`;
 }
 
 function timeAgo(iso){const s=Math.floor((Date.now()-new Date(iso).getTime())/1000);if(s<60)return 'just now';if(s<3600)return `${Math.floor(s/60)}m ago`;if(s<86400)return `${Math.floor(s/3600)}h ago`;return `${Math.floor(s/86400)}d ago`;}
@@ -4770,38 +4466,49 @@ document.addEventListener('click', e=>{
 });
 // ═══════════════════════════════════════════════
 (function initPWA(){
-  // Inject manifest inline as a data: URI — works on both Vercel and local file
+  // Inject manifest as blob so it works from a local file
   const manifest = {
     name: 'HireIQ — Job Search Agent',
     short_name: 'HireIQ',
     description: 'AI-powered job search, resume builder, ATS checker & mock interviewer',
-    start_url: '/',
-    scope: '/',
+    start_url: '.',
     display: 'standalone',
     background_color: '#080c10',
     theme_color: '#0ea47a',
     orientation: 'portrait-primary',
     icons: [
-      {
-        src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='38' fill='%230ea47a'/><text y='140' x='96' font-size='110' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>H</text></svg>",
-        sizes: '192x192',
-        type: 'image/svg+xml'
-      },
-      {
-        src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%230ea47a'/><text y='370' x='256' font-size='300' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>H</text></svg>",
-        sizes: '512x512',
-        type: 'image/svg+xml',
-        purpose: 'any maskable'
-      }
+      { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='38' fill='%230ea47a'/><text y='140' x='96' font-size='110' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>H</text></svg>", sizes: '192x192', type: 'image/svg+xml' },
+      { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%230ea47a'/><text y='370' x='256' font-size='300' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>H</text></svg>", sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
     ]
   };
   try {
-    const url  = 'data:application/json,' + encodeURIComponent(JSON.stringify(manifest));
+    const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+    const url  = URL.createObjectURL(blob);
     const link = document.getElementById('pwaManifest');
     if(link) link.href = url;
   } catch(e){}
 
-  // SW already registered in registerSW() above via /sw.js — no duplicate needed here
+  // Register SW for offline support — blob method works on file://, 
+  // silently skipped on hosted HTTPS (Vercel) where blob SW is blocked
+  if('serviceWorker' in navigator){
+    const swCode = `
+const CACHE='hireiq-v6';
+const ASSETS=['./'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
+self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
+  const clone=res.clone();
+  caches.open(CACHE).then(c=>c.put(e.request,clone));
+  return res;
+}).catch(()=>r))));
+`;
+    try {
+      const swBlob = new Blob([swCode],{type:'application/javascript'});
+      const swUrl  = URL.createObjectURL(swBlob);
+      navigator.serviceWorker.register(swUrl,{scope:'./'})
+        .then(()=>console.log('[HireIQ] Offline SW registered'))
+        .catch(()=>console.info('[HireIQ] Offline SW unavailable on this host (expected on Vercel)'));
+    } catch(e){}
+  }
 
   // Install banner
   let deferredPrompt = null;
