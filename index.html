@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='38' fill='%230ea47a'/><text y='140' x='96' font-size='110' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>H</text></svg>">
 <link rel="manifest" id="pwaManifest">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
 /* ═══════════════════════════════════════════
@@ -22,7 +22,7 @@
   --radius:14px; --radius-sm:8px;
   --accent:#0ea47a; --accent-glow:rgba(14,164,122,0.18);
   --accent2:#6c5ce7; --accent3:#e17055; --accent-light:#00d9a0;
-  --font-d:'Syne',sans-serif; --font-b:'DM Sans',sans-serif;
+  --font-d:'Inter',sans-serif; --font-b:'DM Sans',sans-serif;
   --ease:0.22s cubic-bezier(.4,0,.2,1);
 }
 [data-theme="dark"]{
@@ -53,7 +53,7 @@
 ═══════════════════════════════════════════ */
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:var(--font-b);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background var(--ease),color var(--ease);}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:36px 36px;pointer-events:none;z-index:0;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
@@ -92,6 +92,41 @@ header{position:sticky;top:0;z-index:200;background:var(--hbg);backdrop-filter:b
 .th-btn[data-t="light"]{background:#f0f4f8;}
 .th-btn.on{border-color:var(--accent);transform:scale(1.12);}
 
+/* ── Mobile responsive ───────────────────────── */
+@media(max-width:600px){
+  header{padding:0 1rem;gap:.45rem;height:56px;}
+  .theme-sw{display:none;}
+  .api-pill{display:none;}
+  main{padding:1.1rem .85rem;}
+  .logo{font-size:1.1rem;}
+  nav{padding:0 .5rem;}
+  .tab{padding:0 12px;font-size:.73rem;}
+  .jobs-grid{grid-template-columns:1fr;}
+  .ob-card{padding:1.75rem 1.25rem;}
+  .analytics-grid{grid-template-columns:repeat(2,1fr);}
+  .salary-layout{grid-template-columns:1fr;}
+  #panel-negotiate>div:nth-child(2){grid-template-columns:1fr;}
+  .kanban-board{grid-template-columns:repeat(2,minmax(160px,1fr));}
+  .modal{padding:1.25rem;}
+  .mtab{font-size:.73rem;padding:7px 10px;}
+  .sec-h h2{font-size:1.2rem;}
+  .bank-progress{flex-wrap:wrap;gap:.5rem;}
+  .user-dropdown{right:-10px;}
+}
+@media(max-width:400px){
+  .kanban-board{grid-template-columns:1fr;}
+  .analytics-grid{grid-template-columns:1fr;}
+  .uname{display:none;}              /* show avatar only on very small screens */
+  header{gap:.35rem;}
+}
+/* Large screens — prevent content from feeling lost on wide monitors */
+@media(min-width:1400px){
+  main{padding:2rem 2.5rem;}
+  .hero{padding:3rem 0 2rem;}
+  .hero h1{font-size:2.6rem;}
+  .jobs-grid{grid-template-columns:repeat(auto-fill,minmax(360px,1fr));}
+}
+
 /* BELL */
 .bell-wrap{position:relative;cursor:pointer;}
 .bell-btn{width:38px;height:38px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;transition:all var(--ease);}
@@ -122,8 +157,17 @@ header{position:sticky;top:0;z-index:200;background:var(--hbg);backdrop-filter:b
 
 .user-pill{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 13px 4px 4px;cursor:pointer;transition:all var(--ease);}
 .user-pill:hover{border-color:var(--accent);}
-.uav{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-weight:800;font-size:.72rem;color:#fff;}
+.uav{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-weight:800;font-size:.72rem;color:#fff;flex-shrink:0;}
 .uname{font-size:.82rem;font-weight:500;}
+.user-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);min-width:190px;z-index:9000;overflow:hidden;display:none;animation:popIn .15s ease;}
+.user-dropdown.open{display:block;}
+.ud-header{padding:.75rem 1rem;border-bottom:1px solid var(--border);}
+.ud-name{font-weight:700;color:var(--text);font-size:.82rem;margin-bottom:1px;}
+.ud-email{color:var(--text3);font-size:.71rem;}
+.ud-item{display:flex;align-items:center;gap:.65rem;padding:.65rem 1rem;font-size:.82rem;color:var(--text2);cursor:pointer;transition:background var(--ease);}
+.ud-item:hover{background:var(--surface2);color:var(--text);}
+.ud-item.danger{color:#f87171;}
+.ud-item.danger:hover{background:rgba(248,113,113,.08);}
 
 /* ═══════════════════════════════════════════
    NAV
@@ -176,10 +220,32 @@ textarea.ta::placeholder{color:var(--text3);}
 .ai-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;font-size:.82rem;line-height:1.78;white-space:pre-wrap;color:var(--text);max-height:440px;overflow-y:auto;}
 .ai-box.dim{color:var(--text3);font-style:italic;}
 
+/* ── Skeleton loading ──────────────────────────── */
+@keyframes shimmer{0%{background-position:-600px 0}100%{background-position:600px 0}}
+.skel{
+  background:linear-gradient(90deg,var(--surface2) 25%,var(--surface) 50%,var(--surface2) 75%);
+  background-size:600px 100%;
+  animation:shimmer 1.4s ease-in-out infinite;
+  border-radius:4px;
+}
+.skel-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;display:flex;flex-direction:column;gap:.75rem;}
+.skel-row{display:flex;gap:.65rem;align-items:center;}
+.skel-circle{width:40px;height:40px;border-radius:50%;flex-shrink:0;}
+.skel-line{height:12px;border-radius:4px;}
+.skel-block{height:10px;border-radius:4px;}
+
+/* ── Spinner ───────────────────────────────────── */
 .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .75s linear infinite;margin:0 auto 1rem;}
 .loading{text-align:center;padding:3rem;color:var(--text2);}
+
+/* ── Empty states ──────────────────────────────── */
 .empty{text-align:center;padding:3.5rem 2rem;color:var(--text2);}
 .empty .ei{font-size:2.8rem;margin-bottom:1rem;}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3.5rem 1.5rem;text-align:center;gap:.5rem;}
+.empty-state .es-icon{font-size:3rem;margin-bottom:.5rem;filter:grayscale(30%);}
+.empty-state .es-title{font-family:var(--font-d);font-weight:700;font-size:.98rem;color:var(--text);margin-bottom:.2rem;}
+.empty-state .es-desc{font-size:.83rem;color:var(--text3);line-height:1.6;max-width:280px;}
+.empty-state .es-action{margin-top:1rem;}
 .empty h3{font-family:var(--font-d);color:var(--text);margin-bottom:.5rem;}
 
 ::-webkit-scrollbar{width:5px;height:5px;}
@@ -189,12 +255,29 @@ textarea.ta::placeholder{color:var(--text3);}
 /* ═══════════════════════════════════════════
    SEARCH
 ═══════════════════════════════════════════ */
-.hero{text-align:center;padding:1.75rem 0 1.5rem;}
-.greet{font-size:.88rem;color:var(--text2);font-family:var(--font-d);margin-bottom:.4rem;}
+.hero{text-align:center;padding:2.5rem 0 1.75rem;max-width:860px;margin:0 auto;position:relative;}
+.hero::before{
+  content:'';
+  position:absolute;
+  top:-40px;left:50%;
+  transform:translateX(-50%);
+  width:600px;max-width:100%;
+  height:300px;
+  background:radial-gradient(ellipse 60% 55% at 50% 45%, rgba(14,164,122,.13) 0%, transparent 70%);
+  animation:heroGlow 5s ease-in-out infinite alternate;
+  pointer-events:none;
+  z-index:0;
+}
+@keyframes heroGlow{
+  from{opacity:.6;transform:translateX(-50%) scale(1);}
+  to{opacity:1;transform:translateX(-50%) scale(1.12);}
+}
+.hero>*{position:relative;z-index:1;}
+.greet{font-size:.88rem;color:var(--text2);font-family:var(--font-d);margin-bottom:.5rem;}
 .greet strong{color:var(--accent);}
-.hero h1{font-family:var(--font-d);font-size:clamp(1.7rem,4vw,2.7rem);font-weight:800;line-height:1.12;margin-bottom:.5rem;}
+.hero h1{font-family:var(--font-d);font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:800;line-height:1.15;letter-spacing:-.03em;margin-bottom:.6rem;}
 .hero h1 em{font-style:normal;color:var(--accent);}
-.hero>p{color:var(--text2);font-size:.9rem;margin-bottom:1.6rem;}
+.hero>p{color:var(--text2);font-size:.9rem;margin-bottom:1.75rem;}
 .sbox{display:flex;gap:.55rem;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:.65rem;max-width:880px;margin:0 auto;box-shadow:var(--shadow);}
 .sbox input{flex:1;min-width:140px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 13px;color:var(--text);font-family:var(--font-b);font-size:.86rem;transition:border-color var(--ease);}
 .sbox input:focus{outline:none;border-color:var(--accent);}
@@ -905,9 +988,18 @@ textarea.ta::placeholder{color:var(--text3);}
     <div class="api-dot" id="apiDot"></div>
     <span id="apiSt">No key</span>
   </div>
-  <div class="user-pill" onclick="openSettings()">
+  <div class="user-pill" id="userPill" onclick="toggleUserMenu(event)">
     <div class="uav" id="uav">?</div>
     <span class="uname" id="uname">Guest</span>
+    <div class="user-dropdown" id="userDropdown">
+      <div class="ud-header">
+        <div class="ud-name" id="udName">Guest</div>
+        <div class="ud-email" id="udEmail"></div>
+      </div>
+      <div class="ud-item" onclick="closeMod();openSettings()">⚙️ Settings</div>
+      <div class="ud-item" onclick="sw('analytics',document.querySelector('.tab:nth-child(7))'))">📊 Analytics</div>
+      <div class="ud-item danger" onclick="logoutHireIQ()">🚪 Log out</div>
+    </div>
   </div>
 </header>
 
@@ -923,6 +1015,7 @@ textarea.ta::placeholder{color:var(--text3);}
   <div class="tab" onclick="sw('bank',this)">💡 Interview Bank</div>
   <div class="tab" onclick="sw('mock',this)">🎤 Mock Interview</div>
   <div class="tab" onclick="sw('salary',this)">💰 Salary</div>
+  <div class="tab" onclick="sw('negotiate',this)">🤝 Negotiation</div>
 </nav>
 
 <main>
@@ -932,8 +1025,8 @@ textarea.ta::placeholder{color:var(--text3);}
 <div class="panel on" id="panel-search">
   <div class="hero">
     <div class="greet">Welcome back, <strong id="greetN">there</strong> 👋</div>
-    <h1>Land your <em>dream role</em><br>with AI on your side</h1>
-    <p>Search · Match · Apply · Track · Prep — all in one place, all free</p>
+    <h1>Your AI-powered<br><em>job search toolkit</em></h1>
+    <p>Search live jobs · Tailor your resume · Ace interviews · Track applications</p>
     <div class="sbox">
       <div class="ac-wrap"><input id="sTitle" placeholder="Job title (e.g. ML Engineer)" autocomplete="off" oninput="acInput(this,'title')" onkeydown="acKey(event,'title')" onfocus="acInput(this,'title')" onblur="acBlur('title')" /><div class="ac-drop" id="ac-title"></div></div>
       <div class="ac-wrap"><input id="sLoc"   placeholder="Location (e.g. Austin, TX)"  autocomplete="off" oninput="acInput(this,'loc')"   onkeydown="acKey(event,'loc')"   onfocus="acInput(this,'loc')"   onblur="acBlur('loc')"   /><div class="ac-drop" id="ac-loc"></div></div>
@@ -965,7 +1058,11 @@ textarea.ta::placeholder{color:var(--text3);}
     <div class="chip" onclick="fc(this,'w','onsite')">On-site</div>
   </div>
   <div id="searchOut">
-    <div class="empty"><div class="ei">🚀</div><h3>Ready when you are</h3><p>Search by title, location, or skills to find opportunities</p></div>
+    <div class="empty-state" id="searchInitial">
+      <div class="es-icon">🔍</div>
+      <div class="es-title">Search live job listings</div>
+      <div class="es-desc">Enter a job title, location, or skills above and hit Search. Results come from LinkedIn, Indeed, and Glassdoor in real time.</div>
+    </div>
   </div>
 </div>
 
@@ -1039,7 +1136,12 @@ textarea.ta::placeholder{color:var(--text3);}
   <!-- ACTIVE ALERTS -->
   <div style="font-family:var(--font-d);font-weight:700;font-size:.95rem;margin-bottom:1rem">Active Alerts <span id="alertCountLabel" style="color:var(--text2);font-weight:400;font-size:.8rem"></span></div>
   <div class="alerts-grid" id="alertsGrid">
-    <div class="empty" style="grid-column:1/-1"><div class="ei">🔕</div><h3>No alerts yet</h3><p>Create an alert above or save a search from the Search tab</p></div>
+    <div class="empty-state" id="alertsEmpty">
+      <div class="es-icon">🔕</div>
+      <div class="es-title">No alerts yet</div>
+      <div class="es-desc">Create an alert above and HireIQ will check for new jobs on your schedule — every 30 minutes up to once a day.</div>
+      <div class="es-action"><button class="btn btn-o" onclick="document.getElementById('af-name').focus()">Create your first alert</button></div>
+    </div>
   </div>
 </div>
 
@@ -1473,6 +1575,75 @@ textarea.ta::placeholder{color:var(--text3);}
   </div>
 </div>
 
+<!-- NEGOTIATION COACH PANEL -->
+<div class="panel" id="panel-negotiate">
+  <div class="sec-h">
+    <h2>🤝 Offer Negotiation Coach</h2>
+    <p>Enter your offer details — AI writes your counter-offer script, BATNA framing, and a ready-to-send negotiation email</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start">
+
+    <!-- LEFT: inputs -->
+    <div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem">
+        <div style="font-family:var(--font-d);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.7px;color:var(--text2);margin-bottom:1rem">The offer</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem">
+          <div class="fg" style="margin:0">
+            <label>Base salary offered</label>
+            <input type="text" id="neg-offered" placeholder="e.g. $130,000" />
+          </div>
+          <div class="fg" style="margin:0">
+            <label>Your target salary</label>
+            <input type="text" id="neg-target" placeholder="e.g. $150,000" />
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem">
+          <div class="fg" style="margin:0">
+            <label>Equity / RSUs <span style="color:var(--text3);font-size:.7rem">optional</span></label>
+            <input type="text" id="neg-equity" placeholder="e.g. $40k over 4 years" />
+          </div>
+          <div class="fg" style="margin:0">
+            <label>Signing bonus <span style="color:var(--text3);font-size:.7rem">optional</span></label>
+            <input type="text" id="neg-signing" placeholder="e.g. $10,000" />
+          </div>
+        </div>
+        <div class="fg" style="margin-bottom:.75rem">
+          <label>Role &amp; company</label>
+          <input type="text" id="neg-role" placeholder="e.g. Senior Engineer at Stripe" />
+        </div>
+        <div class="fg" style="margin:0">
+          <label>Your leverage <span style="color:var(--text3);font-size:.7rem">optional but powerful</span></label>
+          <textarea class="ta" id="neg-leverage" placeholder="e.g. 2 competing offers, 6 years experience, rare skills in X..." style="min-height:70px"></textarea>
+        </div>
+      </div>
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem">
+        <div style="font-family:var(--font-d);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.7px;color:var(--text2);margin-bottom:.85rem">What to generate</div>
+        <div style="display:flex;flex-direction:column;gap:.5rem">
+          <label style="display:flex;align-items:center;gap:.6rem;font-size:.84rem;cursor:pointer"><input type="checkbox" id="neg-counter" checked style="accent-color:var(--accent)"> Counter-offer script (what to say)</label>
+          <label style="display:flex;align-items:center;gap:.6rem;font-size:.84rem;cursor:pointer"><input type="checkbox" id="neg-batna" checked style="accent-color:var(--accent)"> BATNA analysis (your walkaway point)</label>
+          <label style="display:flex;align-items:center;gap:.6rem;font-size:.84rem;cursor:pointer"><input type="checkbox" id="neg-email" checked style="accent-color:var(--accent)"> Ready-to-send negotiation email</label>
+          <label style="display:flex;align-items:center;gap:.6rem;font-size:.84rem;cursor:pointer"><input type="checkbox" id="neg-equity-ask" style="accent-color:var(--accent)"> Equity counter-offer strategy</label>
+        </div>
+      </div>
+
+      <button class="btn btn-p" onclick="runNegotiation()" style="width:100%;padding:11px;font-size:.9rem">
+        ✨ Generate Negotiation Strategy
+      </button>
+    </div>
+
+    <!-- RIGHT: output -->
+    <div id="negResult">
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 1.5rem;text-align:center;color:var(--text3)">
+        <div style="font-size:2.5rem;margin-bottom:.75rem">🤝</div>
+        <p style="font-size:.84rem;line-height:1.65;max-width:300px">Enter your offer details and generate a personalised negotiation strategy — including the exact words to use.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <div class="panel" id="panel-bank">
   <div class="sec-h"><h2>Interview Bank</h2><p>145 questions · 46 companies · DSA · System Design · Behavioral · Troubleshooting</p></div>
 
@@ -1649,6 +1820,14 @@ textarea.ta::placeholder{color:var(--text3);}
         <label style="display:flex;align-items:center;justify-content:space-between">Email <span style="font-size:.7rem;color:var(--text3)">optional</span></label>
         <input type="email" id="s-email" placeholder="you@email.com" />
       </div>
+      <div class="fg" style="margin-bottom:0">
+        <label style="display:flex;align-items:center;justify-content:space-between">
+          LinkedIn URL
+          <span style="font-size:.7rem;color:var(--text3)">optional</span>
+        </label>
+        <input type="url" id="s-linkedin" placeholder="https://linkedin.com/in/yourname" />
+        <small>Auto-included in cover letters and follow-up emails</small>
+      </div>
     </div>
 
     <!-- API Keys -->
@@ -1730,15 +1909,16 @@ textarea.ta::placeholder{color:var(--text3);}
 // STATE
 // ═══════════════════════════════════════════════
 let S = {
-  name:   localStorage.getItem('hiq_name')||'',
-  gkey:   localStorage.getItem('hiq_gkey')||'',
-  rkey:   localStorage.getItem('hiq_rkey')||'',
-  email:  localStorage.getItem('hiq_email')||'',
-  theme:  localStorage.getItem('hiq_theme')||'dark',
-  resume: localStorage.getItem('hiq_resume')||'',
-  apps:   JSON.parse(localStorage.getItem('hiq_apps')||'[]'),
-  alerts: JSON.parse(localStorage.getItem('hiq_alerts')||'[]'),
-  notifs: JSON.parse(localStorage.getItem('hiq_notifs')||'[]'),
+  name:     localStorage.getItem('hiq_name')||'',
+  gkey:     localStorage.getItem('hiq_gkey')||'',
+  rkey:     localStorage.getItem('hiq_rkey')||'',
+  email:    localStorage.getItem('hiq_email')||'',
+  linkedin: localStorage.getItem('hiq_linkedin')||'',
+  theme:    localStorage.getItem('hiq_theme')||'dark',
+  resume:   localStorage.getItem('hiq_resume')||'',
+  apps:     JSON.parse(localStorage.getItem('hiq_apps')||'[]'),
+  alerts:   JSON.parse(localStorage.getItem('hiq_alerts')||'[]'),
+  notifs:   JSON.parse(localStorage.getItem('hiq_notifs')||'[]'),
 };
 let allJobs=[], curJob=null, curCat='all', curDiff='all';
 let lastSearch={title:'',loc:'',kw:''};
@@ -1783,6 +1963,11 @@ function applyState(){
   document.getElementById('greetN').textContent = S.name.split(' ')[0]||'there';
   document.getElementById('uname').textContent  = S.name||'Guest';
   document.getElementById('uav').textContent    = S.name ? S.name[0].toUpperCase() : '?';
+  // Populate user dropdown
+  const udName  = document.getElementById('udName');
+  const udEmail = document.getElementById('udEmail');
+  if(udName)  udName.textContent  = S.name||'Guest';
+  if(udEmail) udEmail.textContent = S.email||'';
   if(S.resume){
     document.getElementById('resumeTA').value=S.resume;
     const pv=document.getElementById('resumePrev');
@@ -1797,7 +1982,36 @@ function applyState(){
   document.getElementById('s-gkey').value=S.gkey;
   document.getElementById('s-rkey').value=S.rkey;
   document.getElementById('s-email').value=S.email;
+  const liEl=document.getElementById('s-linkedin'); if(liEl) liEl.value=S.linkedin||'';
   document.getElementById('s-theme').value=S.theme;
+}
+
+function toggleUserMenu(e){
+  e.stopPropagation();
+  const dd = document.getElementById('userDropdown');
+  if(!dd) return;
+  dd.classList.toggle('open');
+}
+// Close dropdown when clicking anywhere else
+document.addEventListener('click', ()=>{
+  document.getElementById('userDropdown')?.classList.remove('open');
+});
+
+function logoutHireIQ(){
+  if(!confirm('Log out of HireIQ?\n\nYour data (tracker, resume, alerts) stays saved in this browser. You\'ll just need to enter your name and API keys again to log back in.')) return;
+  // Clear only auth-related keys — preserve app data
+  ['hiq_name','hiq_gkey','hiq_rkey','hiq_email','hiq_linkedin'].forEach(k=>localStorage.removeItem(k));
+  // Reset state
+  S.name=''; S.gkey=''; S.rkey=''; S.email='';
+  // Show onboarding screen
+  document.getElementById('onboard').style.display='flex';
+  document.getElementById('userDropdown')?.classList.remove('open');
+  // Pre-clear onboarding fields
+  ['ob-name','ob-gkey','ob-rkey','ob-email'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value='';
+  });
+  toast('Logged out. See you soon! 👋');
 }
 
 // ── Onboarding validation ──────────────────────
@@ -1944,6 +2158,7 @@ function saveSettings(){
   S.gkey =document.getElementById('s-gkey').value.trim();
   S.rkey =document.getElementById('s-rkey').value.trim();
   S.email=document.getElementById('s-email').value.trim();
+  S.linkedin=document.getElementById('s-linkedin')?.value.trim()||'';
   S.theme=document.getElementById('s-theme').value;
   const fs = document.getElementById('s-fontsize')?.value||'md';
   applyFontSize(fs);
@@ -2231,7 +2446,7 @@ function renderAlerts(){
   document.getElementById('alertCountLabel').textContent=`(${S.alerts.length} alert${S.alerts.length!==1?'s':''})`;
 
   if(!S.alerts.length){
-    grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ei">🔕</div><h3>No alerts yet</h3><p>Create one above or save a search from the Search tab</p></div>';
+    grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="es-icon">🔕</div><div class="es-title">No alerts yet</div><div class="es-desc">Create an alert above, or go to Search, run a search, and click Save Alert.</div></div>';
     return;
   }
 
@@ -2304,7 +2519,7 @@ async function doSearch(){
   if(!title&&!kw){ toast('Enter a title or skills to search'); return; }
   lastSearch={title,loc,kw};
 
-  document.getElementById('searchOut').innerHTML=`<div class="loading"><div class="spinner"></div><p>Searching opportunities…</p></div>`;
+  document.getElementById('searchOut').innerHTML = skeletonCards(6);
   await sleep(700);
 
   let res;
@@ -2398,8 +2613,40 @@ async function scoreJobs(jobs){
   }catch(e){}
 }
 
+// ── Skeleton loading ────────────────────────────
+// Returns n placeholder cards that match the shape of real job cards.
+// Shows immediately on search click — users see structure, not a spinner.
+function skeletonCards(n=6){
+  const card = `
+  <div class="skel-card">
+    <div class="skel-row">
+      <div class="skel skel-circle"></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+        <div class="skel skel-line" style="width:65%"></div>
+        <div class="skel skel-block" style="width:45%"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px">
+      <div class="skel skel-block" style="width:60px;height:22px;border-radius:20px"></div>
+      <div class="skel skel-block" style="width:70px;height:22px;border-radius:20px"></div>
+      <div class="skel skel-block" style="width:55px;height:22px;border-radius:20px"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px">
+      <div class="skel skel-block" style="width:100%;height:10px"></div>
+      <div class="skel skel-block" style="width:85%;height:10px"></div>
+      <div class="skel skel-block" style="width:70%;height:10px"></div>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:2px">
+      <div class="skel skel-block" style="width:50px;height:22px;border-radius:20px"></div>
+      <div class="skel skel-block" style="width:60px;height:22px;border-radius:20px"></div>
+      <div class="skel skel-block" style="width:55px;height:22px;border-radius:20px"></div>
+    </div>
+  </div>`;
+  return `<div class="jobs-grid">${Array(n).fill(card).join('')}</div>`;
+}
+
 function renderJobs(jobs){
-  if(!jobs.length){ document.getElementById('searchOut').innerHTML=`<div class="empty"><div class="ei">🔍</div><h3>No results</h3><p>Try different keywords</p></div>`; return; }
+  if(!jobs.length){ document.getElementById('searchOut').innerHTML=`<div class="empty-state"><div class="es-icon">🔍</div><div class="es-title">No results found</div><div class="es-desc">Try a broader job title, a different location, or remove some skills from your search.</div></div>`; return; }
   // Annotate LinkedIn / Easy Apply before rendering
   jobs = annotateLinkedInJobs(jobs);
   // Store jobs in registry so onclick handlers use a safe numeric index
@@ -2653,7 +2900,8 @@ ROLE: ${j.title}
 COMPANY: ${j.company}
 JOB DESCRIPTION: ${(j.desc||"").slice(0,2000)}
 REQUIREMENTS: ${[...(j.reqs||[]),(j.responsibilities||[])].flat().join('. ')}
-CANDIDATE NAME: ${S.name||'[Your Name]'}${resumeCtx}
+CANDIDATE NAME: ${S.name||'[Your Name]'}
+${S.linkedin?`LINKEDIN: ${S.linkedin}`:''}${resumeCtx}
 
 Guidelines:
 - Tone: ${tone}
@@ -2812,7 +3060,7 @@ function renderKanban(){
 
     const cardsHtml = cards.length
       ? cards.map(a=>kbCardHtml(a, a._i)).join('')
-      : `<div class="kb-empty-drop">Drop cards here</div>`;
+      : `<div class="kb-empty-drop" onclick="openMod('manAdd')" style="cursor:pointer;padding:1.25rem .75rem" title="Click to add application"><div style="font-size:1.1rem;margin-bottom:3px">📭</div><div>Drop cards here</div><div style="font-size:.68rem;opacity:.6;margin-top:2px">or click to add</div></div>`;
 
     return `
     <div class="kb-col" id="kbcol-${col.id}"
@@ -3082,7 +3330,7 @@ function saveManual(){
 // ── List view (table — kept as fallback) ─────
 function renderList(){
   if(!S.apps.length){
-    document.getElementById('tTable').innerHTML=`<div class="empty"><div class="ei">📭</div><h3>No applications yet</h3><p>Save jobs from search or add manually</p></div>`;
+    document.getElementById('tTable').innerHTML=`<div class="empty-state"><div class="es-icon">📋</div><div class="es-title">No applications tracked yet</div><div class="es-desc">Apply to jobs from the Search tab and click "+ Track", or add applications manually using the button above.</div><div class="es-action"><button class="btn btn-p" onclick="openMod('manAdd')">+ Add manually</button></div></div>`;
     return;
   }
   let html=`<div class="tr-row tr-h"><div>Position</div><div>Salary</div><div>Stage</div><div>Date</div><div>Actions</div></div>`;
@@ -3337,7 +3585,7 @@ function renderBank(){
         </div>
       </div>
     </div>`;
-  }).join('')||`<div class="empty" style="grid-column:1/-1"><div class="ei">🔍</div><h3>No questions match</h3><p>Try clearing some filters</p></div>`;
+  }).join('')||`<div class="empty-state" style="grid-column:1/-1"><div class="es-icon">🔍</div><div class="es-title">No questions match</div><div class="es-desc">Try clearing the difficulty filter, switching category, or clearing your search term.</div><div class="es-action"><button class="btn btn-o" onclick="document.getElementById('bq').value='';renderBank()">Clear search</button></div></div>`;
 }
 
 function toggleQCard(card){
@@ -3473,7 +3721,13 @@ function runATS(resumeId, jdId, outId){
   const out=document.getElementById(outId);
   if(!resume||!jd){ toast('Paste both resume and job description first'); return; }
   if(!out) return;
-  out.innerHTML=`<div class="loading"><div class="spinner"></div><p>Analysing keywords…</p></div>`;
+  out.innerHTML=`<div style="padding:1.5rem;display:flex;flex-direction:column;gap:.75rem">
+  <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem">
+    <div class="spinner" style="width:20px;height:20px;border-width:2px;margin:0"></div>
+    <span style="font-size:.83rem;color:var(--text2)">Analysing keywords…</span>
+  </div>
+  ${[80,60,90,45,70].map(w=>`<div style="display:flex;align-items:center;gap:.75rem"><div class="skel skel-block" style="width:${w}px;height:14px;border-radius:10px"></div><div class="skel skel-block" style="flex:1;height:10px"></div></div>`).join('')}
+</div>`;
 
   setTimeout(()=>{
     const kwList=extractATSKeywords(jd);
@@ -3605,6 +3859,7 @@ async function genCoverLetter(resumeId, jdId, outId, variant){
 ${salutation}
 
 APPLICANT NAME: ${name}
+${S.linkedin?`LINKEDIN: ${S.linkedin}`:''}
 COMPANY: ${company}
 JOB DESCRIPTION:
 ${jd}${resumeCtx}
@@ -3620,7 +3875,7 @@ Requirements:
 - Do NOT use clichés like "I am writing to express my interest" or "I would be a great fit"
 - Write in first person, active voice
 
-Start directly with "${salutation}" and end with the signature block "Sincerely,\\n${name}".
+Start directly with "${salutation}" and end with the signature block "Sincerely,\\n${name}${S.linkedin?'\\n'+S.linkedin:''}".
 Output only the complete letter:`;
 
   const res=await groq(prompt,1400);
@@ -3677,6 +3932,7 @@ function fc(el,type,val){document.querySelectorAll('.chip').forEach(c=>{if(c.get
 function persist(){
   localStorage.setItem('hiq_name',S.name);localStorage.setItem('hiq_gkey',S.gkey);
   localStorage.setItem('hiq_rkey',S.rkey);localStorage.setItem('hiq_email',S.email);
+  localStorage.setItem('hiq_linkedin',S.linkedin||'');
   localStorage.setItem('hiq_theme',S.theme);localStorage.setItem('hiq_apps',JSON.stringify(S.apps));
   localStorage.setItem('hiq_alerts',JSON.stringify(S.alerts));localStorage.setItem('hiq_notifs',JSON.stringify(S.notifs));
 }
@@ -3775,6 +4031,7 @@ async function genEmail(type) {
   outEl.innerHTML = `<div class="email-output dim">Writing your email with Groq AI…</div>`;
 
   const name    = S.name || '[Your Name]';
+  const linkedin = S.linkedin ? `\nLINKEDIN: ${S.linkedin}` : '';
   const resume  = S.resume ? `\nAPPLICANT BACKGROUND: ${S.resume.slice(0, 500)}` : '';
   const notes   = a.notes ? `\nAPPLICATION NOTES: ${a.notes}` : '';
 
@@ -3785,7 +4042,7 @@ async function genEmail(type) {
     prompt = `Write a ${tone} thank-you email after a job interview.
 
 ROLE: ${a.title} at ${a.company}
-CANDIDATE NAME: ${name}
+CANDIDATE NAME: ${name}${linkedin}
 INTERVIEW STAGE: ${a.status}${resume}${notes}
 
 Requirements:
@@ -3806,7 +4063,7 @@ Output only the complete email including subject line:`;
     prompt = `Write a ${isRejection ? 'post-rejection networking' : 'polite check-in'} email.
 
 ROLE: ${a.title} at ${a.company}
-CANDIDATE NAME: ${name}
+CANDIDATE NAME: ${name}${linkedin}
 CURRENT STAGE: ${a.status}
 TIME SINCE LAST CONTACT: ${wait}${resume}${notes}
 
@@ -3832,7 +4089,7 @@ Output only the complete email including subject line:`;
     prompt = `Write a professional salary negotiation email.
 
 ROLE: ${a.title} at ${a.company}
-CANDIDATE NAME: ${name}
+CANDIDATE NAME: ${name}${linkedin}
 NEGOTIATION GOAL: ${style}
 ${offer ? `CURRENT OFFER: ${offer}` : ''}${resume}${notes}
 
@@ -3853,7 +4110,7 @@ Output only the complete email including subject line:`;
     prompt = `Write a professional application withdrawal email.
 
 ROLE: ${a.title} at ${a.company}
-CANDIDATE NAME: ${name}
+CANDIDATE NAME: ${name}${linkedin}
 REASON (handle tactfully): ${reason}${notes}
 
 Requirements:
@@ -3988,7 +4245,15 @@ async function estimateSalary(){
   if(!jd){ toast('Paste a job description first'); document.getElementById('sal-jd')?.focus(); return; }
 
   const out = document.getElementById('salaryResult');
-  out.innerHTML = `<div class="loading" style="padding:3rem 1.5rem"><div class="spinner"></div><p style="margin-top:1rem;color:var(--text2)">Analysing the role…</p></div>`;
+  out.innerHTML = `<div class="loading" style="padding:3rem 1.5rem">
+  <div class="spinner"></div>
+  <p style="margin-top:1rem;color:var(--text2);font-size:.88rem">Analysing role and market data…</p>
+  <div style="margin-top:1.25rem;display:flex;flex-direction:column;gap:.5rem;align-items:center">
+    <div class="skel skel-block" style="width:200px;height:36px;border-radius:var(--radius-sm)"></div>
+    <div class="skel skel-block" style="width:240px;height:36px;border-radius:var(--radius-sm)"></div>
+    <div class="skel skel-block" style="width:220px;height:36px;border-radius:var(--radius-sm)"></div>
+  </div>
+</div>`;
 
   const sizeLabel = {startup:'startup (<50 people)',scaleup:'scale-up (50–500)',midmarket:'mid-market company (500–5k)',enterprise:'large enterprise (5k+)',faang:'FAANG or top-tier tech company'}[size];
   const yoeLabel  = {' 0-2':'0–2 years (entry level)','3-5':'3–5 years (mid level)','6-9':'6–9 years (senior)','10+':'10+ years (staff/principal)'}[yoe] || yoe + ' years experience';
@@ -4113,7 +4378,7 @@ function renderAnalytics(){
   const body = document.getElementById('analyticsBody');
   if(!body) return;
   if(!S.apps.length){
-    body.innerHTML=`<div class="an-empty"><div style="font-size:2.5rem;margin-bottom:.75rem">📭</div><p>No tracked applications yet. Add jobs to your Kanban tracker and your analytics will appear here.</p></div>`;
+    body.innerHTML=`<div class="empty-state"><div class="es-icon">📊</div><div class="es-title">No data yet</div><div class="es-desc">Start tracking applications in the Tracker tab and your analytics will appear here — response rates, pipeline funnel, weekly cadence, and more.</div><div class="es-action"><button class="btn btn-o" onclick="sw('tracker',document.querySelector('[onclick*=tracker]'))">Go to Tracker</button></div></div>`;
     return;
   }
 
@@ -4225,7 +4490,34 @@ function renderAnalytics(){
     </div>
 
     <!-- AI tip -->
-    <div class="an-tip">💡 ${tip}</div>`;
+    <div class="an-tip">💡 ${tip}</div>
+
+    <!-- Response rate trend (last 8 weeks) -->
+    ${weeks.length >= 2 ? `
+    <div class="an-chart-wrap" style="margin-top:1.25rem">
+      <div class="an-chart-title">Response rate trend — last ${weeks.length} weeks</div>
+      <div style="display:flex;align-items:flex-end;gap:4px;height:80px;margin-bottom:.5rem">
+        ${weeks.map(w=>{
+          const weekApps = S.apps.filter(a=>{
+            if(!a.addedAt) return false;
+            const d=new Date(a.addedAt);
+            const mon=new Date(d); mon.setDate(d.getDate()-((d.getDay()+6)%7)); mon.setHours(0,0,0,0);
+            return mon.toISOString().slice(0,10)===w;
+          });
+          const total=weekApps.length;
+          const responded=weekApps.filter(a=>a.status!=='Applied').length;
+          const rate=total?Math.round((responded/total)*100):0;
+          const barH=Math.max(4,Math.round(rate*.8));
+          const col=rate>=50?'#4ade80':rate>=20?'#fb923c':'#f87171';
+          return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+            <div style="font-size:.62rem;color:var(--text3);font-family:var(--font-d)">${rate}%</div>
+            <div style="width:100%;height:${barH}px;background:${col};border-radius:3px 3px 0 0;min-height:4px"></div>
+            <div style="font-size:.6rem;color:var(--text3)">${new Date(w+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="font-size:.72rem;color:var(--text3);text-align:center">% of applications that moved beyond Applied stage</div>
+    </div>` : ''}`;
 }
 
 // Hook sw() to render analytics on tab switch
@@ -4287,8 +4579,11 @@ function removeSearchHist(i){
 // FONT SIZE PREFERENCE
 // ═══════════════════════════════════════════════
 function applyFontSize(size){
-  const map = {sm:'13px', md:'15px', lg:'17px'};
-  document.body.style.fontSize = map[size]||'15px';
+  // Must set on <html> — this controls what 1rem equals.
+  // Every element using rem units (which is most of the app) scales together.
+  // sm=14px, md=16px (browser default), lg=18px
+  const map = {sm:'14px', md:'16px', lg:'18px'};
+  document.documentElement.style.fontSize = map[size] || '16px';
   localStorage.setItem('hiq_fontsize', size);
   const sel = document.getElementById('s-fontsize');
   if(sel) sel.value = size;
@@ -4312,7 +4607,7 @@ function exportAllData(){
 
 function resetAllData(){
   if(!confirm('This will permanently delete all your HireIQ data — tracker, resume, alerts, and settings. This cannot be undone.\n\nAre you absolutely sure?')) return;
-  ['hiq_name','hiq_gkey','hiq_rkey','hiq_email','hiq_theme','hiq_resume','hiq_apps','hiq_alerts','hiq_notifs','hiq_search_hist','hiq_tkview','hiq_fontsize','hiq_install_dismissed','hiq_reviewed'].forEach(k=>localStorage.removeItem(k));
+  ['hiq_name','hiq_gkey','hiq_rkey','hiq_email','hiq_linkedin','hiq_theme','hiq_resume','hiq_apps','hiq_alerts','hiq_notifs','hiq_search_hist','hiq_tkview','hiq_fontsize','hiq_install_dismissed','hiq_reviewed'].forEach(k=>localStorage.removeItem(k));
   location.reload();
 }
 
@@ -4321,29 +4616,51 @@ function resetAllData(){
 // ═══════════════════════════════════════════════
 function checkReminders(){
   const today = new Date(); today.setHours(0,0,0,0);
+  const todayKey = today.toISOString().slice(0,10);
   const due = S.apps.filter(a=>{
     if(!a.reminder) return false;
     const rem = new Date(a.reminder); rem.setHours(0,0,0,0);
     return rem <= today;
   });
   if(!due.length) return;
-  // In-app notification
+
+  // In-app notifications (always)
   due.forEach(a=>{
     const msg = `⏰ Follow up on ${a.title} at ${a.company}`;
-    if(!S.notifs.find(n=>n.msg===msg&&n.date===today.toISOString().slice(0,10))){
-      S.notifs.unshift({msg, date:today.toISOString().slice(0,10), ts:Date.now()});
+    if(!S.notifs.find(n=>n.msg===msg&&n.date===todayKey)){
+      S.notifs.unshift({msg, date:todayKey, ts:Date.now()});
     }
   });
   persist();
   updateNotifBell();
-  // Browser notification if permission granted
-  if(Notification.permission==='granted'){
+
+  // Request permission if not granted, then fire browser notifications
+  const fireNotifs = ()=>{
+    if(Notification.permission!=='granted') return;
     due.forEach(a=>{
-      new Notification('HireIQ reminder', {
-        body:`Follow up on your application to ${a.company} for ${a.title}`,
-        icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230ea47a'/><text y='46' x='32' font-size='40' text-anchor='middle' fill='white'>H</text></svg>"
-      });
+      // Use SW if available (works when tab is backgrounded)
+      if(swReg?.showNotification){
+        swReg.showNotification('HireIQ — Follow up', {
+          body: `${a.title} at ${a.company}`,
+          tag:  'reminder-'+a.company+a.title,
+          icon: '/icon-192.png',
+          badge:'/icon-192.png',
+          data: { url:'/' }
+        });
+      } else {
+        new Notification('HireIQ — Follow up', {
+          body:`${a.title} at ${a.company}`,
+          tag: 'reminder-'+a.company+a.title,
+        });
+      }
     });
+  };
+
+  if(Notification.permission==='granted'){
+    fireNotifs();
+  } else if(Notification.permission==='default'){
+    // Ask once — only if user has reminders set
+    Notification.requestPermission().then(p=>{ if(p==='granted') fireNotifs(); });
   }
 }
 
@@ -4538,6 +4855,102 @@ Return ONLY a JSON array, no markdown, no preamble:
       </div>`;
     }).join('')}
   </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// OFFER NEGOTIATION COACH
+// ═══════════════════════════════════════════════
+async function runNegotiation(){
+  if(!S.gkey){ toast('Add your Groq API key in Settings first'); return; }
+
+  const offered  = document.getElementById('neg-offered')?.value.trim();
+  const target   = document.getElementById('neg-target')?.value.trim();
+  const role     = document.getElementById('neg-role')?.value.trim();
+  const equity   = document.getElementById('neg-equity')?.value.trim();
+  const signing  = document.getElementById('neg-signing')?.value.trim();
+  const leverage = document.getElementById('neg-leverage')?.value.trim();
+  const wantCounter   = document.getElementById('neg-counter')?.checked;
+  const wantBatna     = document.getElementById('neg-batna')?.checked;
+  const wantEmail     = document.getElementById('neg-email')?.checked;
+  const wantEquityAsk = document.getElementById('neg-equity-ask')?.checked;
+
+  if(!offered){ toast('Enter the salary you were offered'); return; }
+  if(!role){    toast('Enter the role and company name');  return; }
+
+  const out = document.getElementById('negResult');
+  out.innerHTML = `<div class="loading" style="padding:3rem 1.5rem">
+  <div class="spinner"></div>
+  <p style="margin-top:1rem;color:var(--text2);font-size:.88rem">Building your negotiation strategy…</p>
+  <div style="margin-top:1.25rem;display:flex;flex-direction:column;gap:.6rem;align-items:flex-start;width:90%;max-width:340px;margin-left:auto;margin-right:auto">
+    ${['Counter-offer script','BATNA analysis','Negotiation email'].map(s=>`<div style="display:flex;align-items:center;gap:.6rem"><div class="skel skel-circle" style="width:18px;height:18px"></div><div class="skel skel-block" style="flex:1;height:10px"></div></div>`).join('')}
+  </div>
+</div>`;
+
+  const sections = [];
+  if(wantCounter)   sections.push('1. COUNTER-OFFER SCRIPT — exact words to say verbally or on a call, 3-5 sentences, confident but collaborative tone');
+  if(wantBatna)     sections.push('2. BATNA ANALYSIS — their walkaway point, your walkaway point, the real negotiating range, what leverage matters most');
+  if(wantEmail)     sections.push('3. NEGOTIATION EMAIL — complete ready-to-send email with subject line, professional but firm, reference specific offer details');
+  if(wantEquityAsk) sections.push('4. EQUITY COUNTER-STRATEGY — how to frame an equity ask, what to request, how to compare equity offers');
+
+  const prompt = `You are an expert compensation negotiator who has helped hundreds of engineers and PMs negotiate offers at top tech companies.
+
+OFFER DETAILS:
+- Role: ${role}
+- Offered salary: ${offered}
+- Target salary: ${target || 'not specified — estimate a reasonable target'}
+${equity   ? `- Equity offered: ${equity}` : ''}
+${signing  ? `- Signing bonus: ${signing}` : ''}
+${leverage ? `- Candidate leverage: ${leverage}` : ''}
+
+Generate the following sections. Be specific, concrete, and use the actual numbers provided.
+Do not give generic advice — tailor everything to this specific offer and role.
+
+${sections.join('\n')}
+
+Format with clear section headers. For the email include a subject line on its own line starting with "Subject:".
+Be direct and confident. Negotiation is expected — frame everything as collaborative problem-solving.`;
+
+  const res = await groq(prompt, 1600);
+
+  // Parse email section for copy button
+  let emailSubject = '', emailBody = '';
+  const emailMatch = res.match(/Subject:\s*(.+)\n([\s\S]+?)(?=\n\n[A-Z]|$)/);
+  if(emailMatch){
+    emailSubject = emailMatch[1].trim();
+    emailBody    = emailMatch[2].trim();
+  }
+
+  // Render result
+  const cacheKey = 'neg_' + Date.now();
+  window._emailCache = window._emailCache || {};
+  window._emailCache[cacheKey] = { subject: emailSubject, body: emailBody };
+
+  // Format sections as cards
+  const sections_html = res
+    .split(/\n(?=(?:\d\.|##+|\*\*)[A-Z])/)
+    .map(block => block.trim())
+    .filter(Boolean)
+    .map(block => {
+      const isEmail = block.toLowerCase().includes('subject:') || block.toLowerCase().includes('negotiation email');
+      return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.25rem;margin-bottom:.85rem">
+        <div style="font-size:.82rem;color:var(--text2);line-height:1.75;white-space:pre-wrap">${block.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>
+        ${isEmail && emailSubject ? `
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.85rem;padding-top:.85rem;border-top:1px solid var(--border)">
+          <button class="btn btn-tl btn-sm" onclick="copyEmailCached('${cacheKey}')">📋 Copy email</button>
+          <button class="btn btn-o btn-sm" onclick="mailtoEmailCached('${cacheKey}')">📧 Open in Mail</button>
+        </div>` : ''}
+      </div>`;
+    }).join('');
+
+  out.innerHTML = `
+    <div style="background:linear-gradient(135deg,rgba(14,164,122,.08),rgba(108,92,231,.06));border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+      <div style="flex:1">
+        <div style="font-family:var(--font-d);font-weight:700;font-size:.85rem;margin-bottom:.2rem">${role}</div>
+        <div style="font-size:.8rem;color:var(--text2)">Offered: <strong>${offered}</strong>${target?' · Target: <strong>'+target+'</strong>':''}</div>
+      </div>
+      <button class="btn btn-tl btn-sm" onclick="copyTxt(document.getElementById('negResult').innerText)">📋 Copy all</button>
+    </div>
+    ${sections_html}`;
 }
 
 function timeAgo(iso){const s=Math.floor((Date.now()-new Date(iso).getTime())/1000);if(s<60)return 'just now';if(s<3600)return `${Math.floor(s/60)}m ago`;if(s<86400)return `${Math.floor(s/3600)}h ago`;return `${Math.floor(s/86400)}d ago`;}
