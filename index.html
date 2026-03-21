@@ -123,7 +123,7 @@ header{position:sticky;top:0;z-index:200;background:var(--hbg);backdrop-filter:b
 @media(min-width:1400px){
   main{padding:2rem 3rem;max-width:none;}
   .hero{padding:3rem 0 2rem;}
-  .hero h1{font-size:2.6rem;}
+  .hl1{font-size:1.6rem;} .hl2{font-size:2rem;}
   .jobs-grid{grid-template-columns:repeat(auto-fill,minmax(360px,1fr));}
 }
 
@@ -275,8 +275,10 @@ textarea.ta::placeholder{color:var(--text3);}
 .hero>*{position:relative;z-index:1;}
 .greet{font-size:.95rem;color:var(--text2);font-family:var(--font-d);margin-bottom:.85rem;letter-spacing:.01em;}
 .greet strong{color:var(--accent);font-weight:700;font-size:1rem;text-transform:none;}
-.hero h1{font-family:var(--font-d);font-size:clamp(1.8rem,3vw,3.2rem);font-weight:800;line-height:1.1;letter-spacing:-.04em;margin-bottom:1.1rem;}
-.hero h1 em{font-style:normal;color:var(--accent);}
+.hero h1{font-family:var(--font-d);line-height:1.05;letter-spacing:-.03em;margin-bottom:1.1rem;display:flex;flex-direction:column;gap:.15em;}
+.hl1{font-size:clamp(1.5rem,2.4vw,2.6rem);font-weight:400;color:rgba(255,255,255,0.82);display:block;}
+.hl2{font-size:clamp(1.9rem,3vw,3.2rem);font-weight:800;color:var(--accent);display:block;letter-spacing:-.04em;}
+
 .hero>p{color:var(--text3);font-size:.87rem;margin-bottom:2rem;line-height:1.6;max-width:660px;letter-spacing:.01em;}
 .sbox{display:flex;gap:.55rem;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:.65rem;width:100%;box-shadow:var(--shadow);}
 .sbox input{flex:1;min-width:140px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 13px;color:var(--text);font-family:var(--font-b);font-size:.86rem;transition:border-color var(--ease);}
@@ -288,8 +290,9 @@ textarea.ta::placeholder{color:var(--text3);}
 .save-search-bar span{font-size:.82rem;color:var(--text2);flex:1;}
 .save-search-bar strong{color:var(--accent);}
 
-.fil-row{display:flex;gap:.45rem;flex-wrap:wrap;align-items:center;margin:1.25rem 0 .75rem;}
-.fl{font-family:var(--font-d);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-right:4px;margin-left:12px;}.fl:first-child{margin-left:0;}
+.fil-row{display:flex;align-items:center;justify-content:space-between;margin:1.25rem 0 .75rem;flex-wrap:wrap;gap:.5rem;}
+.fil-group{display:flex;align-items:center;gap:.4rem;}
+.fl{font-family:var(--font-d);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-right:4px;}
 .chip{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:.76rem;cursor:pointer;color:var(--text2);transition:all var(--ease);font-weight:500;}
 .chip:hover,.chip.on{border-color:var(--accent);color:var(--accent);background:var(--accent-glow);}
 
@@ -902,7 +905,7 @@ textarea.ta::placeholder{color:var(--text3);}
     position:absolute;top:0;right:0;width:340px;
   }
   .hero{text-align:left;max-width:none;margin:0;padding:3rem 0 1.75rem;}
-  .hero h1{font-size:clamp(2.4rem,3.5vw,3.8rem);}
+  .hl1{font-size:clamp(1.8rem,2.8vw,3rem);} .hl2{font-size:clamp(2.3rem,3.5vw,3.8rem);}
   .hero::before{left:15%;width:500px;top:-10px;}
   .sbox{margin:0;width:100%;}
   .greet{font-size:1rem;margin-bottom:.85rem;}
@@ -913,14 +916,14 @@ textarea.ta::placeholder{color:var(--text3);}
   .search-layout{padding-right:380px;}
   .search-sidebar{width:360px;}
   .hero{max-width:760px;}
-  .hero h1{font-size:clamp(2.8rem,3vw,4rem);}
+  .hl1{font-size:clamp(2rem,2.8vw,3.2rem);} .hl2{font-size:clamp(2.6rem,3.5vw,4rem);}
   .sbox{width:100%;}
 }
 @media(min-width:1500px){
   .search-layout{padding-right:400px;}
   .search-sidebar{width:380px;}
 
-  .hero h1{font-size:clamp(3rem,3vw,4.4rem);}
+  .hl1{font-size:clamp(2.2rem,2.8vw,3.4rem);} .hl2{font-size:clamp(2.8rem,3.5vw,4.4rem);}
 }
 @media(min-width:1440px){main{padding:2rem 4rem;}}
 @media(min-width:1600px){main{padding:2rem 5rem;}}
@@ -1077,7 +1080,7 @@ textarea.ta::placeholder{color:var(--text3);}
     <div>
       <div class="hero">
         <div class="greet">Welcome back, <strong id="greetN">there</strong> 👋</div>
-        <h1>Stop applying blindly.<br><em>Start landing interviews.</em></h1>
+        <h1><span class="hl1">Stop applying blindly.</span><span class="hl2">Start landing interviews.</span></h1>
         <p>Resume tailoring · ATS keywords · Mock interviews · Offer negotiation — all free.</p>
         <div class="sbox">
           <div class="ac-wrap"><input id="sTitle" placeholder="Job title (e.g. ML Engineer)" autocomplete="off" oninput="acInput(this,'title')" onkeydown="acKey(event,'title')" onfocus="acInput(this,'title')" onblur="acBlur('title')" /><div class="ac-drop" id="ac-title"></div></div>
@@ -1098,16 +1101,20 @@ textarea.ta::placeholder{color:var(--text3);}
         <div class="search-hist-wrap" id="searchHistPills"></div>
       </div>
       <div class="fil-row">
-        <span class="fl">Type:</span>
-        <div class="chip on" onclick="fc(this,'t','all')">All</div>
-        <div class="chip" onclick="fc(this,'t','fulltime')">Full-time</div>
-        <div class="chip" onclick="fc(this,'t','parttime')">Part-time</div>
-        <div class="chip" onclick="fc(this,'t','contract')">Contract</div>
-        <span class="fl" style="margin-left:.5rem">Work:</span>
-        <div class="chip on" onclick="fc(this,'w','all')">All</div>
-        <div class="chip" onclick="fc(this,'w','remote')">Remote</div>
-        <div class="chip" onclick="fc(this,'w','hybrid')">Hybrid</div>
-        <div class="chip" onclick="fc(this,'w','onsite')">On-site</div>
+        <div class="fil-group">
+          <span class="fl">Type:</span>
+          <div class="chip on" onclick="fc(this,'t','all')">All</div>
+          <div class="chip" onclick="fc(this,'t','fulltime')">Full-time</div>
+          <div class="chip" onclick="fc(this,'t','parttime')">Part-time</div>
+          <div class="chip" onclick="fc(this,'t','contract')">Contract</div>
+        </div>
+        <div class="fil-group">
+          <span class="fl">Work:</span>
+          <div class="chip on" onclick="fc(this,'w','all')">All</div>
+          <div class="chip" onclick="fc(this,'w','remote')">Remote</div>
+          <div class="chip" onclick="fc(this,'w','hybrid')">Hybrid</div>
+          <div class="chip" onclick="fc(this,'w','onsite')">On-site</div>
+        </div>
       </div>
       <div id="searchOut">
         <div class="empty-state" id="searchInitial">
