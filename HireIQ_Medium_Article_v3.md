@@ -26,7 +26,7 @@ At every handoff, you lose context. You copy-paste the same job description four
 
 So I built **HireIQ**: a complete job search workflow in a single `index.html` file, powered by free AI, that takes you from *finding the job* to *negotiating the offer.*
 
----
+---a
 
 📊 **[DIAGRAM: Upload 04_workflow.svg here — the 5-step journey map. Caption: "HireIQ covers every step of the job search workflow."]**
 
