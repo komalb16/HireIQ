@@ -3157,32 +3157,47 @@ async function doTailor(){
   const j=curJob;
   const out=document.getElementById('mAI-tailor');
   if(out) out.innerHTML=`<div class="ai-box dim">Analysing job & tailoring your resume with Groq AI…</div>`;
-  const res=await groq(`You are an expert resume writer. Tailor this resume for the role.
+  const res=await groq(`You are a professional resume writer. Your job is to tailor the candidate's EXISTING resume for the target role.
 
-ROLE: ${j.title} at ${j.company}
-DESCRIPTION: ${(j.desc||"").slice(0,2000)}
-REQUIREMENTS: ${[...(j.reqs||[]),(j.responsibilities||[])].flat().join('. ')}
-SKILLS: ${(j.skills||[]).join(', ')}
+CRITICAL RULES — NEVER BREAK THESE:
+- ONLY use information from the candidate's actual resume below — do NOT invent experience
+- Do NOT add companies, roles, or projects the candidate has not worked at
+- Do NOT claim experience the candidate does not have
+- Do NOT add commentary, notes, or explanations — output ONLY the resume
+- Do NOT repeat sections or add "---" separators between attempts
+- Preserve ALL real job entries — every company, every bullet point
 
-ORIGINAL RESUME:
+TARGET ROLE: ${j.title} at ${j.company}
+JOB DESCRIPTION: ${(j.desc||'').slice(0,1500)}
+KEY REQUIREMENTS: ${[...(j.reqs||[]),(j.responsibilities||[])].flat().slice(0,10).join('. ')}
+
+CANDIDATE'S ACTUAL RESUME (use ONLY this content):
 ${S.resume}
 
-Rewrite to:
-1. Align summary with this specific role
-2. Surface most relevant experience first
-3. Embed job-description keywords for ATS
-4. Remove irrelevant sections
-5. Keep it clean and professional
+INSTRUCTIONS:
+1. Rewrite the Professional Summary (3-4 sentences) to target this specific role using real keywords from the JD
+2. For each existing job entry: rephrase 2-3 bullets to naturally include relevant JD keywords — keep ALL other bullets unchanged
+3. Keep all dates, company names, titles, locations EXACTLY as they appear
+4. Reorder Skills section to put most relevant skills first
+5. Output the complete tailored resume — clean, professional, no commentary
 
-Output the complete tailored resume now:`, 4000);
+BEGIN RESUME OUTPUT NOW:`, 4000);
+
+  // Strip any AI commentary that leaked through
+  const cleanRes = res
+    .replace(/^(I hope|Please note|In conclusion|The resume|Note:).*/gim, '')
+    .replace(/---+/g, '')
+    .replace(/\n\n\n+/g, '\n\n').trim();
+
   if(out) out.innerHTML=`
-    <div class="ai-box" id="tailor_src">${res}</div>
+    <div class="ai-box" id="tailor_src" style="white-space:pre-wrap">${escHtml(cleanRes)}</div>
     <div class="dl-row">
       <span class="dl-lbl">Download:</span>
       <button class="btn btn-docx btn-sm" onclick="dlFromEl('tailor_src','docx',window._curJobCompany)">📄 .docx</button>
       <button class="btn btn-pdf  btn-sm" onclick="dlFromEl('tailor_src','pdf',window._curJobCompany)">📑 .pdf</button>
       <button class="btn btn-txt  btn-sm" onclick="dlFromEl('tailor_src','txt',window._curJobCompany)">💾 .txt</button>
-      <button class="btn btn-p btn-sm" onclick="useAsTailor()">Use as My Resume</button>
+      <button class="btn btn-tl  btn-sm" onclick="copyTxt(document.getElementById('tailor_src').textContent)">📋 Copy</button>
+      <button class="btn btn-p btn-sm" onclick="useAsTailor()">✅ Use as My Resume</button>
     </div>
     <button class="btn btn-o" style="margin-top:.6rem;font-size:.76rem" onclick="runAudit('tailor_src','audit_tailor')">🔍 Run ATS Compliance Audit</button>
     <div id="audit_tailor"></div>`;
@@ -3521,8 +3536,8 @@ Output the complete tailored resume now:`);
       <button class="btn btn-docx btn-sm" onclick="buildAndDownloadDocx(document.getElementById('${base}_src').textContent,S.name||'','','resume','${base}.docx')">📄 .docx</button>
       <button class="btn btn-pdf  btn-sm" onclick="buildAndDownloadPdf(document.getElementById('${base}_src').textContent,S.name||'','','resume','${base}.pdf')">📑 .pdf</button>
       <button class="btn btn-txt  btn-sm" onclick="dlTxt(document.getElementById('${base}_src').textContent,'${base}')">💾 .txt</button>
-      <button class="btn btn-tl   btn-sm" onclick="copyTxt(document.getElementById('${base}_src').textContent)">Copy</button>
-      <button class="btn btn-p    btn-sm" onclick="useBuiltById('${base}_src')">Use as My Resume</button>
+      <button class="btn btn-tl   btn-sm" onclick="copyTxt(document.getElementById('${base}_src').textContent)">📋 Copy</button>
+      <button class="btn btn-p    btn-sm" onclick="useBuiltById('${base}_src')">✅ Use as My Resume</button>
     </div>
     <button class="btn btn-o" style="margin-top:.6rem;font-size:.76rem" onclick="runAudit('${base}_src','audit_${base}')">🔍 Run ATS Compliance Audit</button>
     <div id="audit_${base}"></div>`;
@@ -6423,8 +6438,8 @@ async function groqChat(messages, maxTokens=600){
 async function loadDocxLib(){
   if(window.docx) return window.docx;
   const DOCX_URLS=[
-    'https://unpkg.com/docx@9.5.3/build/index.js',
-    'https://cdn.jsdelivr.net/npm/docx@9.5.3/build/index.js',
+    'https://unpkg.com/docx@7.8.2/build/index.js',
+    'https://cdn.jsdelivr.net/npm/docx@7.8.2/build/index.js',
   ];
   for(const url of DOCX_URLS){
     try{
