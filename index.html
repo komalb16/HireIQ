@@ -1116,6 +1116,7 @@ textarea.ta::placeholder{color:var(--text3);}
         <div class="ac-wrap"><input id="sTitle" placeholder="Job title (e.g. ML Engineer)" autocomplete="off" oninput="acInput(this,'title')" onkeydown="acKey(event,'title')" onfocus="acInput(this,'title')" onblur="acBlur('title')" /><div class="ac-drop" id="ac-title"></div></div>
         <div class="ac-wrap"><input id="sLoc"   placeholder="Location (e.g. Austin, TX)"  autocomplete="off" oninput="acInput(this,'loc')"   onkeydown="acKey(event,'loc')"   onfocus="acInput(this,'loc')"   onblur="acBlur('loc')"   /><div class="ac-drop" id="ac-loc"></div></div>
         <div class="ac-wrap"><input id="sKw"    placeholder="Skills (e.g. React, Python)" autocomplete="off" oninput="acInput(this,'kw')"    onkeydown="acKey(event,'kw')"    onfocus="acInput(this,'kw')"    onblur="acBlur('kw')"    /><div class="ac-drop" id="ac-kw"></div></div>
+        <div class="ac-wrap"><input id="sCo"    placeholder="Company (e.g. Google)"       autocomplete="off" oninput="acInput(this,'co')"    onkeydown="acKey(event,'co')"    onfocus="acInput(this,'co')"    onblur="acBlur('co')"    /><div class="ac-drop" id="ac-co"></div></div>
         <button class="btn btn-p" onclick="doSearch()">Search</button>
       </div>
       <!-- SAVE SEARCH BAR -->
@@ -2810,8 +2811,10 @@ async function doSearch(){
   const title=document.getElementById('sTitle').value.trim();
   const loc  =document.getElementById('sLoc').value.trim();
   const kw   =document.getElementById('sKw').value.trim();
+  const co   =document.getElementById('sCo')?.value.trim()||'';
   if(!title&&!kw){ toast('Enter a title or skills to search'); return; }
-  lastSearch={title,loc,kw};
+  lastSearch={title,loc,kw,co};
+  // Company filter doesn't reset — intentional
 
   document.getElementById('searchOut').innerHTML = skeletonCards(6);
   await sleep(700);
@@ -2819,12 +2822,19 @@ async function doSearch(){
   let res;
   // Try live API first if RapidAPI key exists
   if(S.rkey){
-    res = await fetchLiveJobs(title||kw, loc);
+    res = await fetchLiveJobs(title||kw, loc, co);
     if(!res||!res.length) res = filterMock(title,kw,loc);
   } else {
     res = filterMock(title,kw,loc);
   }
 
+  // Client-side company filter (API may not filter perfectly)
+  if(co && res && res.length){
+    const col=co.toLowerCase();
+    const coFiltered=res.filter(j=>(j.company||'').toLowerCase().includes(col));
+    if(coFiltered.length>0) res=coFiltered;
+    // If no exact match, keep all results (company in query already influenced API)
+  }
   allJobs=res;
   if(S.resume&&S.gkey) await scoreJobs(res);
   renderJobs(res);
@@ -2836,9 +2846,12 @@ async function doSearch(){
   document.getElementById('saveSearchBar').style.display='flex';
 }
 
-async function fetchLiveJobs(query,loc){
+async function fetchLiveJobs(query,loc,company){
   try {
-    const q=loc ? query+' in '+loc : query;
+    // Build query: "Software Engineer at Google in San Francisco"
+    let q=query;
+    if(company) q=q+' at '+company;
+    if(loc) q=q+' in '+loc;
     const r=await fetch(`https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(q)}&num_pages=1`,{
       headers:{'X-RapidAPI-Key':S.rkey,'X-RapidAPI-Host':'jsearch.p.rapidapi.com'}
     });
@@ -5201,6 +5214,7 @@ function rerunSearch(i){
   document.getElementById('sTitle').value = h.title||'';
   document.getElementById('sLoc').value   = h.loc||'';
   document.getElementById('sKw').value    = h.kw||'';
+  if(document.getElementById('sCo')) document.getElementById('sCo').value = h.co||'';
   doSearch();
 }
 
@@ -5674,7 +5688,7 @@ const AC_SKILLS = [
 ];
 
 // ── Autocomplete state ─────────────────────────
-const acState = { title:{idx:-1}, loc:{idx:-1}, kw:{idx:-1} };
+const acState = { title:{idx:-1}, loc:{idx:-1}, kw:{idx:-1}, co:{idx:-1} };
 
 function acSuggest(val, type){
   const v = val.trim().toLowerCase();
@@ -5712,6 +5726,26 @@ function acSuggest(val, type){
     const contains= AC_SKILLS.filter(s => !s.toLowerCase().startsWith(last) && s.toLowerCase().includes(last));
     return [...prefix, ...contains].slice(0,10);
   }
+
+  if(type === 'co'){
+    const AC_COMPANIES = [
+      'Google','Microsoft','Amazon','Apple','Meta','Netflix','Uber','Lyft','Airbnb',
+      'Stripe','Shopify','Salesforce','Oracle','IBM','Intel','Nvidia','Adobe',
+      'Twitter','LinkedIn','Slack','Dropbox','Zoom','Atlassian','GitHub','GitLab',
+      'Datadog','Snowflake','Databricks','Palantir','Twilio','MongoDB','Elastic',
+      'HashiCorp','Confluent','Cloudflare','Fastly','Vercel','Figma','Notion',
+      'JPMorgan Chase','Goldman Sachs','Morgan Stanley','Citi','Bank of America',
+      'Wells Fargo','BlackRock','Bloomberg','Fidelity','Capital One',
+      'Tesla','SpaceX','Boeing','Lockheed Martin','Raytheon',
+      'Johnson & Johnson','Pfizer','UnitedHealth','CVS','Walgreens',
+      'Walmart','Target','Home Depot','Nike','Coca-Cola','PepsiCo',
+      'Deloitte','Accenture','McKinsey','BCG','PwC','EY','KPMG',
+      'TCS','Infosys','Wipro','HCL','Cognizant','ThoughtWorks',
+    ];
+    const prefix  = AC_COMPANIES.filter(c => c.toLowerCase().startsWith(v));
+    const contains= AC_COMPANIES.filter(c => !c.toLowerCase().startsWith(v) && c.toLowerCase().includes(v));
+    return [...prefix, ...contains].slice(0,8);
+  }
   return [];
 }
 
@@ -5727,7 +5761,7 @@ function acInput(input, type){
     return;
   }
 
-  const typeIcon = {title:'💼', loc:'📍', kw:'⚙️'}[type]||'';
+  const typeIcon = {title:'💼', loc:'📍', kw:'⚙️', co:'🏢'}[type]||'';
 
   // Group: for titles, show section headers for Manager/Lead/Engineer groupings
   drop.innerHTML = suggestions.map((s,i) => {
@@ -5757,7 +5791,7 @@ function acSelectFromEl(el){
   if(type && val) acSelect(type, val);
 }
 function acSelect(type, val){
-  const input = document.getElementById(type==='title'?'sTitle':type==='loc'?'sLoc':'sKw');
+  const input = document.getElementById(type==='title'?'sTitle':type==='loc'?'sLoc':type==='co'?'sCo':'sKw');
   if(!input) return;
   if(type==='kw'){
     // For skills: replace only the last comma-separated token
