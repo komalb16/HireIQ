@@ -1718,6 +1718,8 @@ textarea.ta::placeholder{color:var(--text3);}
       <div class="mock-actions">
         <span class="mock-hints"><kbd>Ctrl+Enter</kbd> to submit · <kbd>Tab</kbd> to expand</span>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="btn btn-o btn-sm" id="btnStt" onclick="toggleStt()">🎤 Speak</button>
+          <button class="btn btn-o btn-sm" id="btnTts" onclick="toggleTts()"><span id="ttsIcon">🔇</span> Voice</button>
           <button class="btn btn-o" onclick="requestHint()">💡 Hint</button>
           <button class="btn btn-o" onclick="skipQuestion()">Skip →</button>
           <button class="btn btn-p btn-sm" onclick="submitAnswer()">Submit Answer →</button>
@@ -1734,9 +1736,10 @@ textarea.ta::placeholder{color:var(--text3);}
       <div id="resOverall" style="font-size:.88rem;color:var(--text2);max-width:560px;margin:0 auto;line-height:1.7"></div>
     </div>
     <div class="score-breakdown" id="scoreBreakdown"></div>
-    <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem">
+    <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem" class="no-print">
       <button class="btn btn-p" onclick="restartInterview()">Practice Again</button>
-      <button class="btn btn-o" onclick="dlTxt(buildTranscriptText(),'interview_transcript')">💾 Download Transcript</button>
+      <button class="btn btn-o" onclick="dlTxt(buildTranscriptText(),'interview_transcript')">💾 Download TXT</button>
+      <button class="btn btn-o" onclick="dlPdf()">📄 Download PDF</button>
       <button class="btn btn-pu btn-sm" onclick="sw('bank',document.querySelector('.tab:last-child'))">Browse Interview Bank</button>
     </div>
     <div class="transcript-section">
@@ -1982,7 +1985,6 @@ textarea.ta::placeholder{color:var(--text3);}
     <button class="btn btn-o btn-sm" onclick="spacedRepetition()">🔁 Spaced Repetition</button>
     <button class="btn btn-o btn-sm" onclick="surpriseQ()">🎲 Random</button>
     <button class="btn btn-o btn-sm" onclick="document.getElementById('bankProgress').style.display='flex';renderBank()">📊 Progress</button>
-    <select id="bankCompanyFilter" onchange="renderBank()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.35rem .6rem;font-size:.77rem;color:var(--text);font-family:var(--font-b);margin-left:auto"><option value="all">All companies</option><option value="Amazon">Amazon</option><option value="Google">Google</option><option value="Microsoft">Microsoft</option><option value="Facebook">Meta/Facebook</option><option value="Apple">Apple</option><option value="Netflix">Netflix</option><option value="Uber">Uber</option></select>
   </div>
 
   <!-- AI question generator -->
@@ -4746,6 +4748,13 @@ const BANK=[
 {cat:'Situational',diff:'Hard',company:'Okta',q:'A security vulnerability is found in production.',a:'Assess exploitability. Emergency patch if actively exploited. Responsible disclosure coordination. Notify affected customers per compliance. CISO and legal in the loop immediately.'},
 {cat:'Situational',diff:'Medium',company:'Pagerduty',q:'You are on-call and get paged at 3 AM for a P0 incident. Walk me through it.',a:'Acknowledge. Assess severity. Start incident channel. Communicate status. Divide: one person diagnoses, one communicates. Escalate if needed. Postmortem after.'},
 {cat:'Situational',diff:'Medium',company:'Brex',q:'You need to make a build vs buy decision for a critical component.',a:'Evaluate: core competency? Time to market? Total cost of ownership? Vendor lock-in risk? Support/SLA? Prototype both paths before committing.'},
+// ─── Tier 2 Tech ──────────────────────────────────────────
+{cat:'System Design',diff:'Hard',company:'Uber',q:'Design a real-time location tracking system for drivers.',a:'WebSockets for pub/sub stream, Quadtree/S2 Geometry for spatial indexing, Redis cache for hot data, Cassandra for trip history. Handle partitioning by region.'},
+{cat:'System Design',diff:'Medium',company:'Salesforce',q:'How do you handle multitenant database architectures?',a:'Shared schema with TenantID column (most common for SaaS). Discuss row-level security, noisy neighbors, and custom field extensions via JSONB or sparse tables.'},
+{cat:'Behavioral',diff:'Medium',company:'Airbnb',q:'Describe a time you solved a conflict between product requirements and engineering constraints.',a:'Use STAR. Product wanted real-time video, engineering said 3 months. Compromised on photo-sharing fallback for MVP in 1 month. Communicate trade-offs clearly.'},
+{cat:'DSA',diff:'Medium',company:'Adobe',q:'Design a data structure for a text editor with fast insert/delete (Rope or Gap Buffer).',a:'Gap Buffer is array-based, fast for local edits. Rope is tree-based, great for huge texts. O(log N) for Rope insertion.'},
+{cat:'System Design',diff:'Medium',company:'Stripe',q:'Design an Idempotent API for payment processing.',a:'Use an Idempotency-Key header. Check DB/Cache to see if key exists. If processing, wait. If done, return cached response. If new, begin transaction. Protect against double-charging.'},
+{cat:'Behavioral',diff:'Hard',company:'Intuit',q:'How do you manage an unexpected production outage during tax season?',a:'Incident command structure (Commander, Communicator, Ops). Rollback first if possible. Find root cause later via blameless post-mortem. Over-communicate to users.'},
 ];
 
 const CAT_ORDER=['All','DSA','System Design','Behavioral','Troubleshooting','Leadership','Situational'];
@@ -6742,16 +6751,77 @@ document.addEventListener('click', e=>{
 let bankCompany='all';
 function buildCompanyFilter(){
   const companies = [...new Set(BANK.map(q=>q.company))].sort();
-  const existing = document.getElementById('companyFilter');
+  const existing = document.getElementById('bankCompanyFilter');
   if(existing) return;
   const bankSearch = document.querySelector('.bsearch');
   if(!bankSearch) return;
   const sel = document.createElement('select');
-  sel.id='companyFilter';
-  sel.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;color:var(--text);font-family:var(--font-b);font-size:.84rem;cursor:pointer;';
+  sel.id='bankCompanyFilter';
+  sel.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;color:var(--text);font-family:var(--font-b);font-size:.84rem;cursor:pointer;margin-left:auto';
   sel.innerHTML='<option value="all">All companies</option>'+companies.map(c=>`<option value="${c}">${c}</option>`).join('');
   sel.onchange=()=>{ bankCompany=sel.value; renderBank(); };
   bankSearch.appendChild(sel);
+}
+
+// ═══════════════════════════════════════════════
+// MOCK INTERVIEWER STT / TTS & ADVANCED FEATURES
+// ═══════════════════════════════════════════════
+let isSttActive=false, recognition=null;
+if('webkitSpeechRecognition' in window){
+  recognition = new webkitSpeechRecognition();
+  recognition.continuous=true; recognition.interimResults=true;
+  recognition.onresult=(e)=>{
+    let finalTr='';
+    for(let i=e.resultIndex;i<e.results.length;++i) if(e.results[i].isFinal) finalTr+=e.results[i][0].transcript;
+    if(finalTr){
+      const ta=document.getElementById('mockAnswer');
+      ta.value=ta.value+(ta.value?' ':'')+finalTr;
+    }
+  };
+  recognition.onerror=()=>toggleStt(true);
+  recognition.onend=()=>{if(isSttActive) recognition.start();};
+}
+let isTtsActive=false;
+function toggleStt(forceStop){
+  if(!recognition){alert('Browser does not support Speech Recognition');return;}
+  const btn=document.getElementById('btnStt');
+  if(isSttActive||forceStop===true){
+    isSttActive=false; recognition.stop();
+    btn.classList.remove('btn-p'); btn.classList.add('btn-o'); btn.innerHTML='🎤 Speak';
+  } else {
+    isSttActive=true; recognition.start();
+    btn.classList.remove('btn-o'); btn.classList.add('btn-p'); btn.innerHTML='🔴 Recording...';
+  }
+}
+function toggleTts(){
+  isTtsActive=!isTtsActive;
+  document.getElementById('ttsIcon').textContent=isTtsActive?'🔊':'🔇';
+  if(!isTtsActive) window.speechSynthesis.cancel();
+}
+function speakText(text){
+  if(!isTtsActive) return;
+  window.speechSynthesis.cancel();
+  const ut=new SpeechSynthesisUtterance(text.replace(/[\*_`]/g,''));
+  window.speechSynthesis.speak(ut);
+}
+function highlightKeywords(text){
+  const words=['situation','task','action','result','managed','led','designed','developed','architected','resolved','improved','decreased','increased','metrics','achieved','delivered','reduced'];
+  let res=escHtml(text);
+  words.forEach(w=>{
+    const rx=new RegExp(`\\b(${w})\\b`,'gi');
+    res=res.replace(rx,'<mark style="background:rgba(74,222,128,0.2);color:#4ade80;padding:0 2px;border-radius:2px;font-weight:bold">$1</mark>');
+  });
+  return res;
+}
+function dlPdf(){
+  let s=document.getElementById('print-style');
+  if(!s){
+    s=document.createElement('style');
+    s.id='print-style';
+    s.innerHTML=`@media print { body * { visibility: hidden; } #mock-results, #mock-results * { visibility: visible; } #mock-results { position: absolute; left: 0; top: 0; padding: 20px; width: 100%; } .no-print { display: none !important; } }`;
+    document.head.appendChild(s);
+  }
+  window.print();
 }
 
 // ═══════════════════════════════════════════════
@@ -7103,17 +7173,20 @@ function addBubble(who, text, avatarChar, isHint=false){
   const div  = document.createElement('div');
   div.className = `bubble ${who}`;
   const avClass = who==='interviewer'?'av-interviewer':'av-user';
+  let finalText = text.replace(/\n/g,'<br>');
+  if(who === 'user') finalText = highlightKeywords(text);
   div.innerHTML=`
     <div class="bubble-avatar ${avClass}">${avatarChar}</div>
     <div class="bubble-body">
       <div class="bubble-name">${who==='interviewer'?(MI.company||'Interviewer'):(S.name||'You')}</div>
-      <div class="bubble-text${isHint?' hint-bubble':''}">${text.replace(/\n/g,'<br>')}</div>
+      <div class="bubble-text${isHint?' hint-bubble':''}">${finalText}</div>
     </div>`;
   chat.appendChild(div);
   scrollChat();
 }
 
 function typewriterBubble(who, text, avatarChar){
+  if(who === 'interviewer') speakText(text);
   const chat=document.getElementById('mockChat');
   const div=document.createElement('div');
   div.className=`bubble ${who}`;
