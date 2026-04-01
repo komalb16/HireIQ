@@ -2326,13 +2326,7 @@ var swReg=null, alertTimers={};
   renderBank();
   renderTracker();
   renderAlerts();
-  // Use rAF to ensure sidebar layout is computed before rendering quick actions
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    try{ renderQuickActions(); }catch(e){}
-    // Force sidebar visible on desktop
-    const sb=document.getElementById('searchSidebar');
-    if(sb && window.innerWidth>=1100) sb.style.display='flex';
-  }));
+  setTimeout(renderQuickActions, 100); // ensure DOM ready
   updateBadge();
   updateNotifBell();
   await registerSW();
@@ -2391,9 +2385,6 @@ function applyState(){
   document.getElementById('s-email').value=S.email;
   const liEl=document.getElementById('s-linkedin'); if(liEl) liEl.value=S.linkedin||'';
   document.getElementById('s-theme').value=S.theme;
-  // Update alert badge
-  const ab=document.getElementById('alertBadge');
-  if(ab){ ab.textContent=S.alerts.length||''; ab.style.display=S.alerts.length?'inline-flex':'none'; }
   updateSidebarStats();
 }
 
@@ -2450,8 +2441,7 @@ function startDemo(){
     {jobId:'d3',title:'Platform Engineer',company:'Stripe',location:'Remote',salary:'$150k–$200k',url:'https://stripe.com/jobs',status:'Offer',note:'Offer received!',appliedAt:new Date(Date.now()-21*86400000).toISOString()},
   ];
   S.alerts = [{name:'SRE Jobs',title:'Site Reliability Engineer',loc:'Atlanta',freq:1440,active:true,nextRun:null}];
-  // DO NOT persist demo data — keep in memory only so it never bleeds to real user state
-  // persist();
+  persist();
   hidOnboard();
   applyState();
   phTrack('demo_started', { name });
@@ -2734,10 +2724,6 @@ async function completeOnboard(){
   S.rkey  = rkey;
   S.email = email;
   S.theme = document.getElementById('ob-theme')?.value || 'dark';
-  // Clear any demo data that might linger from a previous demo session
-  DEMO_MODE = false;
-  if(!S.apps.length || S.apps.some(a=>a.jobId==='d1')) S.apps = [];
-  if(!S.alerts.length || S.alerts.some(a=>a.name==='SRE Jobs'&&a.loc==='Atlanta')) S.alerts = [];
   persist();
   hidOnboard();
   applyState();
@@ -4147,25 +4133,17 @@ BEGIN RESUME (start with candidate name, no preamble):`);
 function _doSaveResume(txt, label){
   if(!txt || !txt.trim()){ toast('No content to save'); return; }
   txt = txt.trim();
+  // Save to library system
   if(!S.resumes) S.resumes=[];
   const name = label || ('AI Resume ' + new Date().toLocaleDateString());
   saveResumeToLibrary(txt, name, true);
-  // Update resume textarea
+  // Also update the textarea
   const ta = document.getElementById('resumeTA');
   if(ta) ta.value = txt;
-  // IMPORTANT: also update ATS textarea so re-running ATS uses new resume
-  const atsTA = document.getElementById('ats-resume');
-  if(atsTA && atsTA.value) atsTA.value = txt;
-  // Update cover letter textarea
-  const clTA = document.getElementById('cl-resume');
-  if(clTA && clTA.value) clTA.value = txt;
+  // Update the resume card display
   try{ showRStats(txt); } catch(e){}
+  // Rescore search results if any
   if(allJobs && allJobs.length > 0 && S.gkey) setTimeout(rescoreResults, 500);
-  // Prompt user to re-run ATS if they're on that panel
-  const atsResults = document.getElementById('ats-results');
-  if(atsResults && atsResults.innerHTML.includes('ATS Score')){
-    toast('✅ Saved! Hit "Analyze ATS Match" again to see your new score');
-  }
 }
 function useBuiltById(srcId){
   const t=document.getElementById(srcId)?.textContent;
@@ -5065,11 +5043,10 @@ OUTPUT THE COMPLETE RESUME NOW (start immediately with no preamble):`, 4000);
     <div style="font-size:.75rem;color:var(--text2);margin-bottom:.5rem;padding:.4rem .6rem;background:var(--surface2);border-radius:6px">
       Keywords added: <strong>${missing.split(',').slice(0,5).map(k=>k.trim()).filter(Boolean).join(', ')}${missing.split(',').length>5?' +more':''}</strong>
     </div>
-    <div class="ai-box" id="${fixKey}" style="white-space:pre-wrap;max-height:350px;overflow-y:auto;font-size:.8rem;line-height:1.7">${escHtml(cleanedRes)}</div>
-    <div style="font-size:.73rem;color:var(--text3);margin-top:.4rem">📋 This is the plain text version — ATS optimised. After clicking "Use as My Resume", re-run the ATS check to see your improved score.</div>
+    <div class="ai-box" id="${fixKey}" style="white-space:pre-wrap;max-height:400px;overflow-y:auto">${escHtml(cleanedRes)}</div>
     <div style="display:flex;gap:.5rem;margin-top:.7rem;flex-wrap:wrap">
       <button class="btn btn-tl btn-sm" onclick="copyTxt(window._atsFixCache['${fixKey}'])">📋 Copy</button>
-      <button class="btn btn-p btn-sm" onclick="_doSaveResume(window._atsFixCache['${fixKey}'],'ATS-Fixed Resume');setTimeout(()=>{document.getElementById('ats-resume').value=window._atsFixCache['${fixKey}'];runATS('ats-resume','ats-jd','ats-results');},800)">✅ Save & Re-run ATS</button>
+      <button class="btn btn-p btn-sm" onclick="_doSaveResume(window._atsFixCache['${fixKey}'],'ATS-Fixed Resume')">✅ Use as My Resume</button>
       <button class="btn btn-o btn-sm" onclick="buildAndDownloadDocx(window._atsFixCache['${fixKey}'],S.name||'','','resume','ats_fixed_resume.docx')">📄 .docx</button>
     </div>`;
   document.getElementById(outId).appendChild(fixDiv);
