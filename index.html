@@ -2326,13 +2326,14 @@ var swReg=null, alertTimers={};
   renderBank();
   renderTracker();
   renderAlerts();
-  // Use rAF to ensure sidebar layout is computed before rendering quick actions
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    try{ renderQuickActions(); }catch(e){}
-    // Force sidebar visible on desktop
-    const sb=document.getElementById('searchSidebar');
-    if(sb && window.innerWidth>=1100) sb.style.display='flex';
-  }));
+  // Ensure quick actions renders after full layout
+  setTimeout(()=>{
+    try{
+      const sb=document.getElementById('searchSidebar');
+      if(sb && window.innerWidth>=1100) sb.style.display='flex';
+      renderQuickActions();
+    }catch(e){}
+  }, 300);
   updateBadge();
   updateNotifBell();
   await registerSW();
@@ -3707,8 +3708,23 @@ BEGIN RESUME OUTPUT NOW:`, 4000);
     .replace(/---+/g, '')
     .replace(/\n\n\n+/g, '\n\n').trim();
 
+  // Format resume output properly
+  function fmtResHTML(txt){
+    const SREX=/^(SUMMARY|PROFESSIONAL SUMMARY|OBJECTIVE|PROFILE|EXPERIENCE|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EMPLOYMENT|EDUCATION|SKILLS|TECHNICAL SKILLS|KEY SKILLS|CORE COMPETENCIES|CERTIFICATIONS?|PROJECTS?|AWARDS?|ACHIEVEMENTS?|LANGUAGES?|VOLUNTEER|ADDITIONAL)/i;
+    return txt.split('\n').map(line=>{
+      const l=line.trim();
+      if(!l) return '<div style="height:.35rem"></div>';
+      if(SREX.test(l)) return `<div style="font-family:var(--font-d);font-weight:700;font-size:.8rem;letter-spacing:.7px;color:var(--accent);text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:3px;margin:.9rem 0 .35rem">${l}</div>`;
+      if(/^[•\-\*]\s/.test(l)) return `<div style="padding-left:.85rem;margin:.12rem 0;line-height:1.65;font-size:.8rem">• ${l.replace(/^[•\-\*]\s+/,'')}</div>`;
+      if(l===l.toUpperCase()&&l.length>3&&l.length<60&&!/^\d/.test(l)) return `<div style="font-weight:700;font-size:.82rem;font-family:var(--font-d);margin:.5rem 0 .1rem">${l}</div>`;
+      return `<div style="font-size:.8rem;line-height:1.65;margin:.1rem 0">${l}</div>`;
+    }).join('');
+  }
+
+  // Store raw text in hidden element for download/copy
   if(out) out.innerHTML=`
-    <div class="ai-box" id="tailor_src" style="white-space:pre-wrap">${escHtml(cleanRes)}</div>
+    <div id="tailor_src" style="display:none">${escHtml(cleanRes)}</div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;max-height:500px;overflow-y:auto;margin-bottom:.75rem">${fmtResHTML(cleanRes)}</div>
     <div class="dl-row">
       <span class="dl-lbl">Download:</span>
       <button class="btn btn-docx btn-sm" onclick="dlFromEl('tailor_src','docx',window._curJobCompany)">📄 .docx</button>
@@ -4549,8 +4565,17 @@ window.sw=function(name,el){
   if(name==='resume'){
     try{ renderResumeLibrary(); }catch(e){}
   }
-  // Clear stale error messages when switching to cover letter tab
+  // Auto-fill ATS resume textarea when switching to ATS tab
+  if(name==='ats'){
+    const atsTA = document.getElementById('ats-resume');
+    if(atsTA && !atsTA.value && S.resume) atsTA.value = S.resume;
+  }
+  // Auto-fill cover letter resume textarea and clear stale errors
   if(name==='coverletter'){
+    const clRes=document.getElementById('cl-resume');
+    if(clRes && !clRes.value && S.resume) clRes.value=S.resume;
+    const clName=document.getElementById('cl-name');
+    if(clName && !clName.value && S.name) clName.value=S.name;
     const out=document.getElementById('cl-out');
     if(out && out.querySelector('.err-box')) out.innerHTML='';
     const pv=document.getElementById('resumePrev');
@@ -5054,22 +5079,43 @@ OUTPUT THE COMPLETE RESUME NOW (start immediately with no preamble):`, 4000);
   const fixKey='atsfix_'+Date.now();
   window._atsFixCache=window._atsFixCache||{};
   window._atsFixCache[fixKey]=res;
-  // Clean AI commentary from output
   const cleanedRes = res
     .replace(/^(Here is|Here's|I've|I have|The following|Note:|Please note|In conclusion).*/gim,'')
     .replace(/---+/g,'')
     .replace(/\n{3,}/g,'\n\n').trim();
   window._atsFixCache[fixKey]=cleanedRes;
+
+  // Build a nicely formatted HTML view (separate from plain text stored for ATS)
+  function fmtResumeHTML(txt){
+    const SREX = /^(SUMMARY|PROFESSIONAL SUMMARY|OBJECTIVE|PROFILE|EXPERIENCE|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EMPLOYMENT|EDUCATION|SKILLS|TECHNICAL SKILLS|KEY SKILLS|CORE COMPETENCIES|CERTIFICATIONS?|PROJECTS?|AWARDS?|ACHIEVEMENTS?|LANGUAGES?|VOLUNTEER|ADDITIONAL)/i;
+    const lines = txt.split('\n');
+    let out = '';
+    for(const line of lines){
+      const l = line.trim();
+      if(!l){ out += '<div style="height:.4rem"></div>'; continue; }
+      if(SREX.test(l)){
+        out += `<div style="font-family:var(--font-d);font-weight:700;font-size:.8rem;letter-spacing:.7px;color:var(--accent);text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:3px;margin:1rem 0 .4rem">${l}</div>`;
+      } else if(/^[•\-\*]\s/.test(l)){
+        out += `<div style="padding-left:.9rem;margin:.15rem 0;line-height:1.65;font-size:.8rem;color:var(--text)">• ${l.replace(/^[•\-\*]\s+/,'')}</div>`;
+      } else if(l === l.toUpperCase() && l.length > 3 && l.length < 60 && !/^\d/.test(l)){
+        out += `<div style="font-weight:700;font-size:.82rem;font-family:var(--font-d);margin:.5rem 0 .1rem;color:var(--text)">${l}</div>`;
+      } else {
+        out += `<div style="font-size:.8rem;line-height:1.65;color:var(--text);margin:.1rem 0">${l}</div>`;
+      }
+    }
+    return out;
+  }
+
   fixDiv.innerHTML=`
     <div style="font-family:var(--font-d);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--accent);margin-bottom:.5rem">✅ AI-Fixed Resume — keywords integrated</div>
-    <div style="font-size:.75rem;color:var(--text2);margin-bottom:.5rem;padding:.4rem .6rem;background:var(--surface2);border-radius:6px">
-      Keywords added: <strong>${missing.split(',').slice(0,5).map(k=>k.trim()).filter(Boolean).join(', ')}${missing.split(',').length>5?' +more':''}</strong>
+    <div style="font-size:.75rem;color:var(--text2);margin-bottom:.6rem;padding:.4rem .6rem;background:var(--surface2);border-radius:6px">
+      Keywords woven in: <strong>${missing.split(',').slice(0,6).map(k=>k.trim()).filter(Boolean).join(' · ')}${missing.split(',').length>6?' +more':''}</strong>
     </div>
-    <div class="ai-box" id="${fixKey}" style="white-space:pre-wrap;max-height:350px;overflow-y:auto;font-size:.8rem;line-height:1.7">${escHtml(cleanedRes)}</div>
-    <div style="font-size:.73rem;color:var(--text3);margin-top:.4rem">📋 This is the plain text version — ATS optimised. After clicking "Use as My Resume", re-run the ATS check to see your improved score.</div>
+    <div id="${fixKey}" style="display:none">${escHtml(cleanedRes)}</div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;max-height:420px;overflow-y:auto">${fmtResumeHTML(cleanedRes)}</div>
     <div style="display:flex;gap:.5rem;margin-top:.7rem;flex-wrap:wrap">
-      <button class="btn btn-tl btn-sm" onclick="copyTxt(window._atsFixCache['${fixKey}'])">📋 Copy</button>
-      <button class="btn btn-p btn-sm" onclick="_doSaveResume(window._atsFixCache['${fixKey}'],'ATS-Fixed Resume');setTimeout(()=>{document.getElementById('ats-resume').value=window._atsFixCache['${fixKey}'];runATS('ats-resume','ats-jd','ats-results');},800)">✅ Save & Re-run ATS</button>
+      <button class="btn btn-tl btn-sm" onclick="copyTxt(window._atsFixCache['${fixKey}'])">📋 Copy text</button>
+      <button class="btn btn-p btn-sm" onclick="_doSaveResume(window._atsFixCache['${fixKey}'],'ATS-Fixed Resume');setTimeout(()=>{document.getElementById('ats-resume').value=window._atsFixCache['${fixKey}'];runATS('ats-resume','ats-jd','ats-results');},900)">✅ Save &amp; Re-run ATS</button>
       <button class="btn btn-o btn-sm" onclick="buildAndDownloadDocx(window._atsFixCache['${fixKey}'],S.name||'','','resume','ats_fixed_resume.docx')">📄 .docx</button>
     </div>`;
   document.getElementById(outId).appendChild(fixDiv);
@@ -5595,6 +5641,7 @@ function mailtoEmailCached(key) {
 // SALARY ESTIMATOR
 // ═══════════════════════════════════════════════
 async function estimateSalary(){
+  if(!S.gkey){ toast('Add Groq API key in Settings to use Salary Estimator'); openSettings(); return; }
   if(!S.gkey){ toast('Add your Groq API key in settings'); return; }
 
   const jd   = document.getElementById('sal-jd')?.value.trim();
@@ -5887,6 +5934,8 @@ window.sw = function(name, el){
   _origSwAnalytics(name, el);
   if(name==='analytics') renderAnalytics();
   if(name==='bank') renderBankStats();
+  // Always update quick actions on tab switch (catches first login)
+  try{ renderQuickActions(); } catch(e){}
 };
 
 // ═══════════════════════════════════════════════
@@ -6728,6 +6777,7 @@ function selDiff(el, diff){
 
 // ── Start ──────────────────────────────────────
 async function startInterview(){
+  if(!S.gkey){ toast('Add Groq API key in Settings to use Mock Interview'); openSettings(); return; }
   if(!S.gkey){ toast('Add your Groq API key in settings to use the AI interviewer'); return; }
   MI.role    = document.getElementById('mock-role').value.trim() || 'Software Engineer';
   MI.company = document.getElementById('mock-company').value.trim() || 'a top tech company';
@@ -8223,14 +8273,21 @@ window.sw = function(name, el){
   if(name==='builder'){
     rbRenderExpList();
     rbRenderEduList();
-    rbRender();
-    // Pre-fill name/email from settings if blank
-    const fn=document.getElementById('rb-fname');
-    if(fn && !fn.value && S.name) fn.value=S.name;
-    const fe=document.getElementById('rb-femail');
-    if(fe && !fe.value && S.email) fe.value=S.email;
-    const fli=document.getElementById('rb-fli');
-    if(fli && !fli.value && S.linkedin) fli.value=S.linkedin;
+    // Pre-fill contact from settings if blank
+    const flds = {
+      'rb-fname': S.name, 'rb-femail': S.email,
+      'rb-fli': S.linkedin, 'rb-fphone': '',
+    };
+    Object.entries(flds).forEach(([id,val])=>{
+      const el=document.getElementById(id);
+      if(el && !el.value && val) el.value=val;
+    });
+    // Auto-fill phone from resume text if available
+    if(S.resume && !document.getElementById('rb-fphone')?.value){
+      const ph=S.resume.match(/\+?[0-9][\d\s\-().]{8,15}/);
+      const phEl=document.getElementById('rb-fphone');
+      if(ph && phEl) phEl.value=ph[0].trim();
+    }
     rbRender();
   }
 };
