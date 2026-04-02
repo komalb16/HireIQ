@@ -1,0 +1,21 @@
+{
+  "name": "HireIQ - Modern Job Search",
+  "short_name": "HireIQ",
+  "description": "AI-powered modern job search and resume tailoring platform.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080c10",
+  "theme_color": "#0ea47a",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3850/3850285.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3850/3850285.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
