@@ -164,54 +164,112 @@ export default function CoverLetterPage() {
   // Strict First-Screen Entry Choice
   if (!state.profile.name || state.profile.name === "" || state.profile.name === "User") {
     return (
-      <div className="min-h-[80vh] flex flex-col items-center justify-center p-4 md:p-12 space-y-16 animate-in fade-in zoom-in-95 duration-1000">
-        <div className="text-center space-y-6 max-w-4xl">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-12 space-y-12 animate-in fade-in zoom-in-95 duration-1000">
+        
+        {/* Hero Section */}
+        <div className="text-center space-y-6 max-w-5xl">
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-[10px] font-black uppercase tracking-[0.4em] border border-[var(--accent)]/20 mb-2"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-[10px] font-black uppercase tracking-[0.4em] border border-[var(--accent)]/20"
           >
-             Institutional Hub Entrance
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+            AI-Powered · 100% Local · No Subscription
           </motion.div>
-          <h1 className="text-6xl md:text-9xl font-black tracking-tighter text-[var(--text)] leading-[0.8] italic uppercase">
+
+          <motion.h1 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-6xl md:text-9xl font-black tracking-tighter text-[var(--text)] leading-[0.85] italic uppercase"
+          >
             HireIQ <span className="text-[var(--accent)] not-italic">Hub</span>
-          </h1>
-          <div className="flex flex-col items-center gap-2 pt-4">
-             <div className="flex items-center gap-3">
-               <Badge className="px-4 py-1 border-[var(--accent)]/30 text-[var(--accent)] font-black uppercase text-[10px] tracking-[0.3em] rounded-full bg-transparent">
-                 Neural refraction active
-               </Badge>
-               <span className="text-slate-600 font-black text-[10px] uppercase tracking-widest italic opacity-60">Stable Node v4.0.5</span>
-             </div>
-             <p className="text-slate-500 text-sm font-black uppercase tracking-[0.2em] italic max-w-xl mx-auto pt-2">
-               Enterprise-grade career intelligence terminal.
-             </p>
-          </div>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-xl md:text-2xl text-slate-300 font-semibold max-w-2xl mx-auto leading-relaxed"
+          >
+            Stop applying blindly.{" "}
+            <span className="text-[var(--accent)]">Win more interviews</span>{" "}
+            with AI-powered cover letters, mock interviews, resume scoring, and job tracking — all in one terminal.
+          </motion.p>
+
+          {/* Feature Pills */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="flex flex-wrap items-center justify-center gap-2 pt-2"
+          >
+            {[
+              { icon: '✍️', label: 'AI Cover Letters' },
+              { icon: '🎯', label: 'Mock Interviews' },
+              { icon: '📄', label: 'Resume Builder' },
+              { icon: '📊', label: 'Pipeline Tracker' },
+              { icon: '💰', label: 'Salary Negotiator' },
+              { icon: '🔍', label: 'Job Fit Scoring' },
+            ].map((f) => (
+              <span
+                key={f.label}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-800/70 border border-slate-700 text-slate-300 text-xs font-bold"
+              >
+                {f.icon} {f.label}
+              </span>
+            ))}
+          </motion.div>
+
+          {/* Stats Row */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="flex items-center justify-center gap-8 pt-2"
+          >
+            {[
+              { value: '10+', label: 'AI Tools' },
+              { value: '100%', label: 'Free & Local' },
+              { value: '0', label: 'Data Sent Anywhere' },
+            ].map((s) => (
+              <div key={s.label} className="text-center">
+                <div className="text-2xl font-black text-[var(--accent)]">{s.value}</div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">{s.label}</div>
+              </div>
+            ))}
+          </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-5xl">
-          {/* Institutional Entry */}
-          <Card className="p-10 border-[var(--border)] bg-[var(--card)] hover:border-[var(--accent)]/50 transition-all group rounded-[3rem] relative overflow-hidden backdrop-blur-3xl shadow-2xl flex flex-col border-2">
-             <div className="relative z-10 space-y-8 flex-1">
+        {/* Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full max-w-5xl">
+          {/* Login Card */}
+          <Card className="p-8 border-[var(--border)] bg-[var(--card)] hover:border-[var(--accent)]/50 transition-all group rounded-[2.5rem] relative overflow-hidden backdrop-blur-3xl shadow-2xl flex flex-col border-2">
+             <div className="relative z-10 space-y-6 flex-1">
                 <div className="flex items-center justify-between">
-                  <div className="p-4 rounded-2xl bg-[var(--accent)] text-white flex items-center justify-center shadow-2xl shadow-[var(--accent-glow)] group-hover:scale-110 transition-transform">
-                     <Lock size={28} />
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Step 1</p>
+                    <h2 className="text-xl font-black text-[var(--text)] uppercase italic">Connect Your Keys</h2>
                   </div>
-                  <div className="text-right">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Security Node</p>
-                    <p className="text-xs font-black text-[var(--accent)] uppercase italic">Protocol Secure</p>
+                  <div className="p-3 rounded-2xl bg-[var(--accent)] text-white flex items-center justify-center shadow-2xl shadow-[var(--accent-glow)] group-hover:scale-110 transition-transform">
+                     <Lock size={22} />
                   </div>
                 </div>
+
+                <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                  Your API keys are stored <span className="text-[var(--accent)] font-bold">locally on your device only</span>. HireIQ never sends your data to any server.
+                </p>
                 
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-4">
+                <form onSubmit={handleLogin} className="space-y-3">
+                  <div className="space-y-3">
                     <div>
                       <div className={`relative transition-all ${recalibrate.includes('name') ? 'animate-shake' : ''}`}>
                         <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                         <input 
                           type="text" 
                           placeholder="Full Name (First & Last)" 
-                          className={`w-full bg-[var(--bg)] border-2 border-[var(--border)] rounded-2xl pl-12 pr-6 py-4 text-sm outline-none focus:border-[var(--accent)] transition-all font-black ${recalibrate.includes('name') ? 'animate-recalibrate' : ''}`}
+                          className={`w-full bg-[var(--bg)] border-2 border-[var(--border)] rounded-2xl pl-12 pr-6 py-3.5 text-sm outline-none focus:border-[var(--accent)] transition-all font-bold ${recalibrate.includes('name') ? 'animate-recalibrate' : ''}`}
                           value={loginData.name}
                           onChange={(e) => setLoginData({...loginData, name: e.target.value})}
                         />
@@ -225,7 +283,7 @@ export default function CoverLetterPage() {
                         <input 
                           type="email" 
                           placeholder="Email" 
-                          className={`w-full bg-[var(--bg)] border-2 border-[var(--border)] rounded-2xl pl-12 pr-6 py-4 text-sm outline-none focus:border-[var(--accent)] transition-all font-black ${recalibrate.includes('email') ? 'animate-recalibrate' : ''}`}
+                          className={`w-full bg-[var(--bg)] border-2 border-[var(--border)] rounded-2xl pl-12 pr-6 py-3.5 text-sm outline-none focus:border-[var(--accent)] transition-all font-bold ${recalibrate.includes('email') ? 'animate-recalibrate' : ''}`}
                           value={loginData.email}
                           onChange={(e) => setLoginData({...loginData, email: e.target.value})}
                         />
@@ -238,8 +296,8 @@ export default function CoverLetterPage() {
                         <Zap className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--accent)]" />
                         <input 
                           type={showGroq ? "text" : "password"} 
-                          placeholder="Groq API Node Key (gsk_...)" 
-                          className={`w-full bg-[var(--bg)] border-2 border-[var(--border)] rounded-2xl pl-12 pr-14 py-4 text-sm outline-none focus:border-[var(--accent)] transition-all font-black ${recalibrate.includes('groqKey') ? 'animate-recalibrate' : ''}`}
+                          placeholder="Groq API Key (gsk_...) — free at console.groq.com" 
+                          className={`w-full bg-[var(--bg)] border-2 border-[var(--border)] rounded-2xl pl-12 pr-14 py-3.5 text-sm outline-none focus:border-[var(--accent)] transition-all font-bold ${recalibrate.includes('groqKey') ? 'animate-recalibrate' : ''}`}
                           value={loginData.groqKey}
                           onChange={(e) => setLoginData({...loginData, groqKey: e.target.value})}
                         />
@@ -259,8 +317,8 @@ export default function CoverLetterPage() {
                         <Layout className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-cyan-500" />
                         <input 
                           type={showRapid ? "text" : "password"} 
-                          placeholder="Rapid API Market Key" 
-                          className={`w-full bg-[var(--bg)] border-2 border-[var(--border)] rounded-2xl pl-12 pr-14 py-4 text-sm outline-none focus:border-[var(--accent)] transition-all font-black ${recalibrate.includes('rapidKey') ? 'animate-recalibrate' : ''}`}
+                          placeholder="RapidAPI Key — free at rapidapi.com" 
+                          className={`w-full bg-[var(--bg)] border-2 border-[var(--border)] rounded-2xl pl-12 pr-14 py-3.5 text-sm outline-none focus:border-[var(--accent)] transition-all font-bold ${recalibrate.includes('rapidKey') ? 'animate-recalibrate' : ''}`}
                           value={loginData.rapidKey}
                           onChange={(e) => setLoginData({...loginData, rapidKey: e.target.value})}
                         />
@@ -278,9 +336,9 @@ export default function CoverLetterPage() {
                   <Button 
                     type="submit"
                     disabled={isValidating}
-                    className="w-full h-16 rounded-2xl bg-[var(--accent)] hover:opacity-90 text-white font-black text-lg shadow-xl shadow-[var(--accent-glow)] active:scale-95 transition-all flex items-center justify-center gap-3 uppercase italic disabled:opacity-50"
+                    className="w-full h-14 rounded-2xl bg-[var(--accent)] hover:opacity-90 text-white font-black text-base shadow-xl shadow-[var(--accent-glow)] active:scale-95 transition-all flex items-center justify-center gap-3 uppercase disabled:opacity-50"
                   >
-                    <span>{isValidating ? "Probing Node..." : "Execute Initialization"}</span>
+                    <span>{isValidating ? "Verifying Keys..." : "Launch HireIQ"}</span>
                     {!isValidating && <ArrowRight size={20} />}
                     {isValidating && <Zap size={20} className="animate-spin" />}
                   </Button>
@@ -289,34 +347,47 @@ export default function CoverLetterPage() {
              <div className="absolute -right-20 -top-20 w-80 h-80 bg-[var(--accent)]/5 blur-[100px] rounded-full pointer-events-none" />
           </Card>
 
-          {/* Public Demo Node */}
+          {/* Demo Card */}
           <Card 
             onClick={handleDemo}
-            className="p-10 border-[var(--border)] bg-[var(--bg)]/40 hover:border-cyan-500/50 transition-all group rounded-[3rem] relative overflow-hidden backdrop-blur-2xl cursor-pointer shadow-xl flex flex-col border-2"
+            className="p-8 border-[var(--border)] bg-[var(--bg)]/40 hover:border-cyan-500/50 transition-all group rounded-[2.5rem] relative overflow-hidden backdrop-blur-2xl cursor-pointer shadow-xl flex flex-col border-2"
           >
-             <div className="relative z-10 space-y-8 h-full flex flex-col">
+             <div className="relative z-10 space-y-6 h-full flex flex-col">
                 <div className="flex items-center justify-between">
-                  <div className="p-4 rounded-2xl bg-slate-800 text-white flex items-center justify-center group-hover:bg-cyan-600 transition-colors">
-                     <Zap size={28} />
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">No setup needed</p>
+                    <h2 className="text-xl font-black text-[var(--text)] uppercase italic">Try Demo First</h2>
                   </div>
-                  <div className="text-right">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Public Access</p>
-                    <p className="text-xs font-black text-cyan-500 uppercase italic">Demo Hub</p>
+                  <div className="p-3 rounded-2xl bg-slate-800 text-white flex items-center justify-center group-hover:bg-cyan-600 transition-colors">
+                     <Zap size={22} />
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <h3 className="text-5xl font-black tracking-tighter leading-none italic uppercase">
-                    Sandbox <br/> <span className="text-cyan-500">Explorer</span>
-                  </h3>
-                  <p className="text-slate-500 text-sm font-black leading-tight uppercase italic opacity-70">
-                    Instantly deploy markets and mock datasets across 50+ global companies.
-                  </p>
+                <p className="text-xs text-slate-400 font-medium leading-relaxed">
+                  Explore every feature instantly with pre-loaded sample data — no API keys required.
+                </p>
+
+                <div className="space-y-2 flex-1">
+                  {[
+                    'AI Cover Letter generator with 4 tones',
+                    'Live Mock Interview with voice coaching',
+                    'Resume Builder + LaTeX export',
+                    'Pipeline Tracker with AI fit scoring',
+                    'Salary Negotiation playbook',
+                  ].map((feature) => (
+                    <div key={feature} className="flex items-center gap-3">
+                      <div className="w-4 h-4 rounded-full bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center flex-shrink-0">
+                        <div className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
+                      </div>
+                      <span className="text-xs text-slate-400 font-medium">{feature}</span>
+                    </div>
+                  ))}
                 </div>
 
-                <div className="mt-auto pt-4 flex items-center justify-between">
-                   <div className="flex items-center gap-3 text-cyan-500 font-black text-[10px] uppercase tracking-[0.3em] group-hover:gap-6 transition-all">
-                      Access Demo Hub <ArrowRight size={16} />
+                <div className="flex items-center justify-between pt-2 border-t border-slate-800/50">
+                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">Click anywhere on this card</span>
+                   <div className="flex items-center gap-2 text-cyan-500 font-black text-[10px] uppercase tracking-[0.3em] group-hover:gap-4 transition-all">
+                      Explore Demo <ArrowRight size={14} />
                    </div>
                 </div>
              </div>
