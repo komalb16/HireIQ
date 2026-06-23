@@ -938,9 +938,9 @@ Return ONLY valid JSON matching this structure exactly:
                   </pre>
                 </Card>
                 <div className="mt-4 p-4 rounded-2xl bg-[var(--accent)]/5 border border-[var(--accent)]/20 text-sm text-slate-400">
-                  <strong className="text-[var(--accent)]">How to use LaTeX:</strong> Copy the code above -> Open{" "}
+                  <strong className="text-[var(--accent)]">How to use LaTeX:</strong> Copy the code above &rarr; Open{" "}
                   <a href="https://overleaf.com" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] underline">Overleaf.com</a>{" "}
-                  -> New Project -> Blank Project -> paste the code -> Compile. Download as PDF directly from Overleaf.
+                  &rarr; New Project &rarr; Blank Project &rarr; paste the code &rarr; Compile. Download as PDF directly from Overleaf.
                 </div>
               </motion.div>
             )}

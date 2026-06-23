@@ -22,6 +22,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     theme: "dark",
     groqKey: "",
     rapidKey: "",
+    rubric: [
+      { id: '1', name: 'Base Compensation', weight: 3 },
+      { id: '2', name: 'Remote Flexibility', weight: 4 },
+      { id: '3', name: 'Tech Stack (React/Next)', weight: 3 },
+    ]
   });
 
   const [apps, setApps] = useLocalStorage<AppStatus[]>("hiq_apps", []);
@@ -80,7 +85,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       ...prev, 
       theme: "lavender",
       groqKey: "",
-      rapidKey: ""
+      rapidKey: "",
+      rubric: [
+        { id: '1', name: 'Base Compensation', weight: 3 },
+        { id: '2', name: 'Remote Flexibility', weight: 4 },
+        { id: '3', name: 'Tech Stack (React/Next)', weight: 3 },
+      ]
     }));
     addNotification("Protocol Terminated", "Session & Node data cleared. Returning to secure entry.");
     window.location.reload();

@@ -9,11 +9,18 @@ export interface UserProfile {
   idealRole?: string;
 }
 
+export interface RubricDimension {
+  id: string;
+  name: string;
+  weight: number;
+}
+
 export interface Settings {
   theme: Theme;
   groqKey: string;
   rapidKey: string;
   phKey?: string;
+  rubric: RubricDimension[];
 }
 
 export interface Job {
@@ -79,6 +86,9 @@ export interface AppStatus {
   priority?: 'low' | 'medium' | 'high';
   reminder?: string;
   addedAt: number;
+  fitScore?: number;
+  fitPros?: string[];
+  fitCons?: string[];
 }
 
 export interface Resume {

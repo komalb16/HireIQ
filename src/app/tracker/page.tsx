@@ -16,13 +16,15 @@ import {
   sortableKeyboardCoordinates, 
   verticalListSortingStrategy 
 } from "@dnd-kit/sortable";
-import { Plus, Calendar, Mail, Trash2, Layout, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { useAppContext } from "@/context/AppContext";
 import { AppStatus } from "@/types";
 import { EmailComposer } from "@/components/EmailComposer";
+import { AddJobModal } from "@/components/AddJobModal";
+import { RubricConfigModal } from "@/components/RubricConfigModal";
+import { Settings as SettingsIcon, CheckCircle2, XCircle, Plus, Calendar, Mail, Trash2, Layout, MoreHorizontal } from "lucide-react";
 
 const COLUMNS = [
   { id: "Wishlist", label: "Wishlist", color: "bg-slate-500" },
@@ -36,6 +38,8 @@ export default function TrackerPage() {
   const { state, setApps, addNotification } = useAppContext();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [composingApp, setComposingApp] = useState<AppStatus | null>(null);
+  const [showAddJob, setShowAddJob] = useState(false);
+  const [showRubric, setShowRubric] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -80,9 +84,14 @@ export default function TrackerPage() {
           </h1>
           <p className="text-slate-400 mt-1">Organize your interview stages with a professional Kanban board.</p>
         </div>
-        <Button className="bg-emerald-500 hover:bg-emerald-600 font-bold h-11 px-6 shadow-lg shadow-emerald-500/10">
-          <Plus className="w-5 h-5 mr-2" /> New Application
-        </Button>
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={() => setShowRubric(true)} className="border-slate-700 text-slate-300 hover:text-white font-bold h-11 px-4 rounded-xl">
+            <SettingsIcon className="w-5 h-5 mr-2 text-[var(--accent)]" /> Rubric
+          </Button>
+          <Button onClick={() => setShowAddJob(true)} className="bg-emerald-500 hover:bg-emerald-600 font-bold h-11 px-6 shadow-lg shadow-emerald-500/10 rounded-xl">
+            <Plus className="w-5 h-5 mr-2" /> New Application
+          </Button>
+        </div>
       </div>
 
       <DndContext 
@@ -130,6 +139,9 @@ export default function TrackerPage() {
           onClose={() => setComposingApp(null)} 
         />
       )}
+      
+      {showAddJob && <AddJobModal onClose={() => setShowAddJob(false)} />}
+      {showRubric && <RubricConfigModal onClose={() => setShowRubric(false)} />}
     </div>
   );
 }
@@ -146,7 +158,14 @@ function TrackerCard({ app, onDelete, onCompose }: TrackerCardProps) {
       <div className="space-y-4">
         <div className="flex justify-between items-start">
           <div className="space-y-1">
-             <h4 className="font-bold text-sm leading-tight text-slate-200 group-hover:text-emerald-400 transition-colors">{app.title}</h4>
+             <div className="flex items-center gap-2">
+               <h4 className="font-bold text-sm leading-tight text-slate-200 group-hover:text-emerald-400 transition-colors">{app.title}</h4>
+               {app.fitScore !== undefined && (
+                 <Badge className={`text-[9px] px-1.5 py-0 ${app.fitScore >= 80 ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : app.fitScore >= 60 ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-red-500/20 text-red-400 border-red-500/30'}`}>
+                   {app.fitScore}% Fit
+                 </Badge>
+               )}
+             </div>
              <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-tighter">
                 <div className="w-4 h-4 rounded bg-slate-700 flex items-center justify-center text-slate-400 text-[8px]">
                   {app.company[0]}
