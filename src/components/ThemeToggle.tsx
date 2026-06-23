@@ -10,7 +10,6 @@ export function ThemeToggle() {
 
   const getIcon = () => {
     if (theme === 'light') return <Sun size={18} className="text-amber-500" />;
-    if (theme === 'medium') return <Cloud size={18} className="text-slate-400" />;
     return <Moon size={18} className="text-cyan-400" />;
   };
 

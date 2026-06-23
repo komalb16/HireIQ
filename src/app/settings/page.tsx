@@ -31,7 +31,8 @@ export default function SettingsPage() {
     theme: state.settings.theme,
     groqKey: state.settings.groqKey,
     rapidKey: state.settings.rapidKey,
-    phKey: state.settings.phKey || ''
+    phKey: state.settings.phKey || '',
+    rubric: state.settings.rubric
   });
 
   const handleSaveProfile = (e: React.FormEvent) => {
