@@ -4,6 +4,9 @@ export interface UserProfile {
   name: string;
   email: string;
   linkedin: string;
+  strengths?: string;
+  storyBank?: string;
+  idealRole?: string;
 }
 
 export interface Settings {

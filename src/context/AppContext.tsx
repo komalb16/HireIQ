@@ -13,6 +13,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     name: "", // Empty name triggers strict entry choice
     email: "",
     linkedin: "",
+    strengths: "",
+    storyBank: "",
+    idealRole: "",
   });
 
   const [settings, setSettings] = useLocalStorage<Settings>("hiq_settings", {
@@ -50,7 +53,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [setSettings]);
 
   const seedDemoData = useCallback(() => {
-    setProfile({ name: "Demo User", email: "demo@hireiq.ai", linkedin: "linkedin.com/in/demouser" });
+    setProfile({ 
+      name: "Demo User", 
+      email: "demo@hireiq.ai", 
+      linkedin: "linkedin.com/in/demouser",
+      strengths: "1. Rapid Prototyping\n2. Cross-functional Leadership",
+      storyBank: "STAR 1: Scaled system by 500%...\nSTAR 2: Led team of 10...",
+      idealRole: "Senior Product Manager at an AI startup."
+    });
     setSettings((prev: Settings) => ({
       ...prev,
       groqKey: "gsk_demo_access_node_777",
@@ -62,7 +72,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [setProfile, setSettings, setResumes, setApps, addNotification]);
 
   const logout = useCallback(() => {
-    setProfile({ name: "", email: "", linkedin: "" });
+    setProfile({ name: "", email: "", linkedin: "", strengths: "", storyBank: "", idealRole: "" });
     setResumes([]);
     setApps([]);
     setAlerts([]);

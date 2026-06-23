@@ -19,7 +19,7 @@ export const BANK: Question[] = [
   {
     cat: "DSA", diff: "Easy", company: "Blind 75",
     q: "Two Sum: Given an array of integers and a target, return indices of two numbers that add up to the target.",
-    refAnswer: "Use a HashMap. Iterate once: for each number, calculate complement = target - num. If complement is in map, return its index plus current index. Otherwise, store current num → index in map. Time O(n), Space O(n). Easy: You're looking for a missing puzzle piece — check your 'seen' box before adding a new piece."
+    refAnswer: "Use a HashMap. Iterate once: for each number, calculate complement = target - num. If complement is in map, return its index plus current index. Otherwise, store current num -> index in map. Time O(n), Space O(n). Easy: You're looking for a missing puzzle piece — check your 'seen' box before adding a new piece."
   },
   {
     cat: "DSA", diff: "Easy", company: "Blind 75",
@@ -44,7 +44,7 @@ export const BANK: Question[] = [
   {
     cat: "DSA", diff: "Easy", company: "Blind 75",
     q: "Valid Anagram: Check if two strings are anagrams.",
-    refAnswer: "Use a frequency map. Increment for chars in s, decrement for chars in t. If any value ≠ 0 at the end, not an anagram. Alternative: sort both and compare. Time O(n). Easy: Count the letters in both words — anagrams have the exact same letter inventory."
+    refAnswer: "Use a frequency map. Increment for chars in s, decrement for chars in t. If any value != 0 at the end, not an anagram. Alternative: sort both and compare. Time O(n). Easy: Count the letters in both words — anagrams have the exact same letter inventory."
   },
   {
     cat: "DSA", diff: "Easy", company: "Blind 75",
@@ -89,7 +89,7 @@ export const BANK: Question[] = [
   {
     cat: "DSA", diff: "Medium", company: "Blind 75",
     q: "3Sum: Find all unique triplets in an array that sum to zero.",
-    refAnswer: "Sort the array. For each element i (skip duplicates), use two pointers left=i+1, right=end. If sum < 0, move left up. If sum > 0, move right down. If sum == 0, record triplet and skip duplicates on both sides. Time O(n²). Easy: Fix one number, then use two-pointer to find two others that cancel it out."
+    refAnswer: "Sort the array. For each element i (skip duplicates), use two pointers left=i+1, right=end. If sum < 0, move left up. If sum > 0, move right down. If sum == 0, record triplet and skip duplicates on both sides. Time O(n^2). Easy: Fix one number, then use two-pointer to find two others that cancel it out."
   },
   {
     cat: "DSA", diff: "Medium", company: "Blind 75",
@@ -99,12 +99,12 @@ export const BANK: Question[] = [
   {
     cat: "DSA", diff: "Medium", company: "Blind 75",
     q: "Coin Change: Find the minimum number of coins to make up a target amount.",
-    refAnswer: "Bottom-up DP. dp[i] = min coins to make amount i. For each amount from 1 to target, try each coin: dp[i] = min(dp[i], dp[i - coin] + 1). Init dp[0]=0, rest=infinity. Time O(amount × coins). Easy: Build a table — for each dollar amount, find the cheapest way to make it using previous answers."
+    refAnswer: "Bottom-up DP. dp[i] = min coins to make amount i. For each amount from 1 to target, try each coin: dp[i] = min(dp[i], dp[i - coin] + 1). Init dp[0]=0, rest=infinity. Time O(amount x coins). Easy: Build a table — for each dollar amount, find the cheapest way to make it using previous answers."
   },
   {
     cat: "DSA", diff: "Medium", company: "Blind 75",
     q: "Number of Islands: Count distinct islands in a 2D grid of '1's (land) and '0's (water).",
-    refAnswer: "BFS or DFS. Iterate every cell. When you find a '1', increment count and use DFS/BFS to mark all connected '1's as visited (set to '0'). Time O(m×n). Easy: Every time you step on land, flood-fill the whole island so you never count it twice."
+    refAnswer: "BFS or DFS. Iterate every cell. When you find a '1', increment count and use DFS/BFS to mark all connected '1's as visited (set to '0'). Time O(m x n). Easy: Every time you step on land, flood-fill the whole island so you never count it twice."
   },
   {
     cat: "DSA", diff: "Medium", company: "Blind 75",
@@ -124,7 +124,7 @@ export const BANK: Question[] = [
   {
     cat: "DSA", diff: "Medium", company: "Blind 75",
     q: "Course Schedule: Can you finish all courses given prerequisite pairs? (Detect cycle in directed graph)",
-    refAnswer: "Topological Sort via DFS or BFS (Kahn's). Track node states: unvisited, visiting (in DFS stack), visited. If during DFS you revisit a 'visiting' node → cycle exists → impossible. BFS: start with nodes of in-degree 0 (no prereqs), process and remove edges. If all nodes processed, no cycle. Easy: Check if there's a circular dependency."
+    refAnswer: "Topological Sort via DFS or BFS (Kahn's). Track node states: unvisited, visiting (in DFS stack), visited. If during DFS you revisit a 'visiting' node — cycle exists — impossible. BFS: start with nodes of in-degree 0 (no prereqs), process and remove edges. If all nodes processed, no cycle. Easy: Check if there's a circular dependency."
   },
   {
     cat: "DSA", diff: "Medium", company: "Blind 75",
@@ -144,7 +144,7 @@ export const BANK: Question[] = [
   {
     cat: "DSA", diff: "Hard", company: "Blind 75",
     q: "Longest Increasing Subsequence (LIS).",
-    refAnswer: "DP: dp[i] = LIS ending at index i = 1 + max(dp[j]) for all j < i where nums[j] < nums[i]. O(n²). Optimized: Use patience sort / binary search on a tails array for O(n log n). Easy: Track the smallest ending value of all increasing subsequences of each length."
+    refAnswer: "DP: dp[i] = LIS ending at index i = 1 + max(dp[j]) for all j < i where nums[j] < nums[i]. O(n^2). Optimized: Use patience sort / binary search on a tails array for O(n log n). Easy: Track the smallest ending value of all increasing subsequences of each length."
   },
   {
     cat: "DSA", diff: "Hard", company: "Blind 75",
@@ -154,7 +154,7 @@ export const BANK: Question[] = [
   {
     cat: "DSA", diff: "Hard", company: "Blind 75",
     q: "Find Median from Data Stream.",
-    refAnswer: "Two heaps: a Max-Heap for the lower half, a Min-Heap for the upper half. Maintain them balanced (sizes differ by ≤ 1). Adding a number: push to max_heap, then rebalance. Median: if sizes equal, average the two tops; otherwise return top of larger heap. Easy: Keep two sorted halves and the median is always at the boundary."
+    refAnswer: "Two heaps: a Max-Heap for the lower half, a Min-Heap for the upper half. Maintain them balanced (sizes differ by <= 1). Adding a number: push to max_heap, then rebalance. Median: if sizes equal, average the two tops; otherwise return top of larger heap. Easy: Keep two sorted halves and the median is always at the boundary."
   },
   {
     cat: "DSA", diff: "Medium", company: "LeetCode",
@@ -184,17 +184,117 @@ export const BANK: Question[] = [
   {
     cat: "DSA", diff: "Medium", company: "LeetCode",
     q: "K Closest Points to Origin.",
-    refAnswer: "Write a custom comparator using distance² = x² + y² (avoid sqrt for efficiency). Use a Max-Heap of size K — maintain the K smallest. Or sort all points by distance. Quickselect gives O(n) average. Easy: Calculate how far each point is from (0,0) and keep the K closest."
+    refAnswer: "Write a custom comparator using distance^2 = x^2 + y^2 (avoid sqrt for efficiency). Use a Max-Heap of size K — maintain the K smallest. Or sort all points by distance. Quickselect gives O(n) average. Easy: Calculate how far each point is from (0,0) and keep the K closest."
   },
   {
     cat: "DSA", diff: "Medium", company: "LeetCode",
     q: "Implement Min Stack: A stack that supports push, pop, top, and getMin in O(1).",
-    refAnswer: "Use two stacks: a main stack and a min_stack. When pushing, push to main. If val ≤ min_stack.top() (or min_stack is empty), also push to min_stack. When popping, if main.top() == min_stack.top(), also pop min_stack. getMin = min_stack.top(). Easy: Keep a shadow stack that tracks the minimum at each state."
+    refAnswer: "Use two stacks: a main stack and a min_stack. When pushing, push to main. If val <= min_stack.top() (or min_stack is empty), also push to min_stack. When popping, if main.top() == min_stack.top(), also pop min_stack. getMin = min_stack.top(). Easy: Keep a shadow stack that tracks the minimum at each state."
   },
   {
     cat: "DSA", diff: "Medium", company: "LeetCode",
     q: "Evaluate Reverse Polish Notation (e.g., ['2','1','+','3','*'] = 9).",
     refAnswer: "Use a stack. For each token: if it's a number, push it. If it's an operator, pop two numbers, apply the operator, push the result. Final answer is the only element left in the stack. Easy: Process left-to-right; operators grab the last two numbers they see."
+  },
+  // Additional LeetCode DSA
+  {
+    cat: "DSA", diff: "Medium", company: "LeetCode",
+    q: "Find All Anagrams in a String: find all start indices of anagrams of p in s.",
+    refAnswer: "Sliding window of size p.length. Use two frequency hashmaps (or arrays of 26). Add right char, remove left char as window slides. If freq maps match, record left index. Time O(n). Easy: Keep a fixed-width window that slides right, comparing letter frequencies to the target word's frequencies."
+  },
+  {
+    cat: "DSA", diff: "Medium", company: "LeetCode",
+    q: "Longest Palindromic Substring.",
+    refAnswer: "Expand around center: for each index i, try odd-length (center=i) and even-length (center=i,i+1) palindromes. Expand while chars match. Track max. Time O(n^2). Manacher's algorithm achieves O(n). Easy: For every character, try to expand a palindrome outward — like pushing two hands apart from a center."
+  },
+  {
+    cat: "DSA", diff: "Hard", company: "LeetCode",
+    q: "Trapping Rain Water: given height array, compute total water trapped.",
+    refAnswer: "Two pointer approach: left and right pointers. Track left_max and right_max. If left_max < right_max: water at left = left_max - height[left], move left inward. Else: water at right = right_max - height[right], move right inward. Time O(n), Space O(1). Easy: Water level is determined by the shorter wall — process from whichever side is shorter."
+  },
+  {
+    cat: "DSA", diff: "Medium", company: "LeetCode",
+    q: "Subsets: generate all possible subsets (power set) of a given array.",
+    refAnswer: "Backtracking: at each index, choose to include or exclude the element. Recursively build subsets. Or iteratively: start with [[]], for each num, add num to all existing subsets and append those. Time O(2^n). Easy: For each element you have exactly two choices — in or out. Explore every combination."
+  },
+  {
+    cat: "DSA", diff: "Medium", company: "LeetCode",
+    q: "Letter Combinations of a Phone Number.",
+    refAnswer: "Backtracking over the digits. Use a map digit -> letters. For each digit, try each letter, recurse for the next digit, then backtrack. Base case: current combination length equals digits length. Time O(4^n * n). Easy: Build a tree of choices — at each level pick one letter for the current digit."
+  },
+  {
+    cat: "DSA", diff: "Medium", company: "LeetCode",
+    q: "Word Search: find if a word exists in a 2D character grid.",
+    refAnswer: "DFS + backtracking. At each cell matching word[0], DFS in 4 directions. Mark cell as visited (e.g., temp replace with '#'), recurse for remaining word. Restore cell after recursion. Time O(M*N*4^L) where L=word length. Easy: Walk the grid letter by letter, backtrack if you hit a dead end."
+  },
+  {
+    cat: "DSA", diff: "Hard", company: "LeetCode",
+    q: "N-Queens: place N queens on NxN board so no two queens attack each other.",
+    refAnswer: "Backtracking: place queens row by row. Track which columns, diagonals (row-col), and anti-diagonals (row+col) are occupied using sets. At each row, try each valid column. Backtrack when stuck. Time O(N!). Easy: Place one queen per row, keeping a 'blocked' record — backtrack when no safe column exists."
+  },
+  {
+    cat: "DSA", diff: "Medium", company: "LeetCode",
+    q: "Decode Ways: count how many ways a digit string can be decoded (1=A, 2=B, ..., 26=Z).",
+    refAnswer: "DP. dp[i] = number of ways to decode s[:i]. If s[i-1] != '0': dp[i] += dp[i-1] (single digit). If 10 <= int(s[i-2:i]) <= 26: dp[i] += dp[i-2] (two digits). Base: dp[0]=1, dp[1]=0 or 1. Easy: At each position, decide whether to decode the last one or two characters."
+  },
+  {
+    cat: "DSA", diff: "Medium", company: "LeetCode",
+    q: "House Robber: maximize money robbed from houses where you can't rob adjacent ones.",
+    refAnswer: "DP. rob(i) = max(rob(i-2) + nums[i], rob(i-1)). Either rob house i (and skip i-1) or skip house i (take whatever was best at i-1). Space optimize to two variables. Time O(n), Space O(1). Easy: At each house, compare 'money from two houses ago + this house' vs 'best without this house'."
+  },
+  {
+    cat: "DSA", diff: "Medium", company: "Google",
+    q: "Rotting Oranges: find minimum minutes for all oranges to rot (BFS from all rotten oranges simultaneously).",
+    refAnswer: "Multi-source BFS: start with all initially rotten oranges in the queue simultaneously. Each minute, spread rot to adjacent fresh oranges. Track elapsed minutes. At the end, if any fresh orange remains, return -1. Time O(M*N). Easy: Think of all rotten oranges as spreading simultaneously like multiple infection sources."
+  },
+  {
+    cat: "DSA", diff: "Medium", company: "Amazon",
+    q: "Pacific Atlantic Water Flow: find which cells can drain to both the Pacific and Atlantic oceans.",
+    refAnswer: "Reverse BFS/DFS from ocean borders. Start BFS from all Pacific-border cells, mark reachable cells. Repeat from Atlantic-border cells. Answer = intersection of both reachable sets. Easy: Instead of water flowing down, think of water flowing up from each ocean — find where both oceans' water can reach."
+  },
+  // Jane Street
+  {
+    cat: "DSA", diff: "Hard", company: "Jane Street",
+    q: "Given an array, find the contiguous subarray of length k with the maximum sum.",
+    refAnswer: "Sliding Window in O(n). Compute sum of first k elements. Then slide the window: add the next element, remove the leftmost. Track max. Space O(1). Easy: Imagine a k-wide frame sliding along the array — you just update the running total by adding one side and removing the other."
+  },
+  // Stripe DSA
+  {
+    cat: "DSA", diff: "Medium", company: "Stripe",
+    q: "Given a list of transactions, detect any duplicate charges within a 5-minute window for the same merchant and amount.",
+    refAnswer: "Sort transactions by time. Use a sliding window or HashMap keyed by (merchant, amount). For each transaction, check if any prior transaction with same key exists within 5 minutes. Use a deque to expire old entries. Time O(n log n). Easy: Group by (merchant, amount) and check time deltas within each group."
+  },
+  {
+    cat: "DSA", diff: "Hard", company: "Stripe",
+    q: "Design a data structure that supports insert, delete, and getRandom in O(1).",
+    refAnswer: "HashMap + dynamic array. HashMap maps value to its index in the array. Insert: append to array, add to map. Delete: swap target with last element, update map, pop last. getRandom: return array[random index]. Time O(1) average for all. Easy: Keep an array for O(1) random access and a map for O(1) lookup and deletion."
+  },
+  // Uber DSA
+  {
+    cat: "DSA", diff: "Hard", company: "Uber",
+    q: "Find the shortest path between two nodes in a weighted graph with possible negative edges (no negative cycles).",
+    refAnswer: "Bellman-Ford algorithm. Initialize dist[source]=0, rest=infinity. Relax all edges V-1 times. If relaxation is possible on the Vth pass, there's a negative cycle. Time O(V*E). For non-negative weights prefer Dijkstra (O((V+E) log V)). Easy: Dijkstra is greedy (nearest first); Bellman-Ford is brute force that handles negatives."
+  },
+  // Flipkart / Infosys / Wipro
+  {
+    cat: "DSA", diff: "Easy", company: "Infosys",
+    q: "Reverse a string without using built-in reverse functions.",
+    refAnswer: "Two-pointer: swap characters at left and right pointers, move inward until they meet. Time O(n), Space O(1). Alternative: push all chars onto a stack and pop them. Easy: Think of folding the string in half and swapping pairs from outside in."
+  },
+  {
+    cat: "DSA", diff: "Medium", company: "Wipro",
+    q: "Find all permutations of a string.",
+    refAnswer: "Backtracking: swap each character into the first position, recurse on the rest, then swap back (restore). Base case: start index == length. Time O(n * n!). Easy: At each position, try all unused characters, recurse for the rest, then undo your choice."
+  },
+  {
+    cat: "DSA", diff: "Medium", company: "TCS",
+    q: "Find the first non-repeating character in a string.",
+    refAnswer: "Two passes: first pass builds a frequency map. Second pass iterates the string in order, returning the first character with frequency 1. Time O(n), Space O(1) since alphabet is fixed. Easy: Count every letter, then find the first letter you counted exactly once."
+  },
+  {
+    cat: "DSA", diff: "Medium", company: "Accenture",
+    q: "Check if a binary tree is balanced (heights of left and right subtrees differ by at most 1 for every node).",
+    refAnswer: "DFS returning height: if subtree is unbalanced, return -1 as a sentinel. At each node: if left or right returns -1, propagate -1 up. Otherwise return 1 + max(left, right) if abs(left - right) <= 1, else -1. Time O(n). Easy: Recursively check balance bottom-up — unbalanced subtrees bubble up a special signal."
   },
 
   // ═══════════════════════════════════════════
@@ -203,12 +303,12 @@ export const BANK: Question[] = [
   {
     cat: "System Design", diff: "Medium", company: "Google",
     q: "Design a URL Shortener (like TinyURL).",
-    refAnswer: "Key components: (1) API (POST /shorten → return shortURL, GET /short → redirect). (2) Hashing: base62 encode a unique ID (counter-based or random). (3) DB: Map shortCode → originalURL. (4) Cache: Redis for hot links. (5) Scale: consistent hashing for multi-node DB. Easy: A dictionary that maps a short nickname to a long address, with a redirect desk."
+    refAnswer: "Key components: (1) API (POST /shorten -> return shortURL, GET /short -> redirect). (2) Hashing: base62 encode a unique ID (counter-based or random). (3) DB: Map shortCode -> originalURL. (4) Cache: Redis for hot links. (5) Scale: consistent hashing for multi-node DB. Easy: A dictionary that maps a short nickname to a long address, with a redirect desk."
   },
   {
     cat: "System Design", diff: "Hard", company: "Meta",
     q: "Design a News Feed system (like Facebook or Twitter).",
-    refAnswer: "Two approaches: (1) Pull (fan-out on read): user reads → fetch posts from all followees → merge sort. (2) Push (fan-out on write): when user posts, write to all followers' feeds. Hybrid: push for users < 1M followers, pull for celebrities. Key: cache-heavy, use Redis for feed lists. Easy: Either pre-build everyone's newspaper or build it on demand when they ask."
+    refAnswer: "Two approaches: (1) Pull (fan-out on read): user reads -> fetch posts from all followees -> merge sort. (2) Push (fan-out on write): when user posts, write to all followers' feeds. Hybrid: push for users < 1M followers, pull for celebrities. Key: cache-heavy, use Redis for feed lists. Easy: Either pre-build everyone's newspaper or build it on demand when they ask."
   },
   {
     cat: "System Design", diff: "Hard", company: "Amazon",
@@ -233,27 +333,69 @@ export const BANK: Question[] = [
   {
     cat: "System Design", diff: "Hard", company: "Netflix",
     q: "Design a Video Streaming Platform (like YouTube or Netflix).",
-    refAnswer: "Uploads: chunked upload → transcoding service (multiple resolutions) → CDN. Metadata DB (SQL). Viewing: client requests → CDN-served HLS/DASH segments. Adaptive bitrate: client switches quality based on bandwidth. CDN edge nodes globally. Easy: Cut videos into small, pre-sized chunks that the nearest internet station delivers to you."
+    refAnswer: "Uploads: chunked upload -> transcoding service (multiple resolutions) -> CDN. Metadata DB (SQL). Viewing: client requests -> CDN-served HLS/DASH segments. Adaptive bitrate: client switches quality based on bandwidth. CDN edge nodes globally. Easy: Cut videos into small, pre-sized chunks that the nearest internet station delivers to you."
   },
   {
     cat: "System Design", diff: "Hard", company: "Uber",
     q: "Design a Ride-Sharing App (like Uber/Lyft).",
-    refAnswer: "Core: Location Service (WebSocket for real-time driver location updates → Redis geospatial index). Matching Service (find nearest available drivers). Trip Service (stateful, manages trip lifecycle). Surge Pricing (demand/supply ratio). Easy: A real-time map of drivers stored in a geospatial database, matched to riders by distance."
+    refAnswer: "Core: Location Service (WebSocket for real-time driver location updates -> Redis geospatial index). Matching Service (find nearest available drivers). Trip Service (stateful, manages trip lifecycle). Surge Pricing (demand/supply ratio). Easy: A real-time map of drivers stored in a geospatial database, matched to riders by distance."
   },
   {
     cat: "System Design", diff: "Medium", company: "Amazon",
     q: "Design a Distributed Cache (like Redis or Memcached).",
-    refAnswer: "Key design: Consistent Hashing for node distribution (minimizes remapping on scale). Eviction: LRU (Least Recently Used) or LFU. Cache-aside pattern: app checks cache first, if miss → read from DB and populate cache. Replication for read performance. Easy: A fast-access sticky note board that forgets old notes when it fills up."
+    refAnswer: "Key design: Consistent Hashing for node distribution (minimizes remapping on scale). Eviction: LRU (Least Recently Used) or LFU. Cache-aside pattern: app checks cache first, if miss -> read from DB and populate cache. Replication for read performance. Easy: A fast-access sticky note board that forgets old notes when it fills up."
   },
   {
     cat: "System Design", diff: "Hard", company: "Goldman Sachs",
     q: "Design a Real-Time Stock Trading Platform.",
-    refAnswer: "Order Book: in-memory sorted map (price → orders). Matching Engine: for each new order, try to match against opposite side of book. Use Lock-free data structures (Disruptor). Market data feed: publish trades via WebSocket. Risk checks before order placement. Persistence: async write to DB after matching. Easy: An ultra-fast auctioneer matching buyers and sellers in microseconds."
+    refAnswer: "Order Book: in-memory sorted map (price -> orders). Matching Engine: for each new order, try to match against opposite side of book. Use Lock-free data structures (Disruptor). Market data feed: publish trades via WebSocket. Risk checks before order placement. Persistence: async write to DB after matching. Easy: An ultra-fast auctioneer matching buyers and sellers in microseconds."
   },
   {
     cat: "System Design", diff: "Medium", company: "Generic",
     q: "Design a Web Crawler.",
-    refAnswer: "Seed URLs → URL Frontier (priority queue, dedup via Bloom Filter). Fetcher (respect robots.txt, rate limit per domain). Parser (extract links, content). Content Storage (dedup by hash). Scheduler. Scale: distributed, multiple crawlers in parallel. Easy: A robot that visits web pages, reads them, and follows every link it finds — carefully avoiding infinite loops."
+    refAnswer: "Seed URLs -> URL Frontier (priority queue, dedup via Bloom Filter). Fetcher (respect robots.txt, rate limit per domain). Parser (extract links, content). Content Storage (dedup by hash). Scheduler. Scale: distributed, multiple crawlers in parallel. Easy: A robot that visits web pages, reads them, and follows every link it finds — carefully avoiding infinite loops."
+  },
+  // Stripe System Design
+  {
+    cat: "System Design", diff: "Hard", company: "Stripe",
+    q: "Design a Payment Processing System.",
+    refAnswer: "Components: Payment API (idempotency keys on every request to prevent double charges). Payment processor gateway (Visa/Mastercard network). Ledger DB: append-only, double-entry bookkeeping. Async webhooks for merchant notification. Fraud detection layer (ML model + rules engine). Retry with exponential backoff + jitter. Key: exactly-once semantics via idempotency keys. Easy: Every payment is a carefully logged transaction that can't be duplicated and always notifies both parties."
+  },
+  {
+    cat: "System Design", diff: "Medium", company: "Stripe",
+    q: "Design an Idempotent API.",
+    refAnswer: "Client generates unique idempotency key per request. Server stores key -> response in a cache (Redis, TTL ~24h). On first request: process and store response. On duplicate request with same key: return stored response without reprocessing. Key constraint: idempotency key must be scoped to customer + operation. Easy: If you've seen this exact request before, return the same answer without doing the work again."
+  },
+  // Flipkart / Swiggy System Design
+  {
+    cat: "System Design", diff: "Hard", company: "Flipkart",
+    q: "Design a Flash Sale system that handles 100,000 concurrent users for a limited-stock item.",
+    refAnswer: "Pre-sale: warm up cache with inventory count (Redis atomic DECR). During sale: API Gateway -> queue requests (SQS/Kafka) -> single consumer processes orders sequentially to prevent oversell. Use pessimistic locking or Redis atomic ops for inventory. CDN for static assets. Rate limit per user. Easy: A single-lane checkout that queues everyone but ensures stock never goes negative."
+  },
+  {
+    cat: "System Design", diff: "Hard", company: "Swiggy",
+    q: "Design a Food Delivery Platform (like Swiggy/DoorDash).",
+    refAnswer: "Key services: Restaurant catalog (search via Elasticsearch, menu DB). Order service (state machine: placed -> confirmed -> picked up -> delivered). Driver matching (geospatial queries, similar to Uber). Real-time tracking (WebSocket + driver location polling). ETA prediction (ML model + traffic data). Easy: An order router that coordinates restaurants, drivers, and customers through a choreographed state machine."
+  },
+  {
+    cat: "System Design", diff: "Medium", company: "Meta",
+    q: "Design Facebook-scale Chat System (like WhatsApp/Messenger).",
+    refAnswer: "Components: WebSocket servers for real-time bidirectional connection. Message DB (Cassandra — write-heavy, wide-column). User presence service (Redis TTL). Push notifications for offline users. Group chats: fan-out on write (deliver to all members' inboxes). Message ordering: use server-side timestamp + unique ID. Media: upload to blob store (S3), share URL. Easy: Persistent socket connections for real-time, reliable storage for history, push fallback for offline."
+  },
+  {
+    cat: "System Design", diff: "Hard", company: "Google",
+    q: "Design Google Maps / Route Navigation.",
+    refAnswer: "Map tiles: pre-rendered image tiles served from CDN by zoom/lat/lng. Routing: offline-computed shortest path graph (Dijkstra/A*) updated by traffic data. Real-time traffic: aggregate GPS pings from millions of phones. ETA: ML model trained on historical travel times. Geocoding: address -> lat/lng DB. Easy: Pre-render map images globally, pre-compute routes using road graphs, refine ETAs using live traffic crowdsourced from phones in real time."
+  },
+  {
+    cat: "System Design", diff: "Medium", company: "Generic",
+    q: "Design a Pastebin-like service.",
+    refAnswer: "API: POST /paste (content, expiry) -> returns unique URL. Storage: Key-Value store (Redis for hot/recent, S3 for cold/large). Key generation: Base62-encoded random ID (6 chars = 62^6 = ~56B unique keys). Expiry: TTL in Redis. Analytics: track view counts. CDN for read-heavy traffic. Easy: Generate a short random key, store content at that key, serve it on request — simple and fast."
+  },
+  {
+    cat: "System Design", diff: "Hard", company: "Amazon",
+    q: "Design a Recommendation System (like Amazon or Netflix).",
+    refAnswer: "Approaches: (1) Collaborative Filtering: users who liked X also liked Y. (2) Content-Based: recommend similar item attributes. (3) Hybrid. Architecture: Offline pipeline (Spark jobs compute item-item or user-item similarity matrix nightly). Online serving: retrieve top-K candidates, re-rank with real-time features (recency, CTR, inventory). Cache top recommendations per user in Redis. Easy: Pre-compute 'similar items' overnight, then personalize rankings in real time based on what the user just did."
   },
 
   // ═══════════════════════════════════════════
@@ -284,6 +426,11 @@ export const BANK: Question[] = [
     q: "Tell me about a time you made a mistake in production and how you handled it.",
     refAnswer: "STAR: Be honest — own the mistake fully. Show rapid incident response (diagnosis, mitigation, communication). Most importantly: describe the post-mortem process, the root cause, and the systemic fix you shipped (monitoring, test, process change). Key: Google has a 'blameless culture' — they want to see the fix, not the excuse."
   },
+  {
+    cat: "Behavioral", diff: "Hard", company: "Google",
+    q: "How do you approach a problem you've never seen before?",
+    refAnswer: "Structure your thinking: (1) Understand the problem fully before solving. (2) Decompose into known sub-problems. (3) Think aloud — share your reasoning. (4) Start with brute force, then optimize. (5) If truly stuck, identify what you need to learn and how quickly you can learn it. Key: demonstrate meta-learning skills, not just pre-existing knowledge. Easy: 'I don't know' is okay — 'Here's how I'd figure it out' is what they're hiring for."
+  },
 
   // ═══════════════════════════════════════════
   // AMAZON — BEHAVIORAL (Leadership Principles)
@@ -308,6 +455,11 @@ export const BANK: Question[] = [
     q: "Tell me about a time you went above and beyond for a customer. (LP: Customer Obsession)",
     refAnswer: "STAR: The customer can be internal or external. Show that you identified a pain point they didn't even articulate, proactively solved it, and followed up. Key: Amazon wants 'working backwards from the customer' — your decision must have been driven by customer impact, not convenience. Include a metric if possible ('reduced support tickets by 40%')."
   },
+  {
+    cat: "Behavioral", diff: "Medium", company: "Amazon",
+    q: "Tell me about a time you innovated on behalf of the customer. (LP: Invent and Simplify)",
+    refAnswer: "STAR: Identify a customer pain point that wasn't on anyone's roadmap. Describe how you invented a simple solution — not over-engineered. Emphasize simplicity: Amazon values Ockham's razor in engineering. Quantify the customer impact. Key: differentiate between 'we added features' and 'we removed friction'. Easy: The best innovation often removes steps or complexity rather than adding them."
+  },
 
   // ═══════════════════════════════════════════
   // META — BEHAVIORAL
@@ -326,6 +478,28 @@ export const BANK: Question[] = [
     cat: "Behavioral", diff: "Easy", company: "Meta",
     q: "Why Meta? What about the scale and mission excites you?",
     refAnswer: "Reference 'connecting 3B+ people', AR/VR future (metaverse), WhatsApp/Instagram ecosystem integration. Be specific to the role — ML? Mention PyTorch's open source influence. Infrastructure? Mention TAO (social graph DB). Easy: Talk about the problems that only exist at Meta's scale and why that's exciting to solve."
+  },
+  {
+    cat: "Behavioral", diff: "Medium", company: "Netflix",
+    q: "Netflix has a 'Freedom and Responsibility' culture. Give an example that demonstrates this value.",
+    refAnswer: "STAR: Describe a situation where you operated with high autonomy — you made a significant technical/product decision without waiting for permission. Show you documented the decision, weighed the risk, and owned the outcome. Key: Netflix wants senior, self-directed engineers. Easy: Show you act like an owner, not a permission-seeker."
+  },
+  // Stripe Behavioral
+  {
+    cat: "Behavioral", diff: "Medium", company: "Stripe",
+    q: "Stripe values 'moving with urgency and focus'. Describe a time you balanced speed with correctness in a high-stakes system.",
+    refAnswer: "STAR: Pick an example involving financial data, security, or reliability. Show how you used feature flags, canary releases, or staged rollouts to move fast without risking correctness. Key: Stripe cares about both velocity and trust — 'move fast and be careful'. Easy: Show that 'fast' and 'correct' aren't opposites with the right process."
+  },
+  {
+    cat: "Behavioral", diff: "Hard", company: "Stripe",
+    q: "Tell me about a time you improved developer experience or internal tooling.",
+    refAnswer: "STAR: Stripe deeply values API design and developer ergonomics. Describe a pain point you identified (e.g., a slow CI pipeline, confusing internal API, manual deploy process). Show how you fixed it, the adoption rate, and measurable impact (e.g., deploy time reduced by 40%, 10 teams unblocked). Easy: The best DX improvements eliminate frustration that people had stopped even noticing."
+  },
+  // Microsoft Behavioral
+  {
+    cat: "Behavioral", diff: "Medium", company: "Microsoft",
+    q: "Describe a time you drove a culture of 'growth mindset' in your team.",
+    refAnswer: "STAR: Reference Microsoft's core value. Show you normalized failure/learning (e.g., blameless postmortems). Describe concrete rituals: retrospectives, 'learning lunches', documenting failed experiments. Key: Microsoft's Satya Nadella era emphasizes 'learn-it-all vs know-it-all'. Easy: Show how you created space for people to try, fail, and grow without fear."
   },
 
   // ═══════════════════════════════════════════
@@ -358,7 +532,7 @@ export const BANK: Question[] = [
   {
     cat: "Technical", diff: "Medium", company: "Goldman Sachs",
     q: "Explain the 'Two-Sum' problem using a Hash Map for O(n) complexity.",
-    refAnswer: "Iterate once. For each number, compute complement = target - num. Check if complement exists in HashMap — if yes, return both indices. If no, store num → index in HashMap. O(n) time, O(n) space. Easy: Keep a 'seen' ledger and check if the missing partner of the current number has already been seen."
+    refAnswer: "Iterate once. For each number, compute complement = target - num. Check if complement exists in HashMap — if yes, return both indices. If no, store num -> index in HashMap. O(n) time, O(n) space. Easy: Keep a 'seen' ledger and check if the missing partner of the current number has already been seen."
   },
   {
     cat: "Technical", diff: "Hard", company: "Goldman Sachs",
@@ -391,7 +565,7 @@ export const BANK: Question[] = [
   },
   {
     cat: "Technical", diff: "Medium", company: "Morgan Stanley",
-    q: "What is Index in a database, and what are the trade-offs?",
+    q: "What is an Index in a database, and what are the trade-offs?",
     refAnswer: "An index is a data structure (usually B-Tree or Hash) that allows faster lookups by non-primary-key columns. Trade-offs: Faster reads (avoid full table scans), but slower writes (index must be updated on INSERT/UPDATE/DELETE) and extra storage. Over-indexing hurts write-heavy workloads. Use EXPLAIN/ANALYZE to verify index usage. Easy: Like a book's table of contents — find chapters fast, but updating the book means updating the index too."
   },
 
@@ -401,7 +575,7 @@ export const BANK: Question[] = [
   {
     cat: "Technical", diff: "Hard", company: "Apple",
     q: "Explain Swift's ARC (Automatic Reference Counting) and how to prevent Strong Reference Cycles.",
-    refAnswer: "ARC tracks object retention with a reference count. Object deallocs when count hits 0. Strong Reference Cycle: A holds B, B holds A → neither ever deallocs → memory leak. Fix: use 'weak' (optional, zeroed when object deallocs) or 'unowned' (non-optional, crashes if object gone) in one side of the relationship. Capture lists in closures: [weak self]. Easy: ARC is a popularity counter — 'weak' friends don't count toward keeping you alive."
+    refAnswer: "ARC tracks object retention with a reference count. Object deallocs when count hits 0. Strong Reference Cycle: A holds B, B holds A -> neither ever deallocs -> memory leak. Fix: use 'weak' (optional, zeroed when object deallocs) or 'unowned' (non-optional, crashes if object gone) in one side of the relationship. Capture lists in closures: [weak self]. Easy: ARC is a popularity counter — 'weak' friends don't count toward keeping you alive."
   },
   {
     cat: "Technical", diff: "Medium", company: "Apple",
@@ -410,13 +584,8 @@ export const BANK: Question[] = [
   },
 
   // ═══════════════════════════════════════════
-  // NETFLIX — BEHAVIORAL & TECHNICAL
+  // NETFLIX — TECHNICAL
   // ═══════════════════════════════════════════
-  {
-    cat: "Behavioral", diff: "Medium", company: "Netflix",
-    q: "Netflix has a 'Freedom and Responsibility' culture. Give an example that demonstrates this value.",
-    refAnswer: "STAR: Describe a situation where you operated with high autonomy — you made a significant technical/product decision without waiting for permission. Show you documented the decision, weighed the risk, and owned the outcome. Key: Netflix wants senior, self-directed engineers. Easy: Show you act like an owner, not a permission-seeker."
-  },
   {
     cat: "Technical", diff: "Hard", company: "Netflix",
     q: "How does Netflix use Chaos Engineering (Chaos Monkey) to improve resilience?",
@@ -424,7 +593,7 @@ export const BANK: Question[] = [
   },
 
   // ═══════════════════════════════════════════
-  // MICROSOFT — TECHNICAL & BEHAVIORAL
+  // MICROSOFT — TECHNICAL
   // ═══════════════════════════════════════════
   {
     cat: "Technical", diff: "Medium", company: "Microsoft",
@@ -436,10 +605,16 @@ export const BANK: Question[] = [
     q: "What is a deadlock and how do you prevent it?",
     refAnswer: "Deadlock: two or more threads wait on each other's locks indefinitely. Conditions (Coffman): Mutual Exclusion, Hold-and-Wait, No Preemption, Circular Wait. Prevention: Impose a lock ordering (always acquire lock A before B), use try-lock with timeout, use lock-free algorithms, or use a single global lock. Easy: Thread 1 has key A and waits for B; Thread 2 has key B and waits for A — neither can proceed."
   },
+  // Stripe Technical
   {
-    cat: "Behavioral", diff: "Medium", company: "Microsoft",
-    q: "Describe a time you drove a culture of 'growth mindset' in your team.",
-    refAnswer: "STAR: Reference Microsoft's core value. Show you normalized failure/learning (e.g., blameless postmortems). Describe concrete rituals: retrospectives, 'learning lunches', documenting failed experiments. Key: Microsoft's Satya Nadella era emphasizes 'learn-it-all vs know-it-all'. Easy: Show how you created space for people to try, fail, and grow without fear."
+    cat: "Technical", diff: "Hard", company: "Stripe",
+    q: "How do you design an idempotent payment API to prevent double charges?",
+    refAnswer: "Client generates a unique idempotency key (UUID) per payment intent. Server stores (idempotency_key, customer_id) -> (status, response) in a durable store (Postgres + Redis). On first call: execute payment, store response. On retry with same key: return stored response unchanged — never re-charge. Expire keys after 24h. Key: idempotency key is the client's responsibility; the server guarantees safe replay. Easy: Same key in, same result out — the server remembers and replays instead of re-executing."
+  },
+  {
+    cat: "Technical", diff: "Medium", company: "Stripe",
+    q: "Explain webhooks vs polling. How does Stripe use them?",
+    refAnswer: "Polling: client repeatedly asks 'did anything change?' — simple but wasteful, with latency up to the poll interval. Webhooks: server pushes events to a client-provided URL immediately when something happens. Stripe uses webhooks to notify merchants of payment.succeeded, payment.failed, refund.created events. Best practice: acknowledge webhook (200 OK) immediately, process asynchronously, handle retries with idempotency keys. Easy: Polling is calling every 5 minutes; webhooks is someone calling you the moment it happens."
   },
 
   // ═══════════════════════════════════════════
@@ -448,17 +623,12 @@ export const BANK: Question[] = [
   {
     cat: "Technical", diff: "Hard", company: "Citadel",
     q: "What is the time complexity of QuickSort in best, average, and worst case?",
-    refAnswer: "Best/Average: O(n log n) — with a good pivot, partition splits array roughly in half. Worst: O(n²) — pivot is always the min or max (already sorted array with naive pivot). Fix: random pivot, median-of-3. In-place and cache-friendly. Easy: With a lucky pivot it's like efficient binary splitting; with a terrible pivot it degrades into bubble sort."
+    refAnswer: "Best/Average: O(n log n) — with a good pivot, partition splits array roughly in half. Worst: O(n^2) — pivot is always the min or max (already sorted array with naive pivot). Fix: random pivot, median-of-3. In-place and cache-friendly. Easy: With a lucky pivot it's like efficient binary splitting; with a terrible pivot it degrades into bubble sort."
   },
   {
     cat: "Technical", diff: "Hard", company: "Citadel",
     q: "Explain what a Hash Map collision is and how chaining vs open addressing resolve it.",
     refAnswer: "Collision: two keys hash to the same bucket. Chaining: each bucket is a linked list; append on collision (unbounded growth, cache-unfriendly). Open Addressing: find next open slot (linear probing, quadratic, double hashing) — cache-friendly, but degrades at high load factor. HashMap load factor ~0.75 is standard for rebalancing. Easy: Chaining adds a list at a crowded locker; open addressing finds the next free locker."
-  },
-  {
-    cat: "DSA", diff: "Hard", company: "Jane Street",
-    q: "Given an array, find the contiguous subarray of length k with the maximum sum.",
-    refAnswer: "Sliding Window in O(n). Compute sum of first k elements. Then slide the window: add the next element, remove the leftmost. Track max. Space O(1). Easy: Imagine a k-wide frame sliding along the array — you just update the running total by adding one side and removing the other."
   },
 
   // ═══════════════════════════════════════════
@@ -477,7 +647,7 @@ export const BANK: Question[] = [
   {
     cat: "Technical", diff: "Hard", company: "Generic",
     q: "What happens when you type 'google.com' in your browser?",
-    refAnswer: "Full stack question: (1) DNS lookup (cache → resolver → TLD → authoritative DNS → IP). (2) TCP handshake. (3) TLS handshake (certificate verification, symmetric key exchange). (4) HTTP GET request. (5) Server processes, sends HTTP response. (6) Browser parses HTML/CSS/JS, renders critical path, executes JS, loads subresources. Easy: Your browser looks up the address, shakes hands securely, asks for the page, and paints what it receives."
+    refAnswer: "Full stack question: (1) DNS lookup (cache -> resolver -> TLD -> authoritative DNS -> IP). (2) TCP handshake. (3) TLS handshake (certificate verification, symmetric key exchange). (4) HTTP GET request. (5) Server processes, sends HTTP response. (6) Browser parses HTML/CSS/JS, renders critical path, executes JS, loads subresources. Easy: Your browser looks up the address, shakes hands securely, asks for the page, and paints what it receives."
   },
   {
     cat: "Technical", diff: "Medium", company: "Generic",
@@ -498,6 +668,102 @@ export const BANK: Question[] = [
     cat: "Technical", diff: "Medium", company: "Generic",
     q: "What is a Load Balancer and what are the strategies it uses?",
     refAnswer: "Load Balancer distributes incoming traffic across multiple servers. Strategies: Round Robin (equal turns), Least Connections (to the server with fewest active connections), IP Hash (sticky sessions). Health checks remove unhealthy servers. L4 (TCP level) vs L7 (HTTP level — can route by URL path). Easy: Traffic cop directing cars to different checkout lanes based on which lane is shortest."
+  },
+  {
+    cat: "Technical", diff: "Medium", company: "Generic",
+    q: "What is the Virtual DOM in React and how does it improve performance?",
+    refAnswer: "Virtual DOM: an in-memory JS object representation of the real DOM. On state change, React creates a new vDOM, diffs it against the previous (Diffing algorithm / Fiber), and only updates the real DOM with the minimal set of changes (Reconciliation). This avoids costly full DOM repaints. Easy: React keeps a blueprint and only patches the real building where the blueprint changed."
+  },
+  {
+    cat: "Technical", diff: "Hard", company: "Meta",
+    q: "Explain React's useCallback and useMemo. When would you use each?",
+    refAnswer: "useMemo: memoizes the result of an expensive computation. Re-computes only when dependencies change. useCallback: memoizes a function reference. Prevents child components (wrapped in React.memo) from re-rendering due to a new function reference on every parent render. Use useMemo for heavy calculations; useCallback when passing stable callbacks to memoized children. Easy: Both cache things — useMemo caches values, useCallback caches functions."
+  },
+  {
+    cat: "Technical", diff: "Medium", company: "Generic",
+    q: "What are React Hooks? Why were they introduced?",
+    refAnswer: "Hooks (React 16.8+): functions that let function components use state and lifecycle features. Key hooks: useState (local state), useEffect (side effects), useContext (context access), useRef (mutable ref without re-render). Introduced to: eliminate class component complexity, enable code reuse via custom hooks, remove confusing 'this' binding. Easy: Hooks let function components do everything class components could, but more cleanly."
+  },
+  {
+    cat: "Technical", diff: "Medium", company: "Generic",
+    q: "What is Python's GIL (Global Interpreter Lock) and how does it affect multithreading?",
+    refAnswer: "GIL: a mutex that prevents multiple native threads from executing Python bytecode simultaneously. One thread runs Python at a time. Impact: CPU-bound tasks don't benefit from threading — use multiprocessing instead. I/O-bound tasks (network, disk) do benefit because GIL is released during I/O wait. Async/await (asyncio) is preferred for I/O concurrency. Easy: Python multithreading is great for waiting; use multiprocessing for actual number-crunching."
+  },
+  {
+    cat: "Technical", diff: "Easy", company: "Generic",
+    q: "What is the difference between a list and a tuple in Python?",
+    refAnswer: "List: mutable (can add/remove/change elements), dynamic size, uses more memory. Tuple: immutable (can't change after creation), slightly faster and uses less memory due to fixed allocation. Tuples are hashable (can be dict keys or set elements). Use tuple for fixed data (coordinates, RGB), list for dynamic collections. Easy: Tuple = a locked record. List = editable spreadsheet row."
+  },
+  {
+    cat: "Technical", diff: "Medium", company: "Generic",
+    q: "Explain Python's '@' decorator syntax and give a use case.",
+    refAnswer: "A decorator is a higher-order function that wraps another function, adding behavior before/after. Syntax: @my_decorator above def my_func() is equivalent to my_func = my_decorator(my_func). Common uses: @app.route (Flask routing), @login_required (auth), @cache (memoization), @retry (resilience), @dataclass (auto-generating methods). Easy: A decorator is like a wrapper that adds instructions before and after opening a gift."
+  },
+  {
+    cat: "Technical", diff: "Medium", company: "Amazon",
+    q: "Explain the difference between AWS EC2, ECS, and Lambda.",
+    refAnswer: "EC2: raw virtual machines, full OS control, you manage everything including scaling. ECS (Elastic Container Service): runs Docker containers on a managed cluster (on EC2 or Fargate). Lambda: serverless functions, event-triggered, no server management, pay per invocation. Choose: Lambda for event-driven short tasks, ECS for long-running containerized apps, EC2 for full control or legacy apps. Easy: EC2=rent a car, ECS=hire a driver with your car, Lambda=take a taxi when needed."
+  },
+  {
+    cat: "Technical", diff: "Hard", company: "Amazon",
+    q: "What is Infrastructure as Code (IaC) and what tools are used?",
+    refAnswer: "IaC: defining and provisioning infrastructure via code files (not manual UI clicks). Benefits: reproducibility, version control, disaster recovery, audit trail. Tools: Terraform (cloud-agnostic, declarative HCL), AWS CloudFormation (AWS-native), Pulumi (code in real languages). Key concepts: declarative (describe desired state) vs imperative (describe steps). Easy: Write your server setup like a recipe — anyone can recreate the exact same kitchen from the recipe."
+  },
+  {
+    cat: "Technical", diff: "Medium", company: "Generic",
+    q: "What is a CI/CD pipeline and what are its stages?",
+    refAnswer: "CI (Continuous Integration): automatically build and test code on every commit. Identifies integration errors early. CD (Continuous Delivery/Deployment): automatically deploy to staging or production after CI passes. Typical stages: Source (git push) -> Build (compile) -> Test (unit/integration) -> Security Scan -> Staging Deploy -> Smoke Test -> Production Deploy. Tools: GitHub Actions, Jenkins, GitLab CI, CircleCI. Easy: An assembly line that takes raw code and delivers it to production automatically after quality checks."
+  },
+  {
+    cat: "Technical", diff: "Medium", company: "Generic",
+    q: "Explain the concept of blue-green deployment.",
+    refAnswer: "Maintain two identical production environments: Blue (current live) and Green (new version). Deploy new version to Green. Test Green thoroughly. Switch traffic from Blue to Green (DNS/load balancer). Blue becomes standby — instant rollback if Green has issues. Benefits: zero downtime, instant rollback. Cost: double infrastructure during switch. Easy: Always have a backup restaurant ready — when the new one opens, redirect all customers and keep the old one warm just in case."
+  },
+  {
+    cat: "Technical", diff: "Hard", company: "Generic",
+    q: "What is observability in distributed systems? What are its three pillars?",
+    refAnswer: "Observability: ability to understand internal system state from external outputs. Three pillars: (1) Logs — discrete events with timestamps (ELK stack, CloudWatch Logs). (2) Metrics — numerical measurements over time (Prometheus, DataDog). (3) Traces — end-to-end request journey across services (Jaeger, X-Ray). Good observability means debugging production issues without code changes. Easy: Logs are the diary, metrics are the health dashboard, traces are the GPS tracking of each request."
+  },
+  {
+    cat: "Technical", diff: "Medium", company: "Meta",
+    q: "What is the difference between server-side rendering (SSR) and client-side rendering (CSR)?",
+    refAnswer: "CSR: browser downloads empty HTML + JS bundle, JS renders page in browser. SEO-poor, slow first load, fast subsequent. SSR: server renders full HTML for each request, browser gets complete page. Better SEO, faster FCP but higher server load. Hybrid: Next.js SSR + CSR + Static Generation (SSG). Easy: CSR = server ships an empty frame and a kit; SSR = server ships a fully painted room."
+  },
+  {
+    cat: "Technical", diff: "Medium", company: "Generic",
+    q: "What is CSS specificity and how is it calculated?",
+    refAnswer: "Specificity determines which CSS rule wins when multiple rules apply. Calculated as (A, B, C): A = inline styles (1,0,0), B = IDs (0,1,0), C = classes/attributes/pseudo-classes (0,0,1). Elements/pseudo-elements (0,0,0). Higher specificity wins; ties broken by order (later wins). !important overrides everything. Easy: ID beats class beats element — think of it as a score sheet where each type has a different point value."
+  },
+  {
+    cat: "Technical", diff: "Hard", company: "Generic",
+    q: "What is the browser's Critical Rendering Path and how do you optimize it?",
+    refAnswer: "CRP: HTML -> DOM -> CSSOM -> Render Tree -> Layout -> Paint -> Composite. Optimizations: (1) Eliminate render-blocking resources (defer/async JS). (2) Minify CSS/JS/HTML. (3) Use critical CSS inline. (4) Lazy load below-fold images. (5) Use HTTP/2 for parallel requests. (6) Use CDN. Key metric: First Contentful Paint (FCP). Easy: Get the browser to paint the visible part of the page as fast as possible — don't make it wait for things it doesn't need immediately."
+  },
+  {
+    cat: "Technical", diff: "Medium", company: "Generic",
+    q: "What are Web Workers and when would you use them?",
+    refAnswer: "Web Workers: JavaScript that runs in a background thread, separate from the main thread. They can't access the DOM. Communication via postMessage(). Use for: heavy computations (image processing, encryption, large data sorting) that would freeze the UI if run on the main thread. Easy: Hire a specialist to do heavy lifting in the back room so your front-of-house (UI) stays fast and responsive."
+  },
+  {
+    cat: "Technical", diff: "Medium", company: "Meta",
+    q: "Explain React's Context API and when to use it versus Redux.",
+    refAnswer: "Context API: built-in React mechanism for sharing state across component tree without prop drilling. Best for: low-frequency updates (theme, user, locale). Redux: centralized store with strict predictability (actions, reducers). Best for: complex state, high-frequency updates, time-travel debugging, large teams. Context re-renders all consumers on change; use memo/split contexts to optimize. Easy: Context is a shared billboard; Redux is a carefully managed central database with an audit log."
+  },
+  // ML Basics
+  {
+    cat: "Technical", diff: "Medium", company: "Google",
+    q: "What is the difference between precision and recall?",
+    refAnswer: "Precision = TP / (TP + FP): of everything the model predicted as positive, how many were actually positive? Recall = TP / (TP + FN): of all real positives, how many did the model catch? Precision-Recall tradeoff: lowering threshold increases recall but decreases precision. Use F1 score to balance both. Easy: Precision = 'How often is my alarm right when it rings?' Recall = 'How often does my alarm ring when there IS a fire?'"
+  },
+  {
+    cat: "Technical", diff: "Hard", company: "Meta",
+    q: "Explain the vanishing gradient problem in neural networks and how to address it.",
+    refAnswer: "During backprop in deep networks, gradients (derivatives) get multiplied many times through layers. If weights/activations are small, these products approach 0 — earlier layers learn painfully slowly or stop. Solutions: (1) ReLU activation (doesn't saturate for positive values). (2) Batch Normalization (normalizes layer inputs). (3) Residual connections / skip connections (ResNet). (4) Better weight initialization (Xavier, He). Easy: Tiny numbers multiplied together shrink to zero — use tricks that keep gradients healthy as they flow back through the network."
+  },
+  {
+    cat: "Technical", diff: "Medium", company: "Generic",
+    q: "What is overfitting in machine learning and how do you prevent it?",
+    refAnswer: "Overfitting: model memorizes training data including noise — performs great on training set, poorly on unseen data. Prevention: (1) More training data. (2) Regularization (L1/Lasso, L2/Ridge — penalizes large weights). (3) Dropout (randomly deactivate neurons during training). (4) Early stopping. (5) Cross-validation. (6) Simpler model (reduce parameters). Easy: The model studied the past exams (training data) so hard it memorized answers instead of understanding the concepts."
   },
 
   // ═══════════════════════════════════════════
@@ -527,6 +793,21 @@ export const BANK: Question[] = [
     cat: "Troubleshooting", diff: "Medium", company: "Generic",
     q: "How would you investigate a Memory Leak in a Node.js application?",
     refAnswer: "Symptoms: memory grows monotonically, eventually OOM crash. Diagnosis: (1) Take heap snapshots at different times using Chrome DevTools or --inspect with Node. (2) Compare snapshots — what grew? (3) Look for growing arrays/maps/event listeners never removed. (4) Check for closures keeping references alive. Fix: remove event listeners on cleanup, use WeakMaps, avoid global caches without eviction. Easy: Take X-rays of memory over time and look for what's accumulating that shouldn't be."
+  },
+  {
+    cat: "Troubleshooting", diff: "Hard", company: "Stripe",
+    q: "A payment webhook is failing intermittently. How do you debug and make it resilient?",
+    refAnswer: "Steps: (1) Check webhook logs for status codes — is it 4xx (bad request) or 5xx (server error)? (2) Verify your endpoint returns 200 within timeout (5s). (3) Check for signature validation failures (STRIPE_WEBHOOK_SECRET mismatch). (4) Look for duplicate event handling (ensure idempotency by storing processed event IDs). (5) Check for database timeouts under load. Fix: async processing (queue the event, acknowledge immediately), idempotency checks, retry handling, alerting on DLQ. Easy: Ack fast, process async, deduplicate by event ID."
+  },
+  {
+    cat: "Troubleshooting", diff: "Medium", company: "Amazon",
+    q: "An AWS Lambda function is timing out inconsistently. How do you troubleshoot?",
+    refAnswer: "Check: (1) CloudWatch logs for duration — is it close to timeout limit? (2) Cold start: is the function waking from a cold start adding latency? Fix with Provisioned Concurrency. (3) Downstream dependency: is a DB or API call timing out? Add timeouts on all external calls. (4) Memory: increase memory allocation (also scales CPU proportionally). (5) VPC config: Lambda inside VPC adds ~100ms for ENI attachment. Easy: Lambda timeouts are almost always caused by a slow external call or insufficient memory/CPU."
+  },
+  {
+    cat: "Troubleshooting", diff: "Hard", company: "Google",
+    q: "Your CI pipeline is taking 45 minutes. How do you reduce it to under 10?",
+    refAnswer: "Diagnose: find the slowest stages in the pipeline timeline. Common fixes: (1) Parallelize independent test suites. (2) Cache dependencies (node_modules, pip packages) between runs. (3) Use incremental builds — only rebuild changed modules. (4) Split unit tests (fast, run always) from integration tests (slow, run on merge). (5) Use faster test runners (Vitest vs Jest, pytest-xdist). (6) Containerize build environment for consistency + reuse. Easy: Parallelize, cache, and separate fast checks from slow ones."
   },
 
   // ═══════════════════════════════════════════
@@ -560,170 +841,12 @@ export const BANK: Question[] = [
   {
     cat: "Behavioral", diff: "Easy", company: "Generic",
     q: "What is your greatest weakness, and how are you working on it?",
-    refAnswer: "Be genuine — pick a real (not 'I work too hard') weakness that doesn't undermine core job competency. Structure: name the weakness, explain its impact, describe the concrete mitigation you've built (e.g., 'I tend to over-engineer early — now I timeboxed spikes to 2 hours and check with stakeholders before deep dives'). Easy: HR wants to see self-awareness and proactive growth, not perfection."
+    refAnswer: "Be genuine — pick a real (not 'I work too hard') weakness that doesn't undermine core job competency. Structure: name the weakness, explain its impact, describe the concrete mitigation you've built (e.g., 'I tend to over-engineer early — now I timebox spikes to 2 hours and check with stakeholders before deep dives'). Easy: HR wants to see self-awareness and proactive growth, not perfection."
   },
-
-  // ═══════════════════════════════════════════
-  // REACT / FRONTEND
-  // ═══════════════════════════════════════════
-  {
-    cat: "Technical", diff: "Medium", company: "Generic",
-    q: "What is the Virtual DOM in React and how does it improve performance?",
-    refAnswer: "Virtual DOM: an in-memory JS object representation of the real DOM. On state change, React creates a new vDOM, diffs it against the previous (Diffing algorithm / Fiber), and only updates the real DOM with the minimal set of changes (Reconciliation). This avoids costly full DOM repaints. Easy: React keeps a blueprint and only patches the real building where the blueprint changed."
-  },
-  {
-    cat: "Technical", diff: "Hard", company: "Meta",
-    q: "Explain React's useCallback and useMemo. When would you use each?",
-    refAnswer: "useMemo: memoizes the result of an expensive computation. Re-computes only when dependencies change. useCallback: memoizes a function reference. Prevents child components (wrapped in React.memo) from re-rendering due to a new function reference on every parent render. Use useMemo for heavy calculations; useCallback when passing stable callbacks to memoized children. Easy: Both cache things — useMemo caches values, useCallback caches functions."
-  },
-  {
-    cat: "Technical", diff: "Medium", company: "Generic",
-    q: "What are React Hooks? Why were they introduced?",
-    refAnswer: "Hooks (React 16.8+): functions that let function components use state and lifecycle features. Key hooks: useState (local state), useEffect (side effects), useContext (context access), useRef (mutable ref without re-render). Introduced to: eliminate class component complexity, enable code reuse via custom hooks, remove confusing 'this' binding. Easy: Hooks let function components do everything class components could, but more cleanly."
-  },
-
-  // ═══════════════════════════════════════════
-  // PYTHON / BACKEND
-  // ═══════════════════════════════════════════
-  {
-    cat: "Technical", diff: "Medium", company: "Generic",
-    q: "What is Python's GIL (Global Interpreter Lock) and how does it affect multithreading?",
-    refAnswer: "GIL: a mutex that prevents multiple native threads from executing Python bytecode simultaneously. One thread runs Python at a time. Impact: CPU-bound tasks don't benefit from threading — use multiprocessing instead. I/O-bound tasks (network, disk) do benefit because GIL is released during I/O wait. Async/await (asyncio) is preferred for I/O concurrency. Easy: Python multithreading is great for waiting; use multiprocessing for actual number-crunching."
-  },
-  {
-    cat: "Technical", diff: "Easy", company: "Generic",
-    q: "What is the difference between a list and a tuple in Python?",
-    refAnswer: "List: mutable (can add/remove/change elements), dynamic size, uses more memory. Tuple: immutable (can't change after creation), slightly faster and uses less memory due to fixed allocation. Tuples are hashable (can be dict keys or set elements). Use tuple for fixed data (coordinates, RGB), list for dynamic collections. Easy: Tuple = a locked record. List = editable spreadsheet row."
-  },
-  {
-    cat: "Technical", diff: "Medium", company: "Generic",
-    q: "Explain Python's '@' decorator syntax and give a use case.",
-    refAnswer: "A decorator is a higher-order function that wraps another function, adding behavior before/after. Syntax: @my_decorator above def my_func() is equivalent to my_func = my_decorator(my_func). Common uses: @app.route (Flask routing), @login_required (auth), @cache (memoization), @retry (resilience), @dataclass (auto-generating methods). Easy: A decorator is like a wrapper that adds instructions before and after opening a gift."
-  },
-  // ═══════════════════════════════════════════
-  // MORE DSA — LEETCODE PATTERNS
-  // ═══════════════════════════════════════════
-  {
-    cat: "DSA", diff: "Medium", company: "LeetCode",
-    q: "Find All Anagrams in a String: find all start indices of anagrams of p in s.",
-    refAnswer: "Sliding window of size p.length. Use two frequency hashmaps (or arrays of 26). Add right char, remove left char as window slides. If freq maps match, record left index. Time O(n). Easy: Keep a fixed-width window that slides right, comparing letter frequencies to the target word's frequencies."
-  },
-  {
-    cat: "DSA", diff: "Medium", company: "LeetCode",
-    q: "Longest Palindromic Substring.",
-    refAnswer: "Expand around center: for each index i, try odd-length (center=i) and even-length (center=i,i+1) palindromes. Expand while chars match. Track max. Time O(n²). Manacher's algorithm achieves O(n). Easy: For every character, try to expand a palindrome outward — like pushing two hands apart from a center."
-  },
-  {
-    cat: "DSA", diff: "Hard", company: "LeetCode",
-    q: "Trapping Rain Water: given height array, compute total water trapped.",
-    refAnswer: "Two pointer approach: left and right pointers. Track left_max and right_max. If left_max < right_max: water at left = left_max - height[left], move left inward. Else: water at right = right_max - height[right], move right inward. Time O(n), Space O(1). Easy: Water level is determined by the shorter wall — process from whichever side is shorter."
-  },
-  {
-    cat: "DSA", diff: "Medium", company: "LeetCode",
-    q: "Subsets: generate all possible subsets (power set) of a given array.",
-    refAnswer: "Backtracking: at each index, choose to include or exclude the element. Recursively build subsets. Or iteratively: start with [[]], for each num, add num to all existing subsets and append those. Time O(2^n). Easy: For each element you have exactly two choices — in or out. Explore every combination."
-  },
-  {
-    cat: "DSA", diff: "Medium", company: "LeetCode",
-    q: "Letter Combinations of a Phone Number.",
-    refAnswer: "Backtracking over the digits. Use a map digit→letters. For each digit, try each letter, recurse for the next digit, then backtrack. Base case: current combination length equals digits length. Time O(4^n * n). Easy: Build a tree of choices — at each level pick one letter for the current digit."
-  },
-  {
-    cat: "DSA", diff: "Medium", company: "LeetCode",
-    q: "Word Search: find if a word exists in a 2D character grid.",
-    refAnswer: "DFS + backtracking. At each cell matching word[0], DFS in 4 directions. Mark cell as visited (e.g., temp replace with '#'), recurse for remaining word. Restore cell after recursion. Time O(M*N*4^L) where L=word length. Easy: Walk the grid letter by letter, backtrack if you hit a dead end."
-  },
-  {
-    cat: "DSA", diff: "Hard", company: "LeetCode",
-    q: "N-Queens: place N queens on NxN board so no two queens attack each other.",
-    refAnswer: "Backtracking: place queens row by row. Track which columns, diagonals (row-col), and anti-diagonals (row+col) are occupied using sets. At each row, try each valid column. Backtrack when stuck. Time O(N!). Easy: Place one queen per row, keeping a 'blocked' record — backtrack when no safe column exists."
-  },
-  {
-    cat: "DSA", diff: "Medium", company: "LeetCode",
-    q: "Decode Ways: count how many ways a digit string can be decoded (1=A, 2=B, ..., 26=Z).",
-    refAnswer: "DP. dp[i] = number of ways to decode s[:i]. If s[i-1] != '0': dp[i] += dp[i-1] (single digit). If 10 <= int(s[i-2:i]) <= 26: dp[i] += dp[i-2] (two digits). Base: dp[0]=1, dp[1]=0 or 1. Easy: At each position, decide whether to decode the last one or two characters."
-  },
-  {
-    cat: "DSA", diff: "Medium", company: "LeetCode",
-    q: "House Robber: maximize money robbed from houses where you can't rob adjacent ones.",
-    refAnswer: "DP. rob(i) = max(rob(i-2) + nums[i], rob(i-1)). Either rob house i (and skip i-1) or skip house i (take whatever was best at i-1). Space optimize to two variables. Time O(n), Space O(1). Easy: At each house, compare 'money from two houses ago + this house' vs 'best without this house'."
-  },
-  {
-    cat: "DSA", diff: "Medium", company: "Google",
-    q: "Rotting Oranges: find minimum minutes for all oranges to rot (BFS from all rotten oranges simultaneously).",
-    refAnswer: "Multi-source BFS: start with all initially rotten oranges in the queue simultaneously. Each minute, spread rot to adjacent fresh oranges. Track elapsed minutes. At the end, if any fresh orange remains, return -1. Time O(M*N). Easy: Think of all rotten oranges as spreading simultaneously like multiple infection sources."
-  },
-  {
-    cat: "DSA", diff: "Medium", company: "Amazon",
-    q: "Pacific Atlantic Water Flow: find which cells can drain to both the Pacific and Atlantic oceans.",
-    refAnswer: "Reverse BFS/DFS from ocean borders. Start BFS from all Pacific-border cells, mark reachable cells. Repeat from Atlantic-border cells. Answer = intersection of both reachable sets. Easy: Instead of water flowing down, think of water flowing up from each ocean — find where both oceans' water can reach."
-  },
-
-  // ═══════════════════════════════════════════
-  // CLOUD / DEVOPS
-  // ═══════════════════════════════════════════
-  {
-    cat: "Technical", diff: "Medium", company: "Amazon",
-    q: "Explain the difference between AWS EC2, ECS, and Lambda.",
-    refAnswer: "EC2: raw virtual machines, full OS control, you manage everything including scaling. ECS (Elastic Container Service): runs Docker containers on a managed cluster (on EC2 or Fargate). Lambda: serverless functions, event-triggered, no server management, pay per invocation. Choose: Lambda for event-driven short tasks, ECS for long-running containerized apps, EC2 for full control or legacy apps. Easy: EC2=rent a car, ECS=hire a driver with your car, Lambda=take a taxi when needed."
-  },
-  {
-    cat: "Technical", diff: "Hard", company: "Amazon",
-    q: "What is Infrastructure as Code (IaC) and what tools are used?",
-    refAnswer: "IaC: defining and provisioning infrastructure via code files (not manual UI clicks). Benefits: reproducibility, version control, disaster recovery, audit trail. Tools: Terraform (cloud-agnostic, declarative HCL), AWS CloudFormation (AWS-native), Pulumi (code in real languages). Key concepts: declarative (describe desired state) vs imperative (describe steps). Easy: Write your server setup like a recipe — anyone can recreate the exact same kitchen from the recipe."
-  },
-  {
-    cat: "Technical", diff: "Medium", company: "Generic",
-    q: "What is a CI/CD pipeline and what are its stages?",
-    refAnswer: "CI (Continuous Integration): automatically build and test code on every commit. Identifies integration errors early. CD (Continuous Delivery/Deployment): automatically deploy to staging or production after CI passes. Typical stages: Source (git push) → Build (compile) → Test (unit/integration) → Security Scan → Staging Deploy → Smoke Test → Production Deploy. Tools: GitHub Actions, Jenkins, GitLab CI, CircleCI. Easy: An assembly line that takes raw code and delivers it to production automatically after quality checks."
-  },
-  {
-    cat: "Technical", diff: "Medium", company: "Generic",
-    q: "Explain the concept of blue-green deployment.",
-    refAnswer: "Maintain two identical production environments: Blue (current live) and Green (new version). Deploy new version to Green. Test Green thoroughly. Switch traffic from Blue to Green (DNS/load balancer). Blue becomes standby — instant rollback if Green has issues. Benefits: zero downtime, instant rollback. Cost: double infrastructure during switch. Easy: Always have a backup restaurant ready — when the new one opens, redirect all customers and keep the old one warm just in case."
-  },
-  {
-    cat: "Technical", diff: "Hard", company: "Generic",
-    q: "What is observability in distributed systems? What are its three pillars?",
-    refAnswer: "Observability: ability to understand internal system state from external outputs. Three pillars: (1) Logs — discrete events with timestamps (ELK stack, CloudWatch Logs). (2) Metrics — numerical measurements over time (Prometheus, DataDog). (3) Traces — end-to-end request journey across services (Jaeger, X-Ray). Good observability means debugging production issues without code changes. Easy: Logs are the diary, metrics are the health dashboard, traces are the GPS tracking of each request."
-  },
-
-  // ═══════════════════════════════════════════
-  // FRONTEND ADVANCED
-  // ═══════════════════════════════════════════
-  {
-    cat: "Technical", diff: "Medium", company: "Meta",
-    q: "What is the difference between server-side rendering (SSR) and client-side rendering (CSR)?",
-    refAnswer: "CSR: browser downloads empty HTML + JS bundle, JS renders page in browser. SEO-poor, slow first load, fast subsequent. SSR: server renders full HTML for each request, browser gets complete page. Better SEO, faster FCP but higher server load. Hybrid: Next.js SSR + CSR + Static Generation (SSG). Easy: CSR = server ships an empty frame and a kit; CSR = server ships a fully painted room."
-  },
-  {
-    cat: "Technical", diff: "Medium", company: "Generic",
-    q: "What is CSS specificity and how is it calculated?",
-    refAnswer: "Specificity determines which CSS rule wins when multiple rules apply. Calculated as (A, B, C): A = inline styles (1,0,0), B = IDs (0,1,0), C = classes/attributes/pseudo-classes (0,0,1). Elements/pseudo-elements (0,0,0). Higher specificity wins; ties broken by order (later wins). !important overrides everything. Easy: ID beats class beats element — think of it as a score sheet where each type has a different point value."
-  },
-  {
-    cat: "Technical", diff: "Hard", company: "Generic",
-    q: "What is the browser's Critical Rendering Path and how do you optimize it?",
-    refAnswer: "CRP: HTML → DOM → CSSOM → Render Tree → Layout → Paint → Composite. Optimizations: (1) Eliminate render-blocking resources (defer/async JS). (2) Minify CSS/JS/HTML. (3) Use critical CSS inline. (4) Lazy load below-fold images. (5) Use HTTP/2 for parallel requests. (6) Use CDN. Key metric: First Contentful Paint (FCP). Easy: Get the browser to paint the visible part of the page as fast as possible — don't make it wait for things it doesn't need immediately."
-  },
-  {
-    cat: "Technical", diff: "Medium", company: "Generic",
-    q: "What are Web Workers and when would you use them?",
-    refAnswer: "Web Workers: JavaScript that runs in a background thread, separate from the main thread. They can't access the DOM. Communication via postMessage(). Use for: heavy computations (image processing, encryption, large data sorting) that would freeze the UI if run on the main thread. Easy: Hire a specialist to do heavy lifting in the back room so your front-of-house (UI) stays fast and responsive."
-  },
-  {
-    cat: "Technical", diff: "Medium", company: "Meta",
-    q: "Explain React's Context API and when to use it versus Redux.",
-    refAnswer: "Context API: built-in React mechanism for sharing state across component tree without prop drilling. Best for: low-frequency updates (theme, user, locale). Redux: centralized store with strict predictability (actions, reducers). Best for: complex state, high-frequency updates, time-travel debugging, large teams. Context re-renders all consumers on change; use memo/split contexts to optimize. Easy: Context is a shared billboard; Redux is a carefully managed central database with an audit log."
-  },
-
-  // ═══════════════════════════════════════════
-  // BEHAVIORAL — STARTUP / PM SCENARIOS
-  // ═══════════════════════════════════════════
   {
     cat: "Behavioral", diff: "Hard", company: "Generic",
     q: "How do you decide what NOT to build?",
-    refAnswer: "Framework: Start with opportunity cost — every feature you build means something else you don't. Use ICE scoring (Impact, Confidence, Ease) or RICE (Reach × Impact × Confidence / Effort) to rank. Say no to: low-impact features, features that 5% of users need and 95% won't, features with high technical debt. Show a specific example where you killed a feature that was almost built. Easy: Every 'yes' is a 'no' to something else — know your highest-leverage opportunities."
+    refAnswer: "Framework: Start with opportunity cost — every feature you build means something else you don't. Use ICE scoring (Impact, Confidence, Ease) or RICE (Reach x Impact x Confidence / Effort) to rank. Say no to: low-impact features, features that 5% of users need and 95% won't, features with high technical debt. Show a specific example where you killed a feature that was almost built. Easy: Every 'yes' is a 'no' to something else — know your highest-leverage opportunities."
   },
   {
     cat: "Behavioral", diff: "Medium", company: "Generic",
@@ -736,63 +859,6 @@ export const BANK: Question[] = [
     refAnswer: "STAR: Highlight that you coordinated Engineering, Design, Product, and/or Business without formal authority. Describe how you created alignment — shared OKRs, regular syncs, a RACI matrix. Emphasize how you managed competing priorities across teams. Key metrics: delivered on time, cross-team NPS improved, or reduced inter-team friction. Easy: Show you can translate between technical and non-technical stakeholders and build shared goals."
   },
   {
-    cat: "Behavioral", diff: "Hard", company: "Google",
-    q: "How do you approach a problem you've never seen before?",
-    refAnswer: "Structure your thinking: (1) Understand the problem fully before solving. (2) Decompose into known sub-problems. (3) Think aloud — share your reasoning. (4) Start with brute force, then optimize. (5) If truly stuck, identify what you need to learn and how quickly you can learn it. Key: demonstrate meta-learning skills, not just pre-existing knowledge. Easy: 'I don't know' is okay — 'Here's how I'd figure it out' is what they're hiring for."
-  },
-  {
-    cat: "Behavioral", diff: "Medium", company: "Amazon",
-    q: "Tell me about a time you innovated on behalf of the customer. (LP: Invent and Simplify)",
-    refAnswer: "STAR: Identify a customer pain point that wasn't on anyone's roadmap. Describe how you invented a simple solution — not over-engineered. Emphasize simplicity: Amazon values Ockham's razor in engineering. Quantify the customer impact. Key: differentiate between 'we added features' and 'we removed friction'. Easy: The best innovation often removes steps or complexity rather than adding them."
-  },
-
-  // ═══════════════════════════════════════════
-  // ADDITIONAL SYSTEM DESIGN
-  // ═══════════════════════════════════════════
-  {
-    cat: "System Design", diff: "Hard", company: "Meta",
-    q: "Design a Facebook-scale Chat System (like WhatsApp/Messenger).",
-    refAnswer: "Components: WebSocket servers for real-time bidirectional connection. Message DB (Cassandra — write-heavy, wide-column). User presence service (Redis TTL). Push notifications for offline users. Group chats: fan-out on write (deliver to all members' inboxes). Message ordering: use server-side timestamp + unique ID. Media: upload to blob store (S3), share URL. Easy: Persistent socket connections for real-time, reliable storage for history, push fallback for offline."
-  },
-  {
-    cat: "System Design", diff: "Hard", company: "Google",
-    q: "Design Google Maps / Route Navigation.",
-    refAnswer: "Map tiles: pre-rendered image tiles served from CDN by zoom/lat/lng. Routing: offline-computed shortest path graph (Dijkstra/A*) updated by traffic data. Real-time traffic: aggregate GPS pings from millions of phones. ETA: ML model trained on historical travel times. Geocoding: address → lat/lng DB. Easy: Pre-render map images globally, pre-compute routes using road graphs, refine ETAs using live traffic crowdsourced from phones in real time."
-  },
-  {
-    cat: "System Design", diff: "Medium", company: "Generic",
-    q: "Design a Pastebin-like service.",
-    refAnswer: "API: POST /paste (content, expiry) → returns unique URL. Storage: Key-Value store (Redis for hot/recent, S3 for cold/large). Key generation: Base62-encoded random ID (6 chars = 62^6 = ~56B unique keys). Expiry: TTL in Redis. Analytics: track view counts. CDN for read-heavy traffic. Easy: Generate a short random key, store content at that key, serve it on request — simple and fast."
-  },
-  {
-    cat: "System Design", diff: "Hard", company: "Amazon",
-    q: "Design a Recommendation System (like Amazon or Netflix).",
-    refAnswer: "Approaches: (1) Collaborative Filtering: users who liked X also liked Y. (2) Content-Based: recommend similar item attributes. (3) Hybrid. Architecture: Offline pipeline (Spark jobs compute item-item or user-item similarity matrix nightly). Online serving: retrieve top-K candidates, re-rank with real-time features (recency, CTR, inventory). Cache top recommendations per user in Redis. Easy: Pre-compute 'similar items' overnight, then personalize rankings in real time based on what the user just did."
-  },
-
-  // ═══════════════════════════════════════════
-  // MACHINE LEARNING BASICS (for ML roles)
-  // ═══════════════════════════════════════════
-  {
-    cat: "Technical", diff: "Medium", company: "Google",
-    q: "What is the difference between precision and recall?",
-    refAnswer: "Precision = TP / (TP + FP): of everything the model predicted as positive, how many were actually positive? Recall = TP / (TP + FN): of all real positives, how many did the model catch? Precision-Recall tradeoff: lowering threshold increases recall but decreases precision. Use F1 score to balance both. Easy: Precision = 'How often is my alarm right when it rings?' Recall = 'How often does my alarm ring when there IS a fire?'"
-  },
-  {
-    cat: "Technical", diff: "Hard", company: "Meta",
-    q: "Explain the vanishing gradient problem in neural networks and how to address it.",
-    refAnswer: "During backprop in deep networks, gradients (derivatives) get multiplied many times through layers. If weights/activations are small, these products approach 0 — earlier layers learn painfully slowly or stop. Solutions: (1) ReLU activation (doesn't saturate for positive values). (2) Batch Normalization (normalizes layer inputs). (3) Residual connections / skip connections (ResNet). (4) Better weight initialization (Xavier, He). Easy: Tiny numbers multiplied together shrink to zero — use tricks that keep gradients healthy as they flow back through the network."
-  },
-  {
-    cat: "Technical", diff: "Medium", company: "Generic",
-    q: "What is overfitting in machine learning and how do you prevent it?",
-    refAnswer: "Overfitting: model memorizes training data including noise — performs great on training set, poorly on unseen data. Prevention: (1) More training data. (2) Regularization (L1/Lasso, L2/Ridge — penalizes large weights). (3) Dropout (randomly deactivate neurons during training). (4) Early stopping. (5) Cross-validation. (6) Simpler model (reduce parameters). Easy: The model studied the past exams (training data) so hard it memorized answers instead of understanding the concepts."
-  },
-
-  // ═══════════════════════════════════════════
-  // NEGOTIATION-ADJACENT BEHAVIORAL
-  // ═══════════════════════════════════════════
-  {
     cat: "Behavioral", diff: "Medium", company: "Generic",
     q: "How would you negotiate for higher compensation?",
     refAnswer: "Framework: (1) Research market rates (Levels.fyi, Glassdoor, Blind) for the specific role/level/location. (2) Get competing offers if possible — anchors negotiation. (3) State your ask with justification, not just a number: 'Based on my research and my 7 years in distributed systems, I was expecting X'. (4) Negotiate the whole package: base, equity, bonus, signing bonus, PTO. (5) Never accept on the spot; take 24-48 hours. Easy: Know your worth with data, ask confidently, and remember everything is negotiable."
@@ -800,13 +866,37 @@ export const BANK: Question[] = [
   {
     cat: "Behavioral", diff: "Easy", company: "Generic",
     q: "Tell me about yourself.",
-    refAnswer: "Structure: Past → Present → Future. Past: 1-2 most relevant experiences (academic or professional). Present: current role/project and what you're working on. Future: what excites you about this opportunity and why now. Keep to 90 seconds max. Tailor to the company — highlight what's most relevant to them. Easy: Think of it as a highlights reel of your career that naturally leads into 'and that's why I'm here talking to you today'."
+    refAnswer: "Structure: Past -> Present -> Future. Past: 1-2 most relevant experiences (academic or professional). Present: current role/project and what you're working on. Future: what excites you about this opportunity and why now. Keep to 90 seconds max. Tailor to the company — highlight what's most relevant to them. Easy: Think of it as a highlights reel of your career that naturally leads into 'and that's why I'm here talking to you today'."
   },
   {
     cat: "Behavioral", diff: "Medium", company: "Generic",
     q: "Do you have any questions for us?",
     refAnswer: "Always have questions. Strong questions: 'What does success look like in the first 90 days?' / 'What are the biggest technical challenges the team is facing right now?' / 'How does the team handle technical debt?' / 'What's your engineering culture around code reviews and testing?' / 'What are the opportunities for growth in this role?' Never ask about salary at this stage (unless they bring it up). Easy: Ask questions that show you've done research and are genuinely curious about their specific challenges, team, and growth."
   },
+  // Infosys/TCS/Wipro Behavioral
+  {
+    cat: "Behavioral", diff: "Easy", company: "Infosys",
+    q: "Why do you want to work at Infosys? What do you know about our services?",
+    refAnswer: "Reference Infosys's global scale (300K+ employees), digital transformation practice (Cobalt cloud), AI/ML consulting arm, and commitment to reskilling (Lex platform). Mention specific service lines relevant to your background (BPM, cloud, data analytics). Easy: Show awareness of their transition from IT services to a digital-first consulting powerhouse."
+  },
+  {
+    cat: "Behavioral", diff: "Medium", company: "TCS",
+    q: "Describe a time you worked effectively in a large, distributed team.",
+    refAnswer: "STAR: TCS projects often involve large, multi-location teams. Show how you managed communication (async tools, time zone considerations, documentation). Emphasize process adherence (SDLC, sprints), proactive communication, and relationship building across geographies. Easy: Big teams need structured communication, not just technical skill — show you can operate in the system."
+  },
 ];
+
+// ═══════════════════════════════════════════
+// DERIVED HELPERS — category question counts
+// ═══════════════════════════════════════════
+
+/** Returns the count of questions per category key, including "All" */
+export function getCategoryCounts(): Record<string, number> {
+  const counts: Record<string, number> = { All: BANK.length };
+  for (const q of BANK) {
+    counts[q.cat] = (counts[q.cat] ?? 0) + 1;
+  }
+  return counts;
+}
 
 export const COMPANIES = Array.from(new Set(BANK.map(q => q.company))).sort();

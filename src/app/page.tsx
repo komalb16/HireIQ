@@ -39,6 +39,9 @@ export default function CoverLetterPage() {
   const [loading, setLoading] = useState(false);
   const [output, setOutput] = useState<string | null>(null);
   
+  const [linkedinUrl, setLinkedinUrl] = useState('');
+  const [scraping, setScraping] = useState(false);
+  
   const [loginData, setLoginData] = useState({ name: '', email: '', groqKey: '', rapidKey: '' });
   const [showGroq, setShowGroq] = useState(false);
   const [showRapid, setShowRapid] = useState(false);
@@ -132,6 +135,30 @@ export default function CoverLetterPage() {
   const handleDemo = () => {
     seedDemoData();
     window.location.reload();
+  };
+
+  const scrapeLinkedIn = async () => {
+    if (!linkedinUrl) return;
+    setScraping(true);
+    addNotification("Scraping", "Initializing Playwright to fetch JD...");
+    try {
+      const res = await fetch('/api/scrape-job', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: linkedinUrl })
+      });
+      const data = await res.json();
+      if (res.ok && data.description) {
+        setJd(data.description);
+        addNotification("Success", "Job description imported successfully.");
+      } else {
+        addNotification("Error", data.error || "Failed to fetch JD.");
+      }
+    } catch (e) {
+      addNotification("Error", "Network error while scraping.");
+    } finally {
+      setScraping(false);
+    }
   };
 
   // Strict First-Screen Entry Choice
@@ -318,13 +345,21 @@ export default function CoverLetterPage() {
     
 TONE: ${tone}
 TARGET JOB: ${jd.slice(0, 1500)}
-MY BACKGROUND: ${activeResume ? activeResume.content.slice(0, 2000) : 'I am a highly motivated professional (resume not provided).'}
+
+MY BACKGROUND:
+${activeResume ? activeResume.content.slice(0, 2000) : 'I am a highly motivated professional.'}
+
+MY CORE STRENGTHS:
+${state.profile.strengths || 'Not provided'}
+
+MY STAR STORIES (Use these as examples if relevant to the job):
+${state.profile.storyBank || 'Not provided'}
 
 REQUIREMENTS:
 - Use ${tone} tone specifically.
 - Keep it under 250 words.
 - Start with a strong hook based on the job requirements.
-- Reference 2-3 specific skills/results from my background that map directy to the JD.
+- Reference 2-3 specific skills/results from my background, strengths, or stories that map directly to the JD.
 - End with a call to action.
 - Do NOT use generic placeholders like [Your Name] if you can avoid them (use ${state.profile.name || 'Candidate'}).
 - Use modern, clean language (no "I am writing to express my interest").
@@ -370,8 +405,24 @@ Output ONLY the cover letter text:`;
               <label className="text-[11px] font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-2 px-3 italic">
                 <Layout className="w-4 h-4 text-[var(--accent)]" /> System Input: Target JD
               </label>
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  placeholder="Paste LinkedIn Job URL to auto-scrape..." 
+                  className="flex-1 bg-slate-950/50 border-2 border-slate-800 rounded-2xl px-6 py-3 text-sm text-slate-200 outline-none focus:border-[var(--accent)]/40 transition-all font-bold"
+                  value={linkedinUrl}
+                  onChange={(e) => setLinkedinUrl(e.target.value)}
+                />
+                <Button 
+                  onClick={scrapeLinkedIn} 
+                  disabled={scraping}
+                  className="rounded-2xl bg-cyan-600 hover:bg-cyan-500 font-bold px-6"
+                >
+                  {scraping ? 'Scraping...' : 'Auto-Fetch'}
+                </Button>
+              </div>
               <textarea 
-                className="w-full bg-slate-950/50 border-2 border-slate-800 rounded-[2.5rem] p-10 text-base text-slate-200 outline-none focus:ring-4 focus:ring-[var(--accent)]/10 focus:border-[var(--accent)]/40 min-h-[400px] resize-none transition-all leading-relaxed shadow-inner font-bold"
+                className="w-full bg-slate-950/50 border-2 border-slate-800 rounded-[2.5rem] p-10 text-base text-slate-200 outline-none focus:ring-4 focus:ring-[var(--accent)]/10 focus:border-[var(--accent)]/40 min-h-[400px] resize-none transition-all leading-relaxed shadow-inner font-bold mt-4"
                 placeholder="Paste the target job description node here..."
                 value={jd}
                 onChange={(e) => setJd(e.target.value)}

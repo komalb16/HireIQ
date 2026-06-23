@@ -320,7 +320,7 @@ Respond ONLY with this exact JSON:
                  </div>
 
                  <div className="space-y-4">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 italic">Suite Size — per session</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 italic">Suite Size ï¿½ per session</p>
                     <div className="grid grid-cols-3 gap-2">
                       {[5, 10, 15, 20].map(n => (
                         <button

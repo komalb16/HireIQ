@@ -13,7 +13,8 @@ import {
   Settings,
   Bell,
   Sparkles,
-  Zap
+  Zap,
+  User
 } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { Badge } from '@/components/ui/Badge';
@@ -37,6 +38,7 @@ export default function Sidebar() {
 
   const links = [
     { href: '/', label: 'Magic Builder', icon: Sparkles, color: 'text-emerald-400' },
+    { href: '/profile', label: 'Profile Vault', icon: User, color: 'text-blue-400' },
     { href: '/jobs', label: 'Job Search', icon: Search, color: 'text-cyan-400' },
     { href: '/resume', label: 'Resume Library', icon: FileText, color: 'text-amber-400' },
     { href: '/ats', label: 'ATS Auditor', icon: CheckSquare, color: 'text-indigo-400' },
